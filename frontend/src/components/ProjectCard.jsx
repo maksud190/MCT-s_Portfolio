@@ -50,7 +50,7 @@ export default function ProjectCard({ project }) {
                 className="w-16 h-16 text-gray-400 dark:text-gray-500 mb-2" 
                 fill="none" 
                 stroke="currentColor" 
-                viewBox="0 0 24 24"
+                viewBox="0 0 14 14"
               >
                 <path 
                   strokeLinecap="round" 

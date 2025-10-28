@@ -40,7 +40,7 @@ export default function Home() {
   return (
     <div className="p-6">
       {/* 🔥 Pinterest style masonry layout */}
-      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-6 gap-4 space-y-4">
         {projects.map((p) => (
           <ProjectCard key={p._id} project={p} />
         ))}

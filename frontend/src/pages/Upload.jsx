@@ -8,33 +8,44 @@ export default function Upload() {
     title: "",
     description: "",
     category: "",
+    subcategory: "",
     file: null,
   });
-  const [preview, setPreview] = useState(null); // 🔥 Image preview
-  const [loading, setLoading] = useState(false); // 🔥 Loading state
-  const [error, setError] = useState(""); // 🔥 Error message
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
   
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // 🔥 Image select করার সময় preview দেখানো
+  // 🔥 Category এবং Subcategory data
+  const categories = {
+    "Web Development": ["Frontend", "Backend", "Full Stack", "UI/UX Design", "E-commerce"],
+    "Mobile Apps": ["Android", "iOS", "React Native", "Flutter", "Cross-platform"],
+    "Graphics Design": ["Logo Design", "Branding", "Illustration", "Print Design", "Social Media"],
+    "Photography": ["Portrait", "Landscape", "Product", "Wildlife", "Fashion"],
+    "Video Production": ["Animation", "Video Editing", "Motion Graphics", "Documentary", "Commercial"],
+    "Writing": ["Blog Posts", "Copywriting", "Technical Writing", "Creative Writing", "Content Strategy"],
+    "Art": ["Digital Art", "Traditional Art", "3D Modeling", "Character Design", "Concept Art"],
+    "Music": ["Production", "Composition", "Sound Design", "Mixing", "Cover Songs"],
+  };
+
+  // Image select করার সময় preview দেখানো
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       // File type validation
       if (!file.type.startsWith('image/')) {
-        setError("Please select an image file");
+        alert("Please select an image file");
         return;
       }
       
       // File size validation (5MB max)
       if (file.size > 5 * 1024 * 1024) {
-        setError("Image size should be less than 5MB");
+        alert("Image size should be less than 5MB");
         return;
       }
 
       setData({ ...data, file });
-      setError("");
       
       // Preview তৈরি করা
       const reader = new FileReader();
@@ -45,36 +56,40 @@ export default function Upload() {
     }
   };
 
-  // 🔥 Form reset করার function
+  // 🔥 Category change করার সময় subcategory reset করা
+  const handleCategoryChange = (e) => {
+    setData({ ...data, category: e.target.value, subcategory: "" });
+  };
+
+  // Form reset করার function
   const resetForm = () => {
     setData({
       title: "",
       description: "",
       category: "",
+      subcategory: "",
       file: null,
     });
     setPreview(null);
-    setError("");
   };
 
-  // 🔥 Form submit with loading and redirect
+  // Form submit with loading and redirect
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validation
-    if (!data.title || !data.description || !data.category || !data.file) {
-      setError("Please fill all fields and select an image");
+    if (!data.title || !data.description || !data.category || !data.subcategory || !data.file) {
+      alert("Please fill all fields and select an image");
       return;
     }
 
     setLoading(true);
-    setError("");
 
     try {
       const form = new FormData();
       form.append("title", data.title);
       form.append("description", data.description);
-      form.append("category", data.category);
+      form.append("category", `${data.category} - ${data.subcategory}`);
       form.append("file", data.file);
       form.append("userId", user._id);
 
@@ -84,21 +99,23 @@ export default function Upload() {
         }
       });
 
-      // Success - Reset এবং redirect
+      alert("Project uploaded successfully! 🎉");
       resetForm();
-      alert("✅ Project uploaded successfully!");
-      navigate("/profile"); // Profile page এ redirect
+      
+      setTimeout(() => {
+        navigate("/profile");
+      }, 1000);
       
     } catch (err) {
       console.error("Upload error:", err);
-      setError(err.response?.data?.message || "Upload failed. Please try again.");
+      alert(err.response?.data?.message || "Upload failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen p-6 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-6 flex items-center justify-center">
       <div className="w-full max-w-2xl">
         <form
           onSubmit={handleSubmit}
@@ -108,14 +125,7 @@ export default function Upload() {
             Upload New Project
           </h2>
 
-          {/* 🔥 Error message */}
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
-            </div>
-          )}
-
-          {/* 🔥 Image preview section */}
+          {/* Image preview section */}
           {preview && (
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -136,9 +146,7 @@ export default function Upload() {
                   className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                   title="Remove image"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  ✕
                 </button>
               </div>
             </div>
@@ -176,23 +184,51 @@ export default function Upload() {
             />
           </div>
 
-          {/* Category input */}
+          {/* Category dropdown */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category
             </label>
-            <input
-              type="text"
-              placeholder="e.g. Web Design, Photography, Art"
+            <select
               value={data.category}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              onChange={(e) => setData({ ...data, category: e.target.value })}
+              onChange={handleCategoryChange}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
               disabled={loading}
               required
-            />
+            >
+              <option value="">Select a category</option>
+              {Object.keys(categories).map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* 🔥 File input with custom styling */}
+          {/* Subcategory dropdown */}
+          {data.category && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Subcategory
+              </label>
+              <select
+                value={data.subcategory}
+                onChange={(e) => setData({ ...data, subcategory: e.target.value })}
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
+                disabled={loading}
+                required
+              >
+                <option value="">Select a subcategory</option>
+                {categories[data.category].map((subcat) => (
+                  <option key={subcat} value={subcat}>
+                    {subcat}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* File input */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Project Image
@@ -209,13 +245,11 @@ export default function Upload() {
               />
               <label
                 htmlFor="file-upload"
-                className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
+                className="flex items-center justify-center w-full p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
               >
                 <div className="text-center">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-4xl mb-2">📁</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {data.file ? data.file.name : "Click to upload an image"}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
@@ -226,29 +260,13 @@ export default function Upload() {
             </div>
           </div>
 
-          {/* 🔥 Submit button with loading animation */}
+          {/* Submit button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {loading ? (
-              <>
-                {/* 🔥 Loading spinner */}
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Uploading...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <span>Upload Project</span>
-              </>
-            )}
+            {loading ? "Uploading..." : "Upload Project"}
           </button>
         </form>
       </div>
