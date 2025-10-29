@@ -1,39 +1,5 @@
 
 
-// import { likeProject } from "../controllers/projectController.js";
-// import express from "express";
-// import multer from "multer";
-// import {
-//   uploadProject,
-//   getAllProjects,
-//   getUserProjects,
-//   getProjectById // 🔥 New route
-// } from "../controllers/projectController.js";
-
-// const router = express.Router();
-// const upload = multer({ dest: "uploads/" });
-
-// // ✅ Upload project with multiple images
-// router.post("/upload", upload.array("files", 5), uploadProject); // 🔥 .array() for multiple files, max 5
-
-// // ✅ All projects
-// router.get("/", getAllProjects);
-
-// // ✅ Specific user's projects
-// router.get("/user/:userId", getUserProjects);
-
-// // 🔥 Get single project by ID
-// router.get("/:projectId", getProjectById);
-
-
-
-// // ✅ Like route
-// router.post("/:projectId/like", likeProject);
-
-// export default router;
-
-
-
 import express from "express";
 import multer from "multer";
 import {
@@ -51,8 +17,14 @@ import { authMiddleware } from "../middleware/authMiddleware.js"; // 🔥 Import
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-// ✅ Upload project with multiple images
-router.post("/upload", upload.array("files", 5), uploadProject);
+
+
+// 🔥 Update project - separate thumbnail and files
+router.put("/:projectId", upload.fields([
+  { name: 'newThumbnail', maxCount: 1 }, // 🔥 New thumbnail (optional)
+  { name: 'files', maxCount: 4 } // 🔥 Additional files
+]), updateProject);
+
 
 // ✅ All projects
 router.get("/", getAllProjects);
