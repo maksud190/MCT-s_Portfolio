@@ -54,6 +54,33 @@ button:focus-visible {
 }
 
 
+/* Custom scrollbar for sidebar */
+aside::-webkit-scrollbar {
+  width: 6px;
+}
+
+aside::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+aside::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.dark aside::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+aside::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.dark aside::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+
 @keyframes fadeIn {
   from {
     opacity: 0;
