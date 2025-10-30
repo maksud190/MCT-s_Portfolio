@@ -11,7 +11,7 @@ import EditProject from "./pages/EditProject"; // 🔥 Import করা
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen  dark:text-gray-100 transition-colors duration-300">
       <Navbar />
       
       <Routes>
@@ -39,6 +39,7 @@ export default function App() {
         />
         
         {/* 🔥 Edit route - Protected */}
+        
         <Route 
           path="/edit/:projectId" 
           element={

@@ -396,7 +396,7 @@ export default function ProjectDetail() {
             </h1>
 
             {/* 🔥 Stats Row - Views, Likes, Date */}
-            <div className="flex items-center gap-6 mb-6 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-6 mb-6 text-sm text-gray-600 dark:text-gray-200">
               {/* Views */}
               <div className="flex items-center gap-2">
                 <span className="text-xl">👁️</span>

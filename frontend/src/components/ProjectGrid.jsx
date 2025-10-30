@@ -8,7 +8,7 @@ export default function ProjectGrid({
   // 🔥 যদি projects থাকে
   if (filteredProjects.length > 0) {
     return (
-      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4">
+      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-6 gap-4">
         {filteredProjects.map((p) => (
           <div key={p._id} className="break-inside-avoid mb-4">
             <ProjectCard project={p} />
@@ -32,7 +32,7 @@ export default function ProjectGrid({
       </p>
       <button
         onClick={clearFilters}
-        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        className="px-6 py-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors"
       >
         Clear Filters
       </button>

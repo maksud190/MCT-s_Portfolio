@@ -39,15 +39,15 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 flex justify-between items-center p-4 bg-white shadow-md z-50 transition-colors duration-300">
+    <nav className="sticky top-0 flex justify-between items-center p-4 bg-amber-400 shadow-md z-50 transition-colors duration-300">
       <Link 
         to="/" 
-        className="font-bold text-xl px-4 py-2 rounded-lg  dark:bg-blue-200 text-black dark:text-white hover:bg-amber-200 dark:hover:bg-amber-700 transition-all duration-200"
+        className="font-bold text-xl px-4 py-2 rounded-sm dark:bg-gray-800 dark:hover:bg-gray-900 transition-all duration-200"
       >
-        MCT-Portfolio-Hub
+        <span className="text-white">MCT-Portfolio-Hub</span>
       </Link>
       
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2">
         {/* 🔥 Dark mode toggle button with smooth animation */}
         <button
           onClick={toggleDark}
@@ -62,19 +62,21 @@ export default function Navbar() {
           <>
             <Link 
               to="/upload"
-              className="text-gray-700 dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
+              className=" transition-colors font-medium"
             >
-              Upload
+              <span className="font-bold text-gray-800 hover:text-white hover:bg-gray-800 px-4 py-2 rounded-sm duration-200">Upload</span>
             </Link>
             <Link 
               to="/profile"
-              className="text-gray-700 dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
             >
-              {user.username}
+              <span className="font-bold text-gray-800 hover:text-white hover:bg-gray-800 px-4 py-2 rounded-sm duration-200">
+                {user.username}
+              </span>
+              
             </Link>
             <button 
               onClick={handleLogout} 
-              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors duration-200 font-medium"
+              className=" text-red-900 dark:text-red-700 hover:text-red-700 dark:hover:text-red-900 transition-colors duration-200 font-bold"
             >
               Logout
             </button>

@@ -17,7 +17,7 @@
 
 /* 🔥 Body এ Tailwind classes apply করা */
 body {
-  @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300;
+  @apply  text-gray-900 dark:bg-red-900 dark:text-gray-100 transition-colors duration-300;
   margin: 0;
   padding: 0;
   min-width: 320px;

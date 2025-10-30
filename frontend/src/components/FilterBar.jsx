@@ -10,7 +10,7 @@ export default function FilterBar({
   filteredProjects
 }) {
   return (
-    <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md">
+    <div className="mb-6 bg-white dark:bg-gray-800 px-6 py-3 rounded-sm shadow-md">
       {/* 🔥 Filters Row */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         
@@ -22,7 +22,7 @@ export default function FilterBar({
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>
@@ -44,7 +44,7 @@ export default function FilterBar({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full sm:w-48 p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
+            className="w-full sm:w-48 p-1 border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
           >
             <option value="latest">Latest First</option>
             <option value="likes-high">Most Liked</option>
@@ -60,7 +60,7 @@ export default function FilterBar({
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="w-full sm:w-48 p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
+            className="w-full sm:w-48 p-1 border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
           >
             <option value="all">All Time</option>
             <option value="week">Last Week</option>
@@ -73,7 +73,7 @@ export default function FilterBar({
       </div>
 
       {/* 🔥 Results Count */}
-      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Showing{" "}
           <span className="font-semibold text-blue-500">
