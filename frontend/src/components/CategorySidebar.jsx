@@ -6,7 +6,7 @@ export default function CategorySidebar({
 }) {
   return (
     <aside className="w-63 bg-black dark:bg-white p-4 border-r border-gray-200 dark:border-gray-700 sticky top-16 h-screen overflow-y-auto hidden lg:block">
-      <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-black">
+      <h2 className="text-lg font-bold mb-2 text-gray-900 dark:text-black">
         Categories
       </h2>
 
@@ -16,20 +16,20 @@ export default function CategorySidebar({
           <li className="" key={cat}>
             <button
               onClick={() => setSelectedCategory(cat)}
-              className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
+              className={`w-full text-left px-2 !py-2 !rounded-sm transition-all ${
                 selectedCategory === cat
-                  ? "bg-blue-500 text-white font-semibold"
-                  : "text-gray-700 dark:text-blue-950 hover:bg-gray-100 dark:hover:bg-blue-300"
+                  ? "bg-amber-400 text-white font-semibold"
+                  : "text-gray-700 dark:text-blue-950 hover:bg-gray-100 dark:hover:bg-amber-200"
               }`}
             >
               {cat}
               
               {/* 🔥 Count badge */}
               <span
-                className={`float-right text-xs px-1.5 py-0.5 rounded-full ${
+                className={`float-right text-xs px-1.5 py-0.5 rounded-sm ${
                   selectedCategory === cat
-                    ? "bg-white text-blue-500"
-                    : "bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300"
+                    ? "bg-white text-gray-900 font-semibold"
+                    : "bg-gray-200 dark:bg-gray-600/80 text-gray-700 dark:text-gray-300"
                 }`}
               >
                 {cat === "All"

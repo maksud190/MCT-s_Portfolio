@@ -8,10 +8,11 @@ import Upload from "./pages/Upload";
 import Profile from "./pages/Profile";
 import ProjectDetail from "./pages/ProjectDetail";
 import EditProject from "./pages/EditProject"; // 🔥 Import করা
+import "./App.css";
 
 export default function App() {
   return (
-    <div className="min-h-screen  dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-100 bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <Navbar />
       
       <Routes>
