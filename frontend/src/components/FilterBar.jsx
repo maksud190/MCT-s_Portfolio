@@ -76,7 +76,7 @@ export default function FilterBar({
       <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Showing{" "}
-          <span className="font-semibold text-blue-500">
+          <span className="font-semibold text-amber-400">
             {filteredProjects.length}
           </span>{" "}
           {filteredProjects.length === 1 ? "project" : "projects"}

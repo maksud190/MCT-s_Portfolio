@@ -46,7 +46,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 flex justify-between items-center p-4 bg-amber-400 shadow-md z-50 transition-colors duration-300">
+    <nav className="sticky top-0 flex justify-between items-center p-4 bg-amber-400 shadow-amber-600/40 shadow-md z-50 transition-colors duration-300">
       <Link 
         to="/" 
         className="font-bold text-xl px-4 py-2 rounded-sm dark:bg-gray-800 dark:hover:bg-gray-900 transition-all duration-200"
