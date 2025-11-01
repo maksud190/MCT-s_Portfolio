@@ -34,7 +34,7 @@ export default function Home() {
   useEffect(() => {
     API.get("/projects")
       .then((res) => {
-        console.log("📦 Fetched projects:", res.data);
+        console.log("Fetched projects:", res.data);
         setProjects(res.data);
         setFilteredProjects(res.data);
         setLoading(false);

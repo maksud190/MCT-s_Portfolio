@@ -17,7 +17,7 @@ export default function ProjectCard({ project }) {
   // Check like status
   useEffect(() => {
     if (user) {
-      checkLikeStatus();
+      checkLikeStatus();  
     }
   }, [user, project._id]);
 
@@ -171,7 +171,7 @@ export default function ProjectCard({ project }) {
 
           {/* Footer with category and like button */}
           <div className="flex items-center justify-between">
-            <span className="text-xs rounded-sm font-light text-blue-200 dark:text-blue-200 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 ">
+            <span className="text-xs rounded-sm font-light text-blue-200 dark:text-amber-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 ">
               {project.category}
             </span>
 

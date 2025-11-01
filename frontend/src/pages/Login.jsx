@@ -18,34 +18,35 @@ export default function Login() {
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    // 🔥 Loading toast
-    const loadingToast = toast.loading("Logging in...");
+  const loadingToast = toast.loading("Logging in...");
 
-    try {
-      const res = await API.post("/users/login", form);
-      login(res.data);
-      
-      // 🔥 Success toast
-      toast.success("Welcome back! Login successful 🎉", {
-        id: loadingToast, // Loading toast কে replace করবে
-      });
-      
-      navigate("/profile");
-    } catch (err) {
-      console.error("Login error:", err);
-      
-      // 🔥 Error toast
-      toast.error(
-        err.response?.data?.message || "Login failed. Please check your credentials.",
-        { id: loadingToast }
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await API.post("/users/login", form);
+    
+    console.log("✅ Login response:", res.data);
+    
+    // 🔥 Pass the entire response to login
+    login(res.data);
+    
+    toast.success(`Welcome back, ${res.data.user?.username || 'User'}! 🎉`, {
+      id: loadingToast,
+    });
+    
+    navigate("/profile");
+  } catch (err) {
+    console.error("❌ Login error:", err);
+    
+    toast.error(
+      err.response?.data?.message || "Login failed. Please check your credentials.",
+      { id: loadingToast }
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -76,7 +77,7 @@ export default function Login() {
           disabled={loading}
         />
         <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="bg-amber-400 text-white px-4 py-2 rounded w-full hover:bg-amber-400/80 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
@@ -85,3 +86,6 @@ export default function Login() {
     </div>
   );
 }
+
+
+

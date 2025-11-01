@@ -93,7 +93,7 @@ export default function Register() {
           minLength={6}
         />
         <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="bg-amber-400 text-white px-4 py-2 rounded w-full hover:bg-amber-400/80 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           disabled={loading}
         >
           {loading ? "Registering..." : "Register"}

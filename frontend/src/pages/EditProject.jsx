@@ -234,7 +234,7 @@ export default function EditProject() {
         form.append("files", file);
       });
 
-      console.log("📤 Update data:", {
+      console.log("Update data:", {
         currentThumbnail: !!currentThumbnail,
         newThumbnail: !!newThumbnail,
         existingImages: existingImages.length,

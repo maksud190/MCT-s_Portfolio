@@ -2,24 +2,25 @@ import { useState } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Upload() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
   const [data, setData] = useState({
     title: "",
     description: "",
     category: "",
     subcategory: "",
-    thumbnail: null, // 🔥 Separate thumbnail
-    files: [], // 🔥 Additional images
+    thumbnail: null,
+    files: [],
   });
-  const [thumbnailPreview, setThumbnailPreview] = useState(null); // 🔥 Thumbnail preview
-  const [previews, setPreviews] = useState([]); // 🔥 Additional images previews
-  const [loading, setLoading] = useState(false);
   
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [previews, setPreviews] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Category data
   const categories = {
     "3d": ["Character Modeling", "Environment Modeling", "Product Visualization", "Architectural Visualization", "3D Animation"],
     "Art": ["Digital Art", "Traditional Art", "3D Modeling", "Character Design", "Concept Art"],
@@ -34,56 +35,55 @@ export default function Upload() {
     "Writing": ["Blog Posts", "Copywriting", "Technical Writing", "Creative Writing", "Content Strategy"],
   };
 
-  // 🔥 Thumbnail select করা
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validation
     if (!file.type.startsWith('image/')) {
-      alert("Please select an image file");
+      toast.error("Please select an image file");
       return;
     }
     
     if (file.size > 5 * 1024 * 1024) {
-      alert("Image size should be less than 5MB");
+      toast.error("Image size should be less than 5MB");
       return;
     }
 
     setData({ ...data, thumbnail: file });
     
-    // Preview তৈরি করা
     const reader = new FileReader();
     reader.onloadend = () => {
       setThumbnailPreview(reader.result);
     };
     reader.readAsDataURL(file);
+    
+    toast.success("Thumbnail selected!");
   };
 
-  // 🔥 Additional images select করা
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     
     if (files.length === 0) return;
     
-    // Maximum 4 additional images (total 5 with thumbnail)
     if (data.files.length + files.length > 4) {
-      alert("You can upload maximum 4 additional images");
+      toast.error("You can upload maximum 4 additional images");
       return;
     }
 
-    // Validate files
     const validFiles = [];
     const newPreviews = [];
+    let hasError = false;
 
     files.forEach((file) => {
       if (!file.type.startsWith('image/')) {
-        alert(`${file.name} is not an image file`);
+        toast.error(`${file.name} is not an image file`);
+        hasError = true;
         return;
       }
       
       if (file.size > 5 * 1024 * 1024) {
-        alert(`${file.name} is too large (max 5MB)`);
+        toast.error(`${file.name} is too large (max 5MB)`);
+        hasError = true;
         return;
       }
 
@@ -99,30 +99,33 @@ export default function Upload() {
       reader.readAsDataURL(file);
     });
 
-    setData({ ...data, files: [...data.files, ...validFiles] });
+    if (validFiles.length > 0) {
+      setData({ ...data, files: [...data.files, ...validFiles] });
+      if (!hasError) {
+        toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} selected!`);
+      }
+    }
   };
 
-  // 🔥 Remove thumbnail
   const removeThumbnail = () => {
     setData({ ...data, thumbnail: null });
     setThumbnailPreview(null);
+    toast.success("Thumbnail removed");
   };
 
-  // 🔥 Remove additional image
   const removeImage = (index) => {
     const newFiles = data.files.filter((_, i) => i !== index);
     const newPreviews = previews.filter((_, i) => i !== index);
     
     setData({ ...data, files: newFiles });
     setPreviews(newPreviews);
+    toast.success("Image removed");
   };
 
-  // Category change
   const handleCategoryChange = (e) => {
     setData({ ...data, category: e.target.value, subcategory: "" });
   };
 
-  // Form reset
   const resetForm = () => {
     setData({
       title: "",
@@ -136,129 +139,146 @@ export default function Upload() {
     setPreviews([]);
   };
 
-  // Form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validation
+    // 🔥 CRITICAL: Check if user exists
+    if (!user || !user._id) {
+      toast.error("Please login to upload projects");
+      navigate("/login");
+      return;
+    }
+    
     if (!data.title || !data.description || !data.category || !data.subcategory || !data.thumbnail) {
-      alert("Please fill all fields and select a thumbnail");
+      toast.error("Please fill all required fields and select a thumbnail");
       return;
     }
 
     setLoading(true);
+
+    const loadingToast = toast.loading("Uploading your project...");
 
     try {
       const form = new FormData();
       form.append("title", data.title);
       form.append("description", data.description);
       form.append("category", `${data.category} - ${data.subcategory}`);
-      form.append("userId", user._id);
       
-      // 🔥 Thumbnail আলাদা করে পাঠানো
+      // 🔥 IMPORTANT: Ensure userId is string
+      form.append("userId", user._id.toString());
+      
+      // 🔥 Thumbnail (required)
       form.append("thumbnail", data.thumbnail);
       
-      // 🔥 Additional files পাঠানো
+      // 🔥 Additional files (optional)
       data.files.forEach((file) => {
         form.append("files", file);
       });
 
-      await API.post("/projects/upload", form, {
+      // 🔥 Debug log
+      console.log("📤 Uploading project:", {
+        title: data.title,
+        category: `${data.category} - ${data.subcategory}`,
+        userId: user._id,
+        thumbnail: data.thumbnail?.name,
+        additionalFiles: data.files.length
+      });
+
+      const response = await API.post("/projects/upload", form, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
-      alert("Project uploaded successfully! 🎉");
+      console.log("✅ Upload success:", response.data);
+
+      toast.success("Project uploaded successfully! 🎉", {
+        id: loadingToast,
+      });
+
       resetForm();
       
       setTimeout(() => {
         navigate("/profile");
       }, 1000);
       
-    } 
-    
-    catch (err) {
-      console.error("Upload error:", err);
-      alert(err.response?.data?.message || "Upload failed. Please try again.");
-    }
-    
-    finally {
+    } catch (err) {
+      console.error("❌ Upload error:", err);
+      console.error("Error response:", err.response?.data);
+      
+      toast.error(
+        err.response?.data?.message || "Upload failed. Please try again.",
+        { id: loadingToast }
+      );
+    } finally {
       setLoading(false);
     }
-    
   };
 
   return (
     <div className="min-h-screen p-6 flex items-center justify-center">
       <div className="w-full max-w-3xl">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg"
-        >
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white text-center">
             Upload New Project
           </h2>
 
-          {/* 🔥 Thumbnail Upload - First Priority */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Thumbnail Image <span className="text-red-500">*</span>
-            </label>
-            
-            {thumbnailPreview ? (
-              // 🔥 Thumbnail preview
-              <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                <img
-                  src={thumbnailPreview}
-                  alt="Thumbnail Preview"
-                  className="w-full h-full object-cover"
+          {/* Thumbnail Upload */}
+          {thumbnailPreview ? (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Thumbnail Image <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <img 
+                  src={thumbnailPreview} 
+                  alt="Thumbnail" 
+                  className="w-full h-64 object-cover rounded-lg"
                 />
-                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
+                <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
                   Thumbnail
-                </div>
+                </span>
                 <button
                   type="button"
                   onClick={removeThumbnail}
                   className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                  title="Remove thumbnail"
+                  disabled={loading}
                 >
                   ✕
                 </button>
               </div>
-            ) : (
-              // 🔥 Thumbnail upload button
-              <div className="relative">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  id="thumbnail-upload"
-                  onChange={handleThumbnailChange}
-                  disabled={loading}
-                />
-                <label
-                  htmlFor="thumbnail-upload"
-                  className="flex items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
-                >
-                  <div className="text-center">
-                    <p className="text-4xl mb-2">🖼️</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                      Click to upload thumbnail
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                      This will be the main image for your project
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                      PNG, JPG, GIF up to 5MB
-                    </p>
-                  </div>
-                </label>
-              </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Thumbnail Image <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id="thumbnail-upload"
+                onChange={handleThumbnailChange}
+                disabled={loading}
+              />
+              <label
+                htmlFor="thumbnail-upload"
+                className="flex items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
+              >
+                <div className="text-center">
+                  <p className="text-4xl mb-2">🖼️</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                    Click to upload thumbnail
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                    PNG, JPG, GIF up to 5MB
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
 
-          {/* 🔥 Additional Images Preview */}
+          {/* Additional Images */}
           {previews.length > 0 && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -275,7 +295,8 @@ export default function Upload() {
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      disabled={loading}
                     >
                       ✕
                     </button>
@@ -285,37 +306,32 @@ export default function Upload() {
             </div>
           )}
 
-          {/* 🔥 Additional Images Upload - Optional */}
+          {/* Add More Images Button */}
           {data.files.length < 4 && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Additional Images (Optional - Max 4)
+                Add More Images (Optional, max 4 total)
               </label>
-              <div className="relative">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  id="files-upload"
-                  onChange={handleFileChange}
-                  disabled={loading}
-                />
-                <label
-                  htmlFor="files-upload"
-                  className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
-                >
-                  <div className="text-center">
-                    <p className="text-2xl mb-1">📁</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Click to add more images
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                      {4 - data.files.length} more image{4 - data.files.length !== 1 ? 's' : ''} can be added
-                    </p>
-                  </div>
-                </label>
-              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                id="files-upload"
+                onChange={handleFileChange}
+                disabled={loading}
+              />
+              <label
+                htmlFor="files-upload"
+                className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
+              >
+                <div className="text-center">
+                  <p className="text-2xl mb-1">📁</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Click to add more images ({4 - data.files.length} remaining)
+                  </p>
+                </div>
+              </label>
             </div>
           )}
 
@@ -326,10 +342,10 @@ export default function Upload() {
             </label>
             <input
               type="text"
-              placeholder="Enter project title"
               value={data.title}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               onChange={(e) => setData({ ...data, title: e.target.value })}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter project title"
               disabled={loading}
               required
             />
@@ -341,11 +357,11 @@ export default function Upload() {
               Description <span className="text-red-500">*</span>
             </label>
             <textarea
-              placeholder="Describe your project"
               value={data.description}
               rows="4"
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
               onChange={(e) => setData({ ...data, description: e.target.value })}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
+              placeholder="Describe your project..."
               disabled={loading}
               required
             />
@@ -359,56 +375,54 @@ export default function Upload() {
             <select
               value={data.category}
               onChange={handleCategoryChange}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 cursor-pointer"
               disabled={loading}
               required
             >
               <option value="">Select a category</option>
               {Object.keys(categories).map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
           </div>
 
           {/* Subcategory */}
           {data.category && (
-            <div className="mb-4">
+            <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Subcategory <span className="text-red-500">*</span>
               </label>
               <select
                 value={data.subcategory}
                 onChange={(e) => setData({ ...data, subcategory: e.target.value })}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 disabled={loading}
                 required
               >
                 <option value="">Select a subcategory</option>
                 {categories[data.category].map((subcat) => (
-                  <option key={subcat} value={subcat}>
-                    {subcat}
-                  </option>
+                  <option key={subcat} value={subcat}>{subcat}</option>
                 ))}
               </select>
             </div>
           )}
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={loading || !data.thumbnail}
+            className="w-full bg-amber-400 hover:bg-amber-400 dark:bg-amber-400 dark:hover:bg-amber-400 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {loading ? "Uploading..." : "Upload Project"}
+            {loading ? "Uploading..." : !data.thumbnail ? "Select Thumbnail to Upload" : "Upload Project"}
           </button>
+
+          {!data.thumbnail && (
+            <p className="mt-2 text-sm text-center text-red-500 dark:text-red-400">
+              * Thumbnail is required
+            </p>
+          )}
         </form>
       </div>
     </div>
   );
-
-
-
-
 }
