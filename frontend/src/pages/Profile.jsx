@@ -1,5 +1,6 @@
 
 
+
 import { useEffect, useState } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -25,31 +26,45 @@ export default function Profile() {
   };
 
   const handleDelete = async (projectId, projectTitle) => {
-    const isConfirmed = window.confirm(
-      `⚠️ Delete Project?\n\n"${projectTitle}"\n\nThis action cannot be undone. Are you sure?`
-    );
+  const isConfirmed = window.confirm(
+    `⚠️ Delete Project?\n\n"${projectTitle}"\n\nThis action cannot be undone. Are you sure?`
+  );
 
-    if (!isConfirmed) return;
+  if (!isConfirmed) return;
 
-    const loadingToast = toast.loading("Deleting project...");
+  const loadingToast = toast.loading("Deleting project...");
 
-    try {
-      await API.delete(`/projects/${projectId}`);
-      toast.success("Project deleted successfully!", { id: loadingToast });
-      setProjects(projects.filter((p) => p._id !== projectId));
-    } catch (err) {
-      console.error("Error deleting project:", err);
-      toast.error(
-        err.response?.data?.message || "Failed to delete project",
-        { id: loadingToast }
-      );
+  try {
+    // ✅ GET TOKEN
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      toast.error("Please login again", { id: loadingToast });
+      navigate("/login");
+      return;
     }
-  };
 
+    // ✅ SEND REQUEST with token
+    await API.delete(`/projects/${projectId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    toast.success("Project deleted successfully!", { id: loadingToast });
+    setProjects(projects.filter((p) => p._id !== projectId));
+  } catch (err) {
+    console.error("Error deleting project:", err);
+    toast.error(
+      err.response?.data?.message || "Failed to delete project",
+      { id: loadingToast }
+    );
+  }
+};
+  
+  // ✅ FIXED - Line 54
   const handleEdit = (projectId) => {
-    navigate(`/edit/${projectId}`);
+    navigate(`/edit-project/${projectId}`);
   };
-
+  
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* User Info Card */}

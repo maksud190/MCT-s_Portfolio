@@ -5,8 +5,9 @@ import Upload from "./pages/Upload";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
-import ProfileSettings from "./pages/ProfileSettings"; // 🔥 Import
-import ProjectDetail from "./pages/ProjectDetail";
+import ProfileSettings from "./pages/ProfileSettings";
+import ProjectDetail from "./pages/ProjectDetail"; // ✅
+import EditProject from "./pages/EditProject"; // ✅
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/user/:userId" element={<UserProfile />} />
         <Route path="/project/:projectId" element={<ProjectDetail />} />
+        
         <Route
           path="/upload"
           element={
@@ -34,7 +36,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        // Routes এ add করুন:
         <Route
           path="/profile/settings"
           element={
@@ -42,6 +43,14 @@ function App() {
               <ProfileSettings />
             </ProtectedRoute>
           }
+        />
+        <Route 
+          path="/edit-project/:projectId" 
+          element={
+            <ProtectedRoute>
+              <EditProject />
+            </ProtectedRoute>
+          } 
         />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

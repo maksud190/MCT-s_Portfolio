@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
+import TagsInput from "../components/TagsInput";
 
 export default function EditProject() {
   const { projectId } = useParams();
@@ -11,12 +12,13 @@ export default function EditProject() {
     category: "",
     subcategory: "",
   });
-  const [currentThumbnail, setCurrentThumbnail] = useState(null); // 🔥 Current thumbnail URL
-  const [existingImages, setExistingImages] = useState([]); // 🔥 Other existing images (without thumbnail)
-  const [newThumbnail, setNewThumbnail] = useState(null); // 🔥 New thumbnail file
-  const [newThumbnailPreview, setNewThumbnailPreview] = useState(null); // 🔥 New thumbnail preview
-  const [newFiles, setNewFiles] = useState([]); // 🔥 Additional new files
-  const [newPreviews, setNewPreviews] = useState([]); // 🔥 Additional previews
+  const [currentThumbnail, setCurrentThumbnail] = useState(null);
+  const [existingImages, setExistingImages] = useState([]);
+  const [newThumbnail, setNewThumbnail] = useState(null);
+  const [newThumbnailPreview, setNewThumbnailPreview] = useState(null);
+  const [newFiles, setNewFiles] = useState([]);
+  const [newPreviews, setNewPreviews] = useState([]);
+  const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   
@@ -37,7 +39,6 @@ export default function EditProject() {
     "Writing": ["Blog Posts", "Copywriting", "Technical Writing", "Creative Writing", "Content Strategy"],
   };
 
-  // 🔥 Project data fetch
   useEffect(() => {
     API.get(`/projects/${projectId}`)
       .then((res) => {
@@ -58,10 +59,13 @@ export default function EditProject() {
           subcategory: subCat || "",
         });
         
-        // 🔥 Separate thumbnail and other images
+        if (project.tags) {
+          setTags(project.tags);
+        }
+        
         if (project.images && project.images.length > 0) {
-          setCurrentThumbnail(project.images[0]); // First image is thumbnail
-          setExistingImages(project.images.slice(1)); // Rest are additional images
+          setCurrentThumbnail(project.images[0]);
+          setExistingImages(project.images.slice(1));
         }
         
         setFetchLoading(false);
@@ -73,7 +77,6 @@ export default function EditProject() {
       });
   }, [projectId, user._id, navigate]);
 
-  // 🔥 Remove current thumbnail
   const removeCurrentThumbnail = () => {
     if (!newThumbnail && existingImages.length === 0 && newFiles.length === 0) {
       alert("Project must have at least one image. Please add a new thumbnail before removing this one.");
@@ -90,7 +93,6 @@ export default function EditProject() {
     }
   };
 
-  // 🔥 Remove existing additional image
   const removeExistingImage = (index) => {
     if (!currentThumbnail && !newThumbnail && existingImages.length === 1 && newFiles.length === 0) {
       alert("Project must have at least one image.");
@@ -102,7 +104,6 @@ export default function EditProject() {
     }
   };
 
-  // 🔥 Handle new thumbnail upload
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -126,7 +127,6 @@ export default function EditProject() {
     reader.readAsDataURL(file);
   };
 
-  // 🔥 Remove new thumbnail
   const removeNewThumbnail = () => {
     if (!currentThumbnail && existingImages.length === 0 && newFiles.length === 0) {
       alert("Project must have at least one image");
@@ -136,12 +136,10 @@ export default function EditProject() {
     setNewThumbnailPreview(null);
   };
 
-  // Handle new additional files
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    // Calculate total images
     const thumbnailCount = (currentThumbnail ? 1 : 0) + (newThumbnail ? 1 : 0);
     const totalImages = thumbnailCount + existingImages.length + newFiles.length + files.length;
     
@@ -179,7 +177,6 @@ export default function EditProject() {
     setNewFiles([...newFiles, ...validFiles]);
   };
 
-  // Remove new additional file
   const removeNewFile = (index) => {
     const thumbnailCount = (currentThumbnail ? 1 : 0) + (newThumbnail ? 1 : 0);
     if (thumbnailCount === 0 && existingImages.length === 0 && newFiles.length === 1) {
@@ -190,12 +187,10 @@ export default function EditProject() {
     setNewPreviews(newPreviews.filter((_, i) => i !== index));
   };
 
-  // Category change
   const handleCategoryChange = (e) => {
     setData({ ...data, category: e.target.value, subcategory: "" });
   };
 
-  // 🔥 Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -204,7 +199,6 @@ export default function EditProject() {
       return;
     }
 
-    // 🔥 Check thumbnail exists (either current or new)
     if (!currentThumbnail && !newThumbnail) {
       alert("Thumbnail is required. Please upload a thumbnail.");
       return;
@@ -218,18 +212,17 @@ export default function EditProject() {
       form.append("description", data.description);
       form.append("category", `${data.category} - ${data.subcategory}`);
       
-      // 🔥 Send current thumbnail URL (if exists and not replaced)
-      form.append("currentThumbnail", currentThumbnail || "");
+      if (tags.length > 0) {
+        form.append("tags", JSON.stringify(tags));
+      }
       
-      // 🔥 Send existing additional images
+      form.append("currentThumbnail", currentThumbnail || "");
       form.append("existingImages", JSON.stringify(existingImages));
       
-      // 🔥 Send new thumbnail file (if uploaded)
       if (newThumbnail) {
         form.append("newThumbnail", newThumbnail);
       }
       
-      // 🔥 Send additional new files
       newFiles.forEach((file) => {
         form.append("files", file);
       });
@@ -241,9 +234,18 @@ export default function EditProject() {
         newFiles: newFiles.length
       });
 
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        alert("Please login again");
+        navigate("/login");
+        return;
+      }
+
       await API.put(`/projects/${projectId}`, form, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
         }
       });
 
@@ -266,7 +268,7 @@ export default function EditProject() {
     );
   }
 
-  // Calculate totals
+  // ✅ DEFINE THESE VARIABLES BEFORE RETURN
   const thumbnailCount = (currentThumbnail ? 1 : 0) + (newThumbnail ? 1 : 0);
   const totalImages = thumbnailCount + existingImages.length + newFiles.length;
   const canAddMore = totalImages < 5;
@@ -289,7 +291,7 @@ export default function EditProject() {
             </button>
           </div>
 
-          {/* 🔥 Current Thumbnail */}
+          {/* Current Thumbnail */}
           {currentThumbnail && !newThumbnail && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -312,7 +314,7 @@ export default function EditProject() {
             </div>
           )}
 
-          {/* 🔥 New Thumbnail Preview */}
+          {/* New Thumbnail Preview */}
           {newThumbnailPreview && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -334,7 +336,7 @@ export default function EditProject() {
             </div>
           )}
 
-          {/* 🔥 Upload New Thumbnail - শুধু যখন new thumbnail select করা নেই */}
+          {/* Upload New Thumbnail */}
           {!newThumbnailPreview && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -365,7 +367,7 @@ export default function EditProject() {
             </div>
           )}
 
-          {/* 🔥 Existing Additional Images */}
+          {/* Existing Additional Images */}
           {existingImages.length > 0 && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -388,7 +390,7 @@ export default function EditProject() {
             </div>
           )}
 
-          {/* 🔥 New Additional Images Preview */}
+          {/* New Additional Images Preview */}
           {newPreviews.length > 0 && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -411,7 +413,7 @@ export default function EditProject() {
             </div>
           )}
 
-          {/* 🔥 Upload Additional Images */}
+          {/* Upload Additional Images */}
           {canAddMore && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -510,7 +512,12 @@ export default function EditProject() {
             </div>
           )}
 
-          {/* 🔥 Warning if no thumbnail */}
+          {/* Tags Input */}
+          <div className="mb-6">
+            <TagsInput tags={tags} setTags={setTags} />
+          </div>
+
+          {/* Warning if no thumbnail */}
           {!hasThumbnail && (
             <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 rounded-lg">
               <p className="text-sm text-red-800 dark:text-red-300">
@@ -541,9 +548,3 @@ export default function EditProject() {
     </div>
   );
 }
-
-
-
-
-
-

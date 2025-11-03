@@ -3,368 +3,449 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import Comments from "../components/Comments";
+import FollowButton from "../components/FollowButton";
+import ContactModal from "../components/ContactModal";
+import LazyImage from "../components/LazyImage";
 
-export default function ProjectDetail() {
+export default function ProjectDetails() {
   const { projectId } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
-  
+  const navigate = useNavigate();
   const [project, setProject] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  // 🔥 Like states
-  const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
-  const [likeLoading, setLikeLoading] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [showContactModal, setShowContactModal] = useState(false);
 
-  // 🔥 Project data fetch এবং view count increment
   useEffect(() => {
-    // Fetch project data
-    API.get(`/projects/${projectId}`)
-      .then((res) => {
-        console.log("📦 Project details:", res.data);
-        setProject(res.data);
-        setLikes(res.data.likes || 0);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ Error fetching project:", err);
-        setLoading(false);
-      });
-
-    // Increment view count
-    API.post(`/projects/${projectId}/view`)
-      .then((res) => {
-        console.log("👁️ View counted:", res.data.views);
-      })
-      .catch((err) => {
-        console.error("Error incrementing view:", err);
-      });
+    fetchProject();
+    incrementView();
+    checkLikeStatus();
   }, [projectId]);
 
-  // 🔥 Check like status
-  useEffect(() => {
-    if (user && projectId) {
-      checkLikeStatus();
+  const fetchProject = async () => {
+    try {
+      const res = await API.get(`/projects/${projectId}`);
+      setProject(res.data);
+      setLikes(res.data.likes || 0);
+    } catch (err) {
+      console.error("Fetch project error:", err);
+      toast.error("Failed to load project");
     }
-  }, [user, projectId]);
+  };
+
+  const incrementView = async () => {
+    try {
+      await API.post(`/projects/${projectId}/view`);
+    } catch (err) {
+      console.error("View increment error:", err);
+    }
+  };
 
   const checkLikeStatus = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await API.get(`/projects/${projectId}/like-status`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await API.get(`/projects/${projectId}/like-status`, { headers });
       setIsLiked(res.data.isLiked);
-      setLikes(res.data.likes);
     } catch (err) {
-      console.error("Error checking like status:", err);
+      console.error("Check like status error:", err);
     }
   };
 
-  // 🔥 Handle like/unlike
   const handleLike = async () => {
     if (!user) {
       toast.error("Please login to like projects");
       return;
     }
 
-    if (likeLoading) return;
-
-    setLikeLoading(true);
-
     try {
       const token = localStorage.getItem("token");
       const res = await API.post(
         `/projects/${projectId}/like`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      setLikes(res.data.likes);
+
       setIsLiked(res.data.isLiked);
-      
-      // Toast notification
-      if (res.data.isLiked) {
-        toast.success("Liked! ❤️", { duration: 2000 });
-      } else {
-        toast.success("Unliked", { duration: 2000 });
-      }
+      setLikes(res.data.likes);
+      toast.success(res.data.message);
     } catch (err) {
-      console.error("Error liking project:", err);
-      
-      if (err.response?.status === 401) {
-        toast.error("Please login to like projects");
-      } else {
-        toast.error(err.response?.data?.message || "Failed to like project");
-      }
-    } finally {
-      setLikeLoading(false);
+      console.error("Like error:", err);
+      toast.error("Failed to like project");
     }
   };
 
-  // Next image
-  const nextImage = () => {
-    if (project.images && currentImageIndex < project.images.length - 1) {
-      setCurrentImageIndex(currentImageIndex + 1);
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this project?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await API.delete(`/projects/${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success("Project deleted successfully");
+      navigate("/profile");
+    } catch (err) {
+      console.error("Delete error:", err);
+      toast.error("Failed to delete project");
     }
   };
 
-  // Previous image
-  const prevImage = () => {
-    if (currentImageIndex > 0) {
-      setCurrentImageIndex(currentImageIndex - 1);
-    }
-  };
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key === "ArrowLeft") prevImage();
-      if (e.key === "ArrowRight") nextImage();
-      if (e.key === "Escape") navigate(-1);
-    };
-    
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [currentImageIndex, project]);
-
-  // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  };
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    return date.toLocaleDateString();
+  };
 
   if (!project) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen">
-        <p className="text-xl text-gray-600 dark:text-gray-400 mb-4">Project not found</p>
-        <button 
-          onClick={() => navigate(-1)}
-          className="text-blue-500 hover:text-blue-600"
-        >
-          Go Back
-        </button>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-amber-400"></div>
       </div>
     );
   }
 
+  const isOwner = user && project.userId._id === user._id;
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Back button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-4 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors"
-        >
-          <span>←</span>
-          <span>Back</span>
-        </button>
+    <div className="max-w-7xl mx-auto p-6">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back
+      </button>
 
-        <div className="bg-white dark:bg-gray-800 rounded-sm shadow-lg overflow-hidden">
-          {/* Image Carousel Section */}
-          {project.images && project.images.length > 0 && (
-            <div className="relative bg-black">
-              {/* Main Image Display */}
-              <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
-                <img
-                  src={project.images[currentImageIndex]}
-                  alt={`${project.title} - Image ${currentImageIndex + 1}`}
-                  className="absolute inset-0 w-full h-full object-contain"
-                />
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content - 2 columns */}
+        <div className="lg:col-span-2">
+          {/* Image Gallery */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg mb-6">
+            <div className="relative">
+              <LazyImage
+                src={project.images[currentImageIndex]}
+                alt={project.title}
+                className="w-full h-auto max-h-[600px] object-contain bg-gray-100 dark:bg-gray-900"
+              />
 
-              {/* Previous Button */}
-              {currentImageIndex > 0 && (
-                <button
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              )}
-
-              {/* Next Button */}
-              {currentImageIndex < project.images.length - 1 && (
-                <button
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+              {/* Navigation Arrows */}
+              {project.images.length > 1 && (
+                <>
+                  <button
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        prev === 0 ? project.images.length - 1 : prev - 1
+                      )
+                    }
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <svg className="w-6 h-6 text-gray-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        prev === project.images.length - 1 ? 0 : prev + 1
+                      )
+                    }
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <svg className="w-6 h-6 text-gray-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </>
               )}
 
               {/* Image Counter */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-sm text-sm">
+              <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
                 {currentImageIndex + 1} / {project.images.length}
               </div>
+            </div>
 
-              {/* Thumbnail Navigation */}
-              {project.images.length > 1 && (
-                <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 bg-black bg-opacity-50 p-2 rounded-sm max-w-full overflow-x-auto">
-                  {project.images.map((img, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-16 h-16 rounded-sm overflow-hidden border-2 transition-all flex-shrink-0 ${
-                        index === currentImageIndex
-                          ? "border-amber-400 scale-110"
-                          : "border-transparent opacity-60 hover:opacity-100"
-                      }`}
-                    >
-                      <img
-                        src={img}
-                        alt={`Thumbnail ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
+            {/* Thumbnail Strip */}
+            {project.images.length > 1 && (
+              <div className="p-4 flex gap-2 overflow-x-auto">
+                {project.images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`flex-shrink-0 w-20 h-20 rounded overflow-hidden border-2 transition-all ${
+                      currentImageIndex === idx
+                        ? "border-amber-400 scale-105"
+                        : "border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${project.title} ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Project Info */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  {project.title}
+                </h1>
+                <span className="inline-block px-3 py-1 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 rounded-full text-sm">
+                  {project.category}
+                </span>
+              </div>
+
+              {/* Owner Actions */}
+              {isOwner && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/edit-project/${projectId}`)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-colors"
+                    title="Edit"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors"
+                    title="Delete"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                 </div>
               )}
             </div>
-          )}
-
-          {/* Project Details Section */}
-          <div className="p-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              {project.title}
-            </h1>
-
-            {/* 🔥 Stats Row - Views, Likes, Date */}
-            <div className="flex items-center gap-6 mb-6 text-sm text-gray-600 dark:text-gray-200">
-              {/* Views */}
-              <div className="flex items-center gap-2">
-                <span className="text-xl">👁️</span>
-                <span className="font-medium">{project.views || 0} views</span>
-              </div>
-
-              {/* Likes with button */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleLike}
-                  disabled={likeLoading}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-sm font-medium transition-all ${
-                    isLiked
-                      ? "bg-red-100 dark:bg-red-900/30 text-red-500"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500"
-                  } ${likeLoading ? "opacity-50 cursor-not-allowed" : ""} ${!user ? "cursor-not-allowed opacity-70" : ""}`}
-                  title={!user ? "Login to like" : isLiked ? "Unlike" : "Like"}
-                >
-                  <span className={`text-xl transition-transform ${isLiked ? "scale-110" : ""}`}>
-                    {isLiked ? "❤️" : "🤍"}
-                  </span>
-                  <span className="font-medium">{likes} likes</span>
-                </button>
-              </div>
-
-              {/* Upload Date */}
-              <div className="flex items-center gap-2">
-                <span className="text-xl">📅</span>
-                <span className="font-medium">
-                  {formatDate(project.createdAt)}
-                </span>
-              </div>
-            </div>
-
-            {/* Category */}
-            <div className="mb-6">
-              <span className="text-sm font-medium text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-sm">
-                {project.category}
-              </span>
-            </div>
 
             {/* Description */}
-            <div className="prose dark:prose-invert max-w-none">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                Description
-              </h2>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
-                {project.description}
-              </p>
+            <p className="text-gray-700 dark:text-gray-300 mb-6 whitespace-pre-wrap leading-relaxed">
+              {project.description}
+            </p>
+
+            {/* Stats */}
+            <div className="flex items-center gap-6 text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="flex items-center gap-2">
+                <span>👁️</span>
+                <span>{project.views || 0} views</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>❤️</span>
+                <span>{likes} likes</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>📅</span>
+                <span>{formatDate(project.createdAt)}</span>
+              </div>
             </div>
 
-            {/* 🔥 Author Info - Clickable */}
-            {project.userId && (
-              <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                  Created by
-                </h3>
-                
-                {/* 🔥 Author profile link - শুধু অন্যের profile এ link */}
-                {user && user._id === project.userId._id ? (
-                  // নিজের project হলে link নেই, শুধু info
-                  <div className="flex items-center gap-3">
-                    {project.userId.avatar ? (
-                      <img
-                        src={project.userId.avatar}
-                        alt={project.userId.username}
-                        className="w-12 h-12 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center text-white font-bold">
-                        {project.userId.username?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">
-                        {project.userId.username} <span className="text-xs text-gray-500">(You)</span>
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {project.userId.email}
-                      </p>
-                    </div>
-                  </div>
+            {/* Like Button */}
+            {!isOwner && (
+              <button
+                onClick={handleLike}
+                className={`mt-4 w-full py-3 rounded-lg font-medium transition-all ${
+                  isLiked
+                    ? "bg-red-500 hover:bg-red-600 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {isLiked ? "❤️ Liked" : "🤍 Like"}
+              </button>
+            )}
+          </div>
+
+          {/* Comments Section */}
+          <Comments projectId={projectId} />
+        </div>
+
+        {/* Sidebar - 1 column */}
+        <div className="lg:col-span-1">
+          {/* User Info Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg sticky top-20">
+            <div className="text-center mb-4">
+              <Link to={`/user/${project.userId._id}`}>
+                {project.userId.avatar ? (
+                  <img
+                    src={project.userId.avatar}
+                    alt={project.userId.username}
+                    className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-amber-400 hover:border-amber-500 transition-colors"
+                  />
                 ) : (
-                  // অন্যের project হলে clickable link
-                  <Link 
-                    to={`/user/${project.userId._id}`}
-                    className="flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-3 rounded-sm transition-colors group"
-                  >
-                    {project.userId.avatar ? (
-                      <img
-                        src={project.userId.avatar}
-                        alt={project.userId.username}
-                        className="w-12 h-12 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center text-white font-bold">
-                        {project.userId.username?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-semibold text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors">
-                        {project.userId.username}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {project.userId.email}
-                      </p>
-                    </div>
-                  </Link>
+                  <div className="w-20 h-20 rounded-full mx-auto mb-3 bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-3xl font-bold border-4 border-amber-400">
+                    {project.userId.username?.charAt(0).toUpperCase()}
+                  </div>
                 )}
+              </Link>
+              <Link
+                to={`/user/${project.userId._id}`}
+                className="text-xl font-bold text-gray-900 dark:text-white hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+              >
+                {project.userId.username}
+              </Link>
+              {project.userId.bio && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  {project.userId.bio}
+                </p>
+              )}
+            </div>
+
+            {/* Follow Button */}
+            {!isOwner && (
+              <div className="mb-4">
+                <FollowButton targetUserId={project.userId._id} />
+              </div>
+            )}
+
+            {/* Contact Button */}
+            {!isOwner && project.userId.isAvailableForHire && (
+              <button
+                onClick={() => setShowContactModal(true)}
+                className="w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors mb-4"
+              >
+                💼 Hire Me
+              </button>
+            )}
+
+            {/* Social Links */}
+            {project.userId.socialLinks && (
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                  Connect
+                </h3>
+                <div className="space-y-2">
+                  {project.userId.socialLinks.linkedin && (
+                    
+                    <a href={project.userId.socialLinks.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      🔗 LinkedIn
+                    </a>
+                  )}
+                  {project.userId.socialLinks.github && (
+                    
+                    <a href={project.userId.socialLinks.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-gray-900 dark:text-gray-300 hover:underline"
+                    >
+                      💻 GitHub
+                    </a>
+                  )}
+                  {project.userId.socialLinks.behance && (
+                    
+                    <a href={project.userId.socialLinks.behance}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-blue-500 dark:text-blue-400 hover:underline"
+                    >
+                      🎨 Behance
+                    </a>
+                  )}
+                  {project.userId.socialLinks.portfolio && (
+                    
+                    <a href={project.userId.socialLinks.portfolio}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 hover:underline"
+                    >
+                      🌐 Portfolio
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Collaborators (continued) */}
+            {project.collaborators && project.collaborators.length > 0 && (
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                  Collaborators
+                </h3>
+                <div className="space-y-2">
+                  {project.collaborators.map((collab) => (
+                    <Link
+                      key={collab.user._id}
+                      to={`/user/${collab.user._id}`}
+                      className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors"
+                    >
+                      {collab.user.avatar ? (
+                        <img
+                          src={collab.user.avatar}
+                          alt={collab.user.username}
+                          className="w-8 h-8 rounded-full"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                          {collab.user.username?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {collab.user.username}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {collab.role}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tags */}
+            {project.tags && project.tags.length > 0 && (
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                  Tags
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Contact Modal */}
+      {showContactModal && (
+        <ContactModal
+          targetUser={project.userId}
+          projectId={projectId}
+          onClose={() => setShowContactModal(false)}
+        />
+      )}
     </div>
   );
 }

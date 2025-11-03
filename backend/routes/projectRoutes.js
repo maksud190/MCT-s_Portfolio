@@ -1,66 +1,3 @@
-
-
-// import express from "express";
-// import multer from "multer";
-// import {
-//   uploadProject,
-//   getAllProjects,
-//   getUserProjects,
-//   getProjectById,
-//   updateProject,
-//   deleteProject,
-//   likeProject,
-//   checkLikeStatus // 🔥 New import
-// } from "../controllers/projectController.js";
-// import { authMiddleware } from "../middleware/authMiddleware.js"; // 🔥 Import করা
-
-// const router = express.Router();
-// const upload = multer({ dest: "uploads/" });
-
-
-
-// // 🔥 Update project - separate thumbnail and files
-// router.put("/:projectId", upload.fields([
-//   { name: 'newThumbnail', maxCount: 1 }, // 🔥 New thumbnail (optional)
-//   { name: 'files', maxCount: 4 } // 🔥 Additional files
-// ]), updateProject);
-
-
-// // ✅ All projects
-// router.get("/", getAllProjects);
-
-// // ✅ Specific user's projects
-// router.get("/user/:userId", getUserProjects);
-
-// // ✅ Get single project by ID
-// router.get("/:projectId", getProjectById);
-
-// // 🔥 Update project
-// router.put("/:projectId", upload.array("files", 5), updateProject);
-
-// // 🔥 Delete project
-// router.delete("/:projectId", deleteProject);
-
-// // 🔥 Like/Unlike route - authMiddleware দিয়ে protect করা
-// router.post("/:projectId/like", authMiddleware, likeProject);
-
-// // 🔥 Check like status - optional auth (user না থাকলেও কাজ করবে)
-// router.get("/:projectId/like-status", (req, res, next) => {
-//   // Token optional - থাকলে decode করবে, না থাকলে skip করবে
-//   const token = req.headers.authorization?.split(" ")[1];
-//   if (token) {
-//     return authMiddleware(req, res, next);
-//   }
-//   req.userId = null;
-//   next();
-// }, checkLikeStatus);
-
-// export default router;
-
-
-
-
-
 import express from "express";
 import multer from "multer";
 import {
@@ -72,44 +9,58 @@ import {
   deleteProject,
   likeProject,
   checkLikeStatus,
-  incrementView // 🔥 New import
+  incrementView,
+  searchProjects,
+  getPopularTags,
+  addComment,
+  getComments,
+  deleteComment,
+  addReply,
+  addCollaborator,
+  removeCollaborator,
+  getProjectAnalytics,
+  getProjectsPaginated
 } from "../controllers/projectController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-// Upload project
-router.post("/upload", upload.fields([
+// ✅ Public routes
+router.get("/", getAllProjects);
+router.get("/user/:userId", getUserProjects);
+router.get("/:projectId", getProjectById);
+router.post("/:projectId/view", incrementView);
+
+// 🔥 Feature 1: Search
+router.get("/search/projects", searchProjects);
+
+// 🔥 Feature 15: Tags
+router.get("/tags/popular", getPopularTags);
+
+// 🔥 Feature 7: Pagination (Infinite Scroll)
+router.get("/paginated/projects", getProjectsPaginated);
+
+// 🔥 Feature 2: Comments (Public - can view without login)
+router.get("/:projectId/comments", getComments);
+
+// ✅ Protected routes - Upload
+router.post("/upload", authMiddleware, upload.fields([
   { name: 'thumbnail', maxCount: 1 },
   { name: 'files', maxCount: 4 }
 ]), uploadProject);
 
-// All projects
-router.get("/", getAllProjects);
-
-// Specific user's projects
-router.get("/user/:userId", getUserProjects);
-
-// Get single project by ID
-router.get("/:projectId", getProjectById);
-
-// 🔥 Increment view count - public route (no auth required)
-router.post("/:projectId/view", incrementView);
-
-// Update project
-router.put("/:projectId", upload.fields([
+// ✅ Protected routes - Update
+router.put("/:projectId", authMiddleware, upload.fields([
   { name: 'newThumbnail', maxCount: 1 },
   { name: 'files', maxCount: 4 }
 ]), updateProject);
 
-// Delete project
-router.delete("/:projectId", deleteProject);
+// ✅ Protected routes - Delete
+router.delete("/:projectId", authMiddleware, deleteProject);
 
-// Like/Unlike route
+// ✅ Protected routes - Like
 router.post("/:projectId/like", authMiddleware, likeProject);
-
-// Check like status
 router.get("/:projectId/like-status", (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (token) {
@@ -118,5 +69,17 @@ router.get("/:projectId/like-status", (req, res, next) => {
   req.userId = null;
   next();
 }, checkLikeStatus);
+
+// 🔥 Feature 2: Comments (Protected)
+router.post("/:projectId/comments", authMiddleware, addComment);
+router.delete("/:projectId/comments/:commentId", authMiddleware, deleteComment);
+router.post("/:projectId/comments/:commentId/replies", authMiddleware, addReply);
+
+// 🔥 Feature 11: Collaborators
+router.post("/:projectId/collaborators", authMiddleware, addCollaborator);
+router.delete("/:projectId/collaborators/:collaboratorId", authMiddleware, removeCollaborator);
+
+// 🔥 Feature 12: Analytics
+router.get("/:projectId/analytics", authMiddleware, getProjectAnalytics);
 
 export default router;

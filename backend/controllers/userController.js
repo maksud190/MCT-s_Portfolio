@@ -1,9 +1,11 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import cloudinary from "../config/cloudinary.js"; // 🔥 Import cloudinary
+import cloudinary from "../config/cloudinary.js";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
-// Register
+// ✅ Register
 export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -28,7 +30,7 @@ export const register = async (req, res) => {
   }
 };
 
-// Login
+// ✅ Login
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -67,7 +69,7 @@ export const login = async (req, res) => {
   }
 };
 
-// Get user by ID
+// ✅ Get user by ID (for other users' profiles)
 export const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -85,7 +87,7 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// 🔥 Update user profile - FIXED
+// ✅ Update user profile (authenticated)
 export const updateUserProfile = async (req, res) => {
   try {
     const userId = req.userId;
@@ -116,11 +118,6 @@ export const updateUserProfile = async (req, res) => {
     // Handle avatar upload
     if (req.file) {
       console.log("📁 File received, uploading to Cloudinary...");
-      console.log("File details:", {
-        path: req.file.path,
-        mimetype: req.file.mimetype,
-        size: req.file.size
-      });
       
       try {
         const uploadResult = await cloudinary.uploader.upload(req.file.path, {
@@ -135,18 +132,14 @@ export const updateUserProfile = async (req, res) => {
         console.log("✅ Avatar uploaded successfully:", uploadResult.secure_url);
       } catch (uploadError) {
         console.error("❌ Cloudinary upload error:", uploadError);
-        console.error("Upload error details:", uploadError.message);
         return res.status(500).json({ 
           message: "Failed to upload avatar",
           error: uploadError.message 
         });
       }
-    } else {
-      console.log("⚠️ No file in request");
     }
 
     await user.save();
-    console.log("✅ User saved to database");
 
     const updatedUser = {
       _id: user._id,
@@ -160,24 +153,290 @@ export const updateUserProfile = async (req, res) => {
       batchMentor: user.batchMentor,
     };
 
-    console.log("📤 Sending response with avatar:", updatedUser.avatar);
+    console.log("✅ Profile updated successfully");
 
     res.json({ 
       message: "Profile updated successfully", 
       user: updatedUser 
     });
   } catch (err) {
-    console.error("❌ Update profile error:", err);
-    console.error("Error stack:", err.stack);
-    res.status(500).json({ 
-      message: err.message,
-      error: process.env.NODE_ENV === 'development' ? err.toString() : undefined
-    });
+    console.error("❌ Update profile error:", err.message);
+    res.status(500).json({ message: err.message });
   }
 };
 
+// 🔥 Feature 18: Email Verification - Send Email
+export const sendVerificationEmail = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    if (user.isEmailVerified) {
+      return res.status(400).json({ message: "Email already verified" });
+    }
+    
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    user.emailVerificationToken = verificationToken;
+    user.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+    await user.save();
+    
+    // Send email (configure your email service)
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+    
+    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
+    
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'Verify Your Email - MCT Portfolio Hub',
+      html: `
+        <h2>Email Verification</h2>
+        <p>Click the link below to verify your email:</p>
+        <a href="${verificationUrl}">${verificationUrl}</a>
+        <p>This link will expire in 24 hours.</p>
+      `
+    });
+    
+    res.json({ message: "Verification email sent successfully" });
+  } catch (err) {
+    console.error("Send verification email error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
 
+// 🔥 Feature 18: Verify Email Token
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    
+    const user = await User.findOne({
+      emailVerificationToken: token,
+      emailVerificationExpires: { $gt: Date.now() }
+    });
+    
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired verification token" });
+    }
+    
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save();
+    
+    res.json({ message: "Email verified successfully" });
+  } catch (err) {
+    console.error("Verify email error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
 
+// 🔥 Feature 3: Follow/Unfollow User
+export const followUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { targetUserId } = req.params;
+    
+    if (userId === targetUserId) {
+      return res.status(400).json({ message: "Cannot follow yourself" });
+    }
+    
+    const currentUser = await User.findById(userId);
+    const targetUser = await User.findById(targetUserId);
+    
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    const isFollowing = currentUser.following.includes(targetUserId);
+    
+    if (isFollowing) {
+      // Unfollow
+      currentUser.following = currentUser.following.filter(
+        id => id.toString() !== targetUserId
+      );
+      targetUser.followers = targetUser.followers.filter(
+        id => id.toString() !== userId
+      );
+      
+      // 🔥 Remove follow notification when unfollowing
+      if (targetUser.notifications) {
+        targetUser.notifications = targetUser.notifications.filter(
+          notif => !(notif.type === "follow" && notif.from?.toString() === userId)
+        );
+      }
+    } else {
+      // Follow
+      currentUser.following.push(targetUserId);
+      targetUser.followers.push(userId);
+      
+      // 🔥 Create notification
+      if (!targetUser.notifications) {
+        targetUser.notifications = [];
+      }
+      
+      targetUser.notifications.push({
+        type: "follow",
+        message: `${currentUser.username} started following you`,
+        from: userId
+      });
+    }
+    
+    await currentUser.save();
+    await targetUser.save();
+    
+    res.json({ 
+      message: isFollowing ? "Unfollowed successfully" : "Followed successfully",
+      isFollowing: !isFollowing,
+      followersCount: targetUser.followers.length,
+      followingCount: currentUser.following.length
+    });
+  } catch (err) {
+    console.error("Follow user error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// 🔥 Feature 3: Check Follow Status
+export const checkFollowStatus = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { targetUserId } = req.params;
+    
+    if (!userId) {
+      return res.json({ isFollowing: false });
+    }
+    
+    const user = await User.findById(userId);
+    const isFollowing = user.following.includes(targetUserId);
+    
+    res.json({ isFollowing });
+  } catch (err) {
+    console.error("Check follow status error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// 🔥 Feature 4: Get Notifications
+// 🔥 Feature 4: Get Notifications (FIXED)
+export const getNotifications = async (req, res) => {
+  try {
+    const userId = req.userId;
+    
+    const user = await User.findById(userId)
+      .populate('notifications.from', 'username avatar')
+      .populate('notifications.project', 'title thumbnail');
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // 🔥 Safety check - initialize notifications if undefined
+    if (!user.notifications) {
+      user.notifications = [];
+      await user.save();
+    }
+    
+    const notifications = user.notifications
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 50); // Last 50 notifications
+    
+    res.json(notifications);
+  } catch (err) {
+    console.error("Get notifications error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// 🔥 Feature 4: Mark Notification as Read
+export const markNotificationRead = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { notificationId } = req.params;
+    
+    const user = await User.findById(userId);
+    const notification = user.notifications.id(notificationId);
+    
+    if (notification) {
+      notification.read = true;
+      await user.save();
+    }
+    
+    res.json({ message: "Notification marked as read" });
+  } catch (err) {
+    console.error("Mark notification read error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// 🔥 Feature 4: Mark All Notifications as Read
+export const markAllNotificationsRead = async (req, res) => {
+  try {
+    const userId = req.userId;
+    
+    await User.updateOne(
+      { _id: userId },
+      { $set: { "notifications.$[].read": true } }
+    );
+    
+    res.json({ message: "All notifications marked as read" });
+  } catch (err) {
+    console.error("Mark all notifications read error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// 🔥 Feature 30: Send Contact Message
+export const sendContactMessage = async (req, res) => {
+  try {
+    const { toUserId, message, projectId } = req.body;
+    const fromUserId = req.userId;
+    
+    const fromUser = await User.findById(fromUserId);
+    const toUser = await User.findById(toUserId);
+    
+    if (!toUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // Send email notification
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+    
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: toUser.email,
+      subject: `New message from ${fromUser.username}`,
+      html: `
+        <h2>You have a new message</h2>
+        <p><strong>From:</strong> ${fromUser.username} (${fromUser.email})</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+        ${projectId ? `<p><a href="${process.env.FRONTEND_URL}/project/${projectId}">View Project</a></p>` : ''}
+      `
+    });
+    
+    res.json({ message: "Message sent successfully" });
+  } catch (err) {
+    console.error("Send contact message error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
 
 
 

@@ -7,12 +7,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js"; // 🔥 NEW
 
 dotenv.config();
 
 const app = express();
 
-// 🔥 Create uploads directory if it doesn't exist
+// Create uploads directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -27,16 +28,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🔥 Add request logging middleware
+// Request logging
 app.use((req, res, next) => {
   console.log(`\n🌐 ${req.method} ${req.url}`);
-  console.log("Content-Type:", req.headers['content-type']);
   next();
 });
 
-// Routes
+// ✅ Routes
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/admin", adminRoutes); // 🔥 NEW
 
 // Database connection
 mongoose
