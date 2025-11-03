@@ -14,7 +14,7 @@ import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-stone-950">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

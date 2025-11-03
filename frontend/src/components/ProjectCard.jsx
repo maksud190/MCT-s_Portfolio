@@ -1,11 +1,8 @@
-
-
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import toast from "react-hot-toast"; // 🔥 Import
+import toast from "react-hot-toast";
 
 export default function ProjectCard({ project }) {
   const [likes, setLikes] = useState(project.likes || 0);
@@ -35,7 +32,6 @@ export default function ProjectCard({ project }) {
   };
 
   // Handle like
-  // 🔥 Handle like with toast
   const handleLike = async (e) => {
     e.preventDefault();
     
@@ -61,7 +57,6 @@ export default function ProjectCard({ project }) {
       setLikes(res.data.likes);
       setIsLiked(res.data.isLiked);
       
-      // 🔥 Success toast
       if (res.data.isLiked) {
         toast.success("Liked! ❤️", { duration: 2000 });
       } else {
@@ -70,7 +65,6 @@ export default function ProjectCard({ project }) {
     } catch (err) {
       console.error("Error liking project:", err);
       
-      // 🔥 Error toast
       if (err.response?.status === 401) {
         toast.error("Please login to like projects");
       } else {
@@ -81,7 +75,7 @@ export default function ProjectCard({ project }) {
     }
   };
 
-  // 🔥 Format date helper function
+  // Format date helper function
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -113,7 +107,7 @@ export default function ProjectCard({ project }) {
 
   return (
     <Link to={`/project/${project._id}`} className="block group">
-      <div className="bg-white dark:bg-gray-800 rounded-sm shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
+      <div className="bg-white dark:bg-stone-800 rounded-sm shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
         {/* Image Section */}
         <div className="relative overflow-hidden bg-gray-200 dark:bg-gray-700">
           {project.thumbnail && !imageError ? (
@@ -129,8 +123,7 @@ export default function ProjectCard({ project }) {
               {/* Image count badge */}
               {project.images && project.images.length > 1 && (
                 <div className="absolute top-2 right-2 bg-gray-950/40 text-white text-xs px-2 py-1 rounded-sm flex justify-center items-center gap-1">
-                  {/* <span>Hello</span> */}
-                  <span className=" pb-1">📷</span>
+                  <span className="pb-1">📷</span>
                   <span>{project.images.length}</span>
                 </div>
               )}
@@ -146,20 +139,22 @@ export default function ProjectCard({ project }) {
 
         {/* Content Section */}
         <div className="px-4 py-2.5">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1.5 line-clamp-2">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1.5 line-clamp-2">
             {project.title}
           </h3>
 
-          {/* <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-3">
-            {project.description}
-          </p> */}
-
-          {/* 🔥 Stats Row - Views, Likes, Date */}
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1.5">
+          {/* Stats Row - Views, Comments, Date */}
+          <div className="flex items-center justify-between text-xs font-light text-gray-500 dark:text-gray-400 mb-1.5">
             {/* Views */}
             <div className="flex items-center gap-1">
               <span>👁️</span>
               <span>{project.views || 0}</span>
+            </div>
+
+            {/* ✅ Comments - Use .length for array */}
+            <div className="flex items-center gap-1">
+              <span>💬</span>
+              <span>{project.comments?.length || 0}</span>
             </div>
 
             {/* Upload Date */}
@@ -171,33 +166,29 @@ export default function ProjectCard({ project }) {
 
           {/* Footer with category and like button */}
           <div className="flex items-center justify-between">
-            <span className="text-xs rounded-sm font-light text-blue-200 dark:text-amber-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 ">
+            <span className="text-xs rounded-sm font-extralight text-blue-200 dark:text-amber-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1">
               {project.category}
             </span>
 
             {/* Like Button */}
-            <span
+            <button
               onClick={handleLike}
-              disabled={loading}
+              disabled={loading || !user}
               className={`flex items-center gap-1 px-2 py-1 rounded-sm text-sm font-medium transition-all ${
                 isLiked
-                  ? "bg-red-100 dark:bg-red-900/30 text-red-500 px-2 py-1 rounded-sm"
-                  : "bg-gray-100 dark:bg-gray-700  text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500"
+                  ? "bg-red-100 dark:bg-red-900/30 text-red-500"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""} ${!user ? "cursor-not-allowed opacity-70" : ""}`}
               title={!user ? "Login to like" : isLiked ? "Unlike" : "Like"}
             >
-              <span className={`text-base transition-transform ${isLiked ? "scale-100" : ""}`}>
+              <span className={`text-base transition-transform ${isLiked ? "scale-110" : ""}`}>
                 {isLiked ? "❤️" : "🤍"}
               </span>
               <span>{likes}</span>
-            </span>
+            </button>
           </div>
         </div>
       </div>
     </Link>
   );
 }
-
-
-
-

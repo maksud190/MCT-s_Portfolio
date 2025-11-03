@@ -118,7 +118,7 @@ export default function NotificationBell() {
       {/* Bell Icon */}
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+        className="relative p-2 rounded-full focus:outline-0 text-stone-900 hover:text-stone-700 transition-colors"
       >
         <svg
           className="w-6 h-6"

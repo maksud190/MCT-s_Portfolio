@@ -51,10 +51,10 @@ export default function SearchBar() {
           placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+          className="w-full px-2 py-1 pl-10 pr-4 border-gray-300 dark:border-gray-700 rounded-sm border-b-2 hover:border-b-stone-900 text-gray-900 dark:text-white focus:outline-none focus:border-stone-900 transition-all duration-200"
         />
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-800"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

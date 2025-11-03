@@ -144,7 +144,7 @@ export default function Home() {
 
         {/* Projects Grid */}
         {filteredProjects.length > 0 ? (
-          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-6 gap-4">
+          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-6 gap-2">
             {filteredProjects.map((project) => (
               <div key={project._id} className="break-inside-avoid mb-4">
                 <ProjectCard project={project} />
