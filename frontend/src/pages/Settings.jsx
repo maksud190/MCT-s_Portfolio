@@ -2021,52 +2021,85 @@ export default function Settings() {
 
   // Update Profile (with avatar and social links)
   const handleUpdateProfile = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const loadingToast = toast.loading("Updating profile...");
+  e.preventDefault();
+  setLoading(true);
+  const loadingToast = toast.loading("Updating profile...");
 
-    try {
-      const form = new FormData();
-      form.append("username", profileData.username);
-      form.append("bio", profileData.bio);
-      form.append("studentId", profileData.studentId);
-      form.append("batch", profileData.batch);
-      form.append("batchAdvisor", profileData.batchAdvisor);
-      form.append("batchMentor", profileData.batchMentor);
-      form.append("role", profileData.role);
-      form.append("designation", profileData.designation);
-      form.append("department", profileData.department);
-      form.append("socialLinks", JSON.stringify(socialLinks));
+  try {
+    const form = new FormData();
+    form.append("username", profileData.username);
+    form.append("bio", profileData.bio);
+    form.append("studentId", profileData.studentId);
+    form.append("batch", profileData.batch);
+    form.append("batchAdvisor", profileData.batchAdvisor);
+    form.append("batchMentor", profileData.batchMentor);
+    form.append("role", profileData.role);
+    form.append("designation", profileData.designation);
+    form.append("department", profileData.department);
+    form.append("socialLinks", JSON.stringify(socialLinks));
 
-      if (avatar) {
-        form.append("avatar", avatar);
-      }
-
-      const token = localStorage.getItem("token");
-
-      const res = await API.put("/users/profile", form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      updateUser(res.data.user);
-
-      if (res.data.user.avatar) {
-        setAvatarPreview(res.data.user.avatar);
-      }
-
-      toast.success("Profile updated successfully!", { id: loadingToast });
-    } catch (err) {
-      console.error("Update error:", err);
-      toast.error(err.response?.data?.message || "Failed to update profile", {
-        id: loadingToast,
-      });
-    } finally {
-      setLoading(false);
+    if (avatar) {
+      form.append("avatar", avatar);
     }
-  };
+
+    // ✅ Log what we're sending
+    console.log("📤 Sending data to API:");
+    console.log({
+      username: profileData.username,
+      role: profileData.role,
+      designation: profileData.designation,
+      department: profileData.department,
+      batch: profileData.batch,
+      studentId: profileData.studentId,
+    });
+
+    const token = localStorage.getItem("token");
+
+    const res = await API.put("/users/profile", form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // ✅ Log the full response
+    console.log("📥 Full API response:", res.data);
+    console.log("📥 User data from API:", res.data.user);
+    
+    // ✅ Check specific fields
+    console.log("🔍 Checking received fields:");
+    console.log("  - Role:", res.data.user.role);
+    console.log("  - Designation:", res.data.user.designation);
+    console.log("  - Department:", res.data.user.department);
+
+    // ✅ Update user in context
+    console.log("🔄 Calling updateUser with:", res.data.user);
+    updateUser(res.data.user);
+
+    if (res.data.user.avatar) {
+      setAvatarPreview(res.data.user.avatar);
+    }
+
+    toast.success("Profile updated successfully!", { id: loadingToast });
+    
+    // ✅ Verify localStorage after update
+    setTimeout(() => {
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+      console.log("💾 User in localStorage after update:", savedUser);
+      console.log("  - Role:", savedUser.role);
+      console.log("  - Designation:", savedUser.designation);
+    }, 100);
+    
+  } catch (err) {
+    console.error("❌ Update error:", err);
+    console.error("❌ Error response:", err.response?.data);
+    toast.error(err.response?.data?.message || "Failed to update profile", {
+      id: loadingToast,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Update Account (Password)
   const handleUpdateAccount = async (e) => {

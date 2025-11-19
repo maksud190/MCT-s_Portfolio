@@ -51,7 +51,6 @@ router.get("/all", getAllUsers);
 router.get("/:userId", getUserById);
 
 
-router.get("/migrate-roles", migrateUsers); // ⚠️ Remove after use
 
 // ✅ PROTECTED ROUTES
 router.put("/profile", authMiddleware, upload.single('avatar'), updateUserProfile);
