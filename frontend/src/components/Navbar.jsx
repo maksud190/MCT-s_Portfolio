@@ -8,7 +8,7 @@
 // export default function Navbar() {
 //   const { user, logout } = useAuth();
 //   const navigate = useNavigate();
-  
+
 //   // Avatar key for re-render
 //   const [avatarKey, setAvatarKey] = useState(Date.now());
 
@@ -57,8 +57,8 @@
 //       <div className="max-w-7xl bg-amber-400/80 shadow-amber-600/40 shadow-md rounded-sm mx-auto px-6 backdrop-blur-md">
 //         <div className="flex justify-between items-center h-16">
 //           {/* Logo */}
-//           <Link 
-//             to="/" 
+//           <Link
+//             to="/"
 //             className="font-bold text-xl"
 //           >
 //             <span className="text-white">MCT's <span className="text-stone-800">Portfolio</span></span>
@@ -68,7 +68,7 @@
 //           <div className="hidden md:block flex-1 max-w-xl mx-8">
 //             <SearchBar />
 //           </div>
-          
+
 //           {/* Desktop Navigation */}
 //           <div className="hidden md:flex items-center gap-3">
 //             {/* Dark Mode Toggle */}
@@ -80,7 +80,7 @@
 //             >
 //               {dark ? "☀️" : "🌙"}
 //             </button> */}
-            
+
 //             {user ? (
 //               <>
 //                 {/* Notification Bell */}
@@ -92,19 +92,19 @@
 //                     Upload
 //                   </span>
 //                 </Link>
-                
+
 //                 {/* User Profile Dropdown */}
 //                 <div className="relative group">
-//                   <Link 
-//                     to="/profile" 
+//                   <Link
+//                     to="/profile"
 //                     className="flex items-center gap-2 hover:bg-gray-800/75 px-3 py-1 rounded-sm transition-all duration-200"
 //                   >
 //                     {user.avatar ? (
-//                       <img 
+//                       <img
 //                         key={avatarKey}
 //                         src={`${user.avatar}?t=${avatarKey}`}
-//                         alt={user.username} 
-//                         className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-md" 
+//                         alt={user.username}
+//                         className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-md"
 //                       />
 //                     ) : (
 //                       <div className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold border-2 border-white shadow-md">
@@ -137,7 +137,7 @@
 //                           className="block px-4 py-2 hover:bg-stone-700/40 transition-colors font-semibold"
 //                         >
 //                           <div className="text-stone-400 hover:text-stone-50">🛡️ Admin Panel</div>
-                          
+
 //                         </Link>
 //                       )}
 //                       <hr className="my-2 border-gray-200 dark:border-gray-700" />
@@ -158,8 +158,8 @@
 //                     Login
 //                   </span>
 //                 </Link>
-//                 <Link 
-//                   to="/register" 
+//                 <Link
+//                   to="/register"
 //                   className="bg-stone-800 !text-white hover:text-white px-4 py-2 rounded-sm hover:!bg-stone-900 dark:hover:bg-white transition-all duration-200 font-medium"
 //                 >
 //                   Register
@@ -206,10 +206,10 @@
 //                 {/* User Info */}
 //                 <div className="flex items-center gap-3 px-4 py-2 bg-amber-200 dark:bg-gray-700 rounded-sm">
 //                   {user.avatar ? (
-//                     <img 
+//                     <img
 //                       src={`${user.avatar}?t=${avatarKey}`}
-//                       alt={user.username} 
-//                       className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md" 
+//                       alt={user.username}
+//                       className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
 //                     />
 //                   ) : (
 //                     <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold border-2 border-white shadow-md">
@@ -283,21 +283,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
@@ -308,7 +293,7 @@ import NotificationBell from "./NotificationBell";
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  
+
   // Avatar key for re-render
   const [avatarKey, setAvatarKey] = useState(Date.now());
 
@@ -342,33 +327,48 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 transition-colors duration-300">
       <div className=" bg-white shadow-slate-600/40 shadow-md px-6 backdrop-blur-md">
         <div className="flex justify-between items-center h-15">
-          {/* Logo */}
-          <Link 
-            to="/" 
-            className="font-bold text-xl"
-          >
-            <span className="text-stone-800">MCT's <span className="text-stone-800">Portfolio</span></span>
-          </Link>
+          <div className="flex justify-between items-center h-15">
+            {/* Logo */}
+            <Link to="/" className="font-bold text-xl">
+              <span className="text-stone-800">
+                MCT's <span className="text-stone-800">Portfolio</span>
+              </span>
+            </Link>
+
+            <div>
+              <Link to="/">
+                <span className="font-semibold text-sm text-stone-800 hover:text-white  hover:border-stone-800/75 hover:bg-stone-800 ml-6 px-2 py-2 rounded-sm duration-200">
+                  Explore
+                </span>
+              </Link>
+
+              {/* 🆕 Image Converter Link */}
+              <Link to="/imageConverter">
+                <span className="font-semibold text-sm text-stone-800 hover:text-white  hover:border-stone-800/75 hover:bg-stone-800 ml-3 px-2 py-2 rounded-sm duration-200">
+                  Image Converter
+                </span>
+              </Link>
+
+              {/* Profiles */}
+              <Link to="/profiles">
+                <span className="font-semibold text-sm text-stone-800 hover:text-white  hover:border-stone-800/75 hover:bg-stone-800 ml-3 px-2 py-2 rounded-sm duration-200">
+                  Profiles
+                </span>
+              </Link>
+            </div>
+          </div>
 
           {/* Desktop Search Bar */}
           <div className="hidden md:block flex-1 max-w-xl mx-8">
             <SearchBar />
           </div>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-3">
-            
             {user ? (
               <>
                 {/* Notification Bell */}
                 <NotificationBell />
-
-                {/* 🆕 Image Converter Link */}
-                <Link to="/image-converter">
-                  <span className="font-bold text-stone-800 hover:text-white border-1 hover:border-stone-800/75 hover:bg-stone-800 px-2 py-2 rounded-sm duration-200">
-                    🖼️ Converter
-                  </span>
-                </Link>
 
                 {/* Upload Button */}
                 <Link to="/upload">
@@ -376,19 +376,19 @@ export default function Navbar() {
                     Upload
                   </span>
                 </Link>
-                
+
                 {/* User Profile Dropdown */}
                 <div className="relative group">
-                  <Link 
-                    to="/profile" 
+                  <Link
+                    to="/profile"
                     className="flex items-center gap-2 hover:bg-stone-800 px-3 py-1 rounded-sm transition-all duration-200"
                   >
                     {user.avatar ? (
-                      <img 
+                      <img
                         key={avatarKey}
                         src={`${user.avatar}?t=${avatarKey}`}
-                        alt={user.username} 
-                        className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-md" 
+                        alt={user.username}
+                        className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-md"
                       />
                     ) : (
                       <div className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold border-2 border-white shadow-md">
@@ -407,21 +407,26 @@ export default function Navbar() {
                         to="/profile"
                         className="block px-4 py-2 hover:bg-stone-700/40 transition-colors"
                       >
-                        <div className="text-stone-300 hover:text-stone-50">👤 My Profile</div>
+                        <div className="text-stone-300 hover:text-stone-50">
+                          👤 My Profile
+                        </div>
                       </Link>
                       <Link
                         to="/settings"
                         className="block px-4 py-2 hover:bg-stone-700/40 transition-colors"
                       >
-                        <div className="text-stone-300 hover:text-stone-50">⚙️ Settings</div>
+                        <div className="text-stone-300 hover:text-stone-50">
+                          ⚙️ Settings
+                        </div>
                       </Link>
                       {user.role === "admin" && (
                         <Link
                           to="/admin"
                           className="block px-4 py-2 hover:bg-stone-700/40 transition-colors font-semibold"
                         >
-                          <div className="text-stone-400 hover:text-stone-50">🛡️ Admin Panel</div>
-                          
+                          <div className="text-stone-400 hover:text-stone-50">
+                            🛡️ Admin Panel
+                          </div>
                         </Link>
                       )}
                       <hr className="my-2 border-gray-200 dark:border-gray-700" />
@@ -437,20 +442,13 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                {/* 🆕 Image Converter Link for non-logged users */}
-                <Link to="/image-converter">
-                  <span className="font-bold text-stone-800 hover:text-white border-1 hover:border-stone-800/75 hover:bg-stone-800 px-2 py-2 rounded-sm duration-200">
-                    🖼️ Converter
-                  </span>
-                </Link>
-
                 <Link to="/login">
                   <span className="font-bold text-gray-800 hover:text-white hover:bg-gray-800/75 px-4 py-3 rounded-sm duration-200">
                     Login
                   </span>
                 </Link>
-                <Link 
-                  to="/register" 
+                <Link
+                  to="/register"
                   className="bg-stone-800 !text-white hover:text-white px-4 py-2 rounded-sm hover:!bg-stone-900 dark:hover:bg-white transition-all duration-200 font-medium"
                 >
                   Register
@@ -464,11 +462,26 @@ export default function Navbar() {
             onClick={() => setShowMobileMenu(!showMobileMenu)}
             className="md:hidden p-2 text-white hover:text-gray-800 hover:bg-white/20 rounded-sm transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               {showMobileMenu ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -484,16 +497,15 @@ export default function Navbar() {
       {showMobileMenu && (
         <div className=" bg-amber-300 dark:bg-gray-800 border-t border-amber-500 dark:border-gray-700">
           <div className="px-4 py-3 space-y-2">
-
             {user ? (
               <>
                 {/* User Info */}
                 <div className="flex items-center gap-3 px-4 py-2 bg-amber-200 dark:bg-gray-700 rounded-sm">
                   {user.avatar ? (
-                    <img 
+                    <img
                       src={`${user.avatar}?t=${avatarKey}`}
-                      alt={user.username} 
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md" 
+                      alt={user.username}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold border-2 border-white shadow-md">

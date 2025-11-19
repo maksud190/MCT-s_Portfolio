@@ -110,6 +110,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ImageConverter from "./pages/ImageConverter";
+import Profiles from "./pages/Profiles";
 
 function App() {
   return (
@@ -159,7 +160,8 @@ function App() {
           
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/image-converter" element={<ImageConverter />} />
+          <Route path="/imageConverter" element={<ImageConverter />} />
+          <Route path="/profiles" element={<Profiles />} />
         </Routes>
       </main>
       <Footer />
