@@ -42,13 +42,51 @@ export default function SearchBar() {
     navigate(`/project/${projectId}`);
   };
 
+  // ✅ Highlight matching text
+  const highlightText = (text, query) => {
+    if (!text || !query) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return (
+      <span>
+        {parts.map((part, i) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <mark
+              key={i}
+              className="bg-amber-300 text-stone-900 px-0.5 rounded"
+            >
+              {part}
+            </mark>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+      </span>
+    );
+  };
+
+  // ✅ Determine match type for each result
+  const getMatchType = (project) => {
+    const query = searchQuery.toLowerCase();
+    const title = project.title?.toLowerCase() || "";
+    const username = project.userId?.username?.toLowerCase() || "";
+    const email = project.userId?.email?.toLowerCase() || "";
+    const category = project.category?.toLowerCase() || "";
+
+    if (title.includes(query)) return "Title";
+    if (username.includes(query)) return "Username";
+    if (email.includes(query)) return "Email";
+    if (category.includes(query)) return "Category";
+    return "";
+  };
+
   return (
     <div className="relative w-full max-w-md">
       {/* Search Input */}
       <div className="relative">
         <input
           type="text"
-          placeholder="Search projects..."
+          placeholder="Search by title, username, or email..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-2 py-1 pl-10 pr-4 border-gray-300 dark:border-gray-700 rounded-sm border-b-2 hover:border-b-stone-900 text-stone-900 focus:outline-none focus:border-stone-900 transition-all duration-200"
@@ -76,40 +114,72 @@ export default function SearchBar() {
       {/* Search Results Dropdown */}
       {showResults && searchResults.length > 0 && (
         <div className="absolute z-50 w-full mt-2 bg-slate-50 rounded-sm shadow-2xl max-h-96 overflow-y-auto border border-stone-700">
-          {searchResults.map((project) => (
-            <div
-              key={project._id}
-              onClick={() => handleResultClick(project._id)}
-              className="flex items-center gap-3 px-3 py-1 hover:bg-slate-200 cursor-pointer transition-colors border-b border-stone-700 last:border-b-0"
-            >
-              <img
-                src={project.thumbnail}
-                alt={project.title}
-                className="w-13 h-13 object-cover rounded-sm"
-              />
-              <div className="flex-1">
-                <h4 className="font-semibold text-stone-900 line-clamp-1 m-0 p-0">
-                  {project.title}
-                </h4>
-                <p className="text-sm text-stone-700">
-                  by {project.userId?.username}
-                </p>
-                <div className="flex items-center gap-3 text-xs text-stone-600 mt-1">
-                  <span>👁️ {project.views || 0}</span>
-                  <span>❤️ {project.likes || 0}</span>
+          {searchResults.map((project) => {
+            const matchType = getMatchType(project);
+
+            return (
+              <div
+                key={project._id}
+                onClick={() => handleResultClick(project._id)}
+                className="flex items-center gap-3 px-3 py-2 hover:bg-slate-200 cursor-pointer transition-colors border-b border-stone-700 last:border-b-0"
+              >
+                <img
+                  src={project.thumbnail}
+                  alt={project.title}
+                  className="w-16 h-16 object-cover rounded-sm flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  {/* Project Title */}
+                  <h4 className="font-semibold text-stone-900 line-clamp-1 m-0 p-0">
+                    {highlightText(project.title, searchQuery)}
+                  </h4>
+
+                  {/* User Info */}
+                  <p className="text-sm text-stone-700">
+                    by {highlightText(project.userId?.username, searchQuery)}
+                    {project.userId?.email && (
+                      <span className="text-xs text-stone-500 ml-1">
+                        ({highlightText(project.userId?.email, searchQuery)})
+                      </span>
+                    )}
+                  </p>
+
+                  {/* Match Type Badge & Stats */}
+                  <div className="flex items-center gap-3 text-xs mt-1">
+                    {matchType && (
+                      <span className="bg-amber-400 text-stone-900 px-2 py-0.5 rounded text-xs font-medium">
+                        Match: {matchType}
+                      </span>
+                    )}
+                    <span className="text-stone-600">
+                      👁️ {project.views || 0}
+                    </span>
+                    <span className="text-stone-600">
+                      ❤️ {project.likes?.length || 0}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {/* No Results */}
-      {showResults && searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
-        <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-sm shadow-xl p-4 text-center border border-gray-200 dark:border-gray-700">
-          <p className="text-gray-600 dark:text-gray-400">No projects found</p>
-        </div>
-      )}
+      {showResults &&
+        searchQuery.length >= 2 &&
+        searchResults.length === 0 &&
+        !isSearching && (
+          <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-sm shadow-xl p-4 text-center border border-gray-200 dark:border-gray-700">
+            <div className="text-4xl mb-2">🔍</div>
+            <p className="text-gray-600 dark:text-gray-400 font-medium">
+              No projects found
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              Try searching by project title, username, or email
+            </p>
+          </div>
+        )}
 
       {/* Click outside to close */}
       {showResults && (

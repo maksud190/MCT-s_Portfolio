@@ -335,39 +335,49 @@ export const checkLikeStatus = async (req, res) => {
   }
 };
 
-// 🔥 Feature 1: Search Projects
+// 🔥 Search Projects by Title, Description, Category, Username, or Email
 export const searchProjects = async (req, res) => {
   try {
-    const { q, category, tags } = req.query;
+    const { q } = req.query;
     
-    let query = { isPublished: true };
-    
-    if (q) {
-      query.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-        { tags: { $regex: q, $options: 'i' } }
-      ];
+    if (!q || q.trim().length < 2) {
+      return res.json([]);
     }
+
+    const searchQuery = q.trim();
     
-    if (category && category !== 'All') {
-      query.category = { $regex: `^${category}`, $options: 'i' };
-    }
-    
-    if (tags) {
-      const tagArray = tags.split(',');
-      query.tags = { $in: tagArray };
-    }
-    
-    const projects = await Project.find(query)
-      .populate('userId', 'username avatar')
-      .populate('collaborators.user', 'username avatar')
+    console.log("🔍 Searching for:", searchQuery);
+
+    // ✅ First, find matching users by username or email
+    const matchingUsers = await User.find({
+      $or: [
+        { username: { $regex: searchQuery, $options: 'i' } },
+        { email: { $regex: searchQuery, $options: 'i' } }
+      ]
+    }).select('_id');
+
+    const matchingUserIds = matchingUsers.map(user => user._id);
+
+    // ✅ Search projects by:
+    // 1. Title, description, category (in project)
+    // 2. Username or email (in user)
+    const projects = await Project.find({
+      $or: [
+        { title: { $regex: searchQuery, $options: 'i' } },
+        { description: { $regex: searchQuery, $options: 'i' } },
+        { category: { $regex: searchQuery, $options: 'i' } },
+        { userId: { $in: matchingUserIds } } // ✅ Search by user
+      ]
+    })
+      .populate('userId', 'username email avatar')
       .sort({ createdAt: -1 })
-      .limit(50);
-    
+      .limit(20);
+
+    console.log(`✅ Found ${projects.length} projects`);
+
     res.json(projects);
   } catch (err) {
-    console.error("Search projects error:", err);
+    console.error("❌ Search error:", err);
     res.status(500).json({ message: err.message });
   }
 };

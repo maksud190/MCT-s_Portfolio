@@ -379,26 +379,26 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-950 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-stone-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h2 className="mt-6 text-4xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mt-6 text-4xl font-extrabold text-stone-100">
             Join Us Today!
           </h2>
-          <p className="mt-2 text-sm text-stone-400">
+          <p className="mt-2 text-sm text-stone-300">
             Create your account and start showcasing your work
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div className="bg-stone-900 rounded-sm shadow-2xl p-8 space-y-6 border border-gray-100 dark:border-gray-700">
+          <div className="bg-stone-900/50 rounded-sm  p-8 space-y-6 border border-stone-700 ">
             {/* Username Input */}
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-stone-200 mb-2"
               >
                 Username
               </label>
@@ -422,7 +422,7 @@ export default function Register() {
                   id="username"
                   type="text"
                   placeholder="Choose a username"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-stone-200 focus:border-transparent transition-all"
                   value={form.username}
                   onChange={(e) =>
                     setForm({ ...form, username: e.target.value })
@@ -437,7 +437,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-stone-200 mb-2"
               >
                 Email Address
               </label>
@@ -461,7 +461,7 @@ export default function Register() {
                   id="email"
                   type="email"
                   placeholder="your@email.com"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-stone-200 focus:border-transparent transition-all"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   required
@@ -474,7 +474,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="role"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-stone-200 mb-2"
               >
                 I am a
               </label>
@@ -484,12 +484,12 @@ export default function Register() {
                 onChange={(e) => {
                   setForm({ ...form, role: e.target.value, designation: "" });
                 }}
-                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                 required
                 disabled={loading}
               >
-                <option value="student">🎓 Student</option>
-                <option value="teacher">👨‍🏫 Teacher/Instructor</option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher/Instructor</option>
               </select>
             </div>
 
@@ -497,7 +497,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="designation"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-stone-200 mb-2"
               >
                 Designation
               </label>
@@ -507,7 +507,7 @@ export default function Register() {
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                 required
                 disabled={loading}
               >
@@ -524,7 +524,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="department"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-stone-200 mb-2"
               >
                 Department
               </label>
@@ -535,7 +535,7 @@ export default function Register() {
                 onChange={(e) =>
                   setForm({ ...form, department: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                 required
                 disabled={loading}
               />
@@ -545,7 +545,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-stone-200 mb-2"
               >
                 Password
               </label>
@@ -569,7 +569,7 @@ export default function Register() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:border-transparent transition-all"
                   value={form.password}
                   onChange={(e) =>
                     setForm({ ...form, password: e.target.value })
@@ -652,7 +652,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber-400 hover:bg-amber-400/80 text-white !font-extrabold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-blue-600 hover:bg-stone-900 !text-stone-100 py-3 px-4 !rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {loading ? (
                 <span className="flex items-center justify-center">

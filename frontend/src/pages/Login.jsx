@@ -78,7 +78,7 @@ export default function Login() {
                   id="email"
                   type="email"
                   placeholder="your@email.com"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:border-transparent transition-all"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   required
@@ -102,7 +102,7 @@ export default function Login() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:border-transparent transition-all"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   required
@@ -136,7 +136,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber-400 hover:bg-amber-400/80 text-white !font-extrabold py-3 px-4 !rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-blue-600 hover:bg-stone-900 text-white !font-extrabold py-3 px-4 !rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -158,7 +158,7 @@ export default function Login() {
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="font-semibold !text-amber-500 hover:text-amber-400/80 dark:text-amber-400 dark:hover:text-amber-400/80 transition-colors"
+                className="font-semibold !text-blue-600 hover:!text-blue-500 transition-colors"
               >
                 Create one now
               </Link>

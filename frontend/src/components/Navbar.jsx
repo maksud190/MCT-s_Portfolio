@@ -388,10 +388,10 @@ export default function Navbar() {
                         key={avatarKey}
                         src={`${user.avatar}?t=${avatarKey}`}
                         alt={user.username}
-                        className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-md"
+                        className="w-9 h-9 rounded-sm object-cover border-2 border-white shadow-md"
                       />
                     ) : (
-                      <div className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold border-2 border-white shadow-md">
+                      <div className="w-9 h-9 rounded-sm bg-gray-800 flex items-center justify-center text-white font-bold border-2 border-white shadow-md">
                         {user.username?.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -443,13 +443,13 @@ export default function Navbar() {
             ) : (
               <>
                 <Link to="/login">
-                  <span className="font-bold text-gray-800 hover:text-white hover:bg-gray-800/75 px-4 py-3 rounded-sm duration-200">
+                  <span className="font-bold text-gray-800 hover:text-stone-100 hover:bg-stone-800 px-4 py-2 rounded-sm duration-200">
                     Login
                   </span>
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-stone-800 !text-white hover:text-white px-4 py-2 rounded-sm hover:!bg-stone-900 dark:hover:bg-white transition-all duration-200 font-medium"
+                  className="bg-stone-800 !text-stone-100 hover:!text-stone-800 px-4 py-2 rounded-sm hover:!bg-white transition-all duration-200 font-medium"
                 >
                   Register
                 </Link>

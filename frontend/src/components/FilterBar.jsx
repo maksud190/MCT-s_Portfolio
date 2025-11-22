@@ -37,14 +37,14 @@ export default function FilterBar({
 
         {/* Sort Dropdown */}
         <div className="w-full sm:w-auto">
-          <label className="block text-sm font-medium text-stone-400 mb-2">
+          <label className="block text-sm font-medium text-stone-600 mb-2">
             Sort By
           </label>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             // className="w-full sm:w-52 p-2 border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:border-amber-400 focus:border-amber-400 focus:ring-2 focus:ring-amber-400 transition-colors cursor-pointer"
-            className="w-full sm:w-40 p-0.5 text-sm font-light border-gray-300 dark:border-gray-600 rounded-sm bg-stone-700 text-gray-900 dark:text-white hover:border-amber-400 focus:border-amber-400 focus:ring-2 focus:ring-amber-400 transition-colors cursor-pointer"
+            className="w-full sm:w-40 p-0.5 text-sm font-light  rounded-sm bg-stone-800 text-stone-100 transition-colors cursor-pointer"
           >
             <option value="random">🎲 Default</option>
             <option value="latest">📅 Latest First</option>
@@ -58,13 +58,13 @@ export default function FilterBar({
 
         {/* Date Range Dropdown */}
         <div className="w-full sm:w-auto">
-          <label className="block text-sm font-medium text-stone-400 mb-2">
+          <label className="block text-sm font-medium text-stone-600 mb-2">
             Time Period
           </label>
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="w-full sm:w-40  p-0.5 text-sm font-light border border-gray-300 dark:border-gray-600 rounded-sm bg-stone-700 text-gray-900 dark:text-white hover:border-amber-400 focus:border-amber-400 focus:ring-2 focus:ring-amber-400 transition-colors cursor-pointer"
+            className="w-full sm:w-40  p-0.5 text-sm font-light  rounded-sm bg-stone-800 text-stone-100 transition-colors cursor-pointer"
           >
             <option value="all">⏰ All Time</option>
             <option value="week">📆 Last Week</option>
@@ -79,16 +79,16 @@ export default function FilterBar({
 
       {/* Results Count */}
       <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-        <p className="text-sm text-stone-400 font-light">
+        <p className="text-sm text-stone-500 font-light">
           Showing{" "}
-          <span className="font-semibold text-amber-400">
+          <span className="font-semibold text-blue-600">
             {filteredProjects.length}
           </span>{" "}
           {filteredProjects.length === 1 ? "project" : "projects"}
           {selectedCategory !== "All" && (
             <span>
               {" "}
-              in <span className="font-light text-amber-400">{selectedCategory}</span>
+              in <span className="font-light text-blue-600">{selectedCategory}</span>
             </span>
           )}
           {dateRange !== "all" && (

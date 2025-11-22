@@ -127,8 +127,8 @@ export default function Comments({ projectId }) {
   };
 
   return (
-    <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg p-6">
-      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+    <div className="mt-8 bg-stone-800 rounded-sm p-6">
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
         Comments ({comments.length})
       </h3>
 
@@ -140,10 +140,10 @@ export default function Comments({ projectId }) {
               <img
                 src={user.avatar}
                 alt={user.username}
-                className="w-10 h-10 rounded-full"
+                className="w-10 h-10 rounded-sm"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 rounded-sm bg-stone-800 flex items-center justify-center text-white font-bold">
                 {user.username?.charAt(0).toUpperCase()}
               </div>
             )}
@@ -153,14 +153,14 @@ export default function Comments({ projectId }) {
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment..."
                 rows="3"
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400 resize-none"
+                className="w-full p-3 font-semibold border border-stone-600 rounded-sm bg-stone-900 text-stone-50 focus:ring-2  resize-none"
                 disabled={loading}
               />
               <div className="flex justify-end mt-2">
                 <button
                   type="submit"
                   disabled={loading || !newComment.trim()}
-                  className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 text-sm bg-blue-600 hover:bg-stone-900 text-white !rounded-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? "Posting..." : "Post Comment"}
                 </button>
@@ -195,14 +195,14 @@ export default function Comments({ projectId }) {
               )}
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="font-semibold text-stone-100">
                     {comment.user?.username}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-stone-500">
                     {formatDate(comment.createdAt)}
                   </span>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                <p className="text-stone-300  whitespace-pre-wrap">
                   {comment.text}
                 </p>
                 
@@ -215,14 +215,14 @@ export default function Comments({ projectId }) {
                         [comment._id]: !showReplyBox[comment._id],
                       })
                     }
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-amber-500"
+                    className="text-sm text-stone-300 hover:text-blue-600"
                   >
                     Reply
                   </button>
                   {user && (comment.user?._id === user._id) && (
                     <button
                       onClick={() => handleDeleteComment(comment._id)}
-                      className="text-sm text-red-600 dark:text-red-400 hover:text-red-700"
+                      className="text-sm text-red-600 hover:text-red-700"
                     >
                       Delete
                     </button>
@@ -242,12 +242,12 @@ export default function Comments({ projectId }) {
                       }
                       placeholder="Write a reply..."
                       rows="2"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-400 resize-none"
+                      className="w-full p-2 border border-stone-600 rounded-sm  bg-stone-900 text-stone-100 text-sm font-semibold focus:ring-2 resize-none"
                     />
                     <div className="flex gap-2 mt-2">
                       <button
                         onClick={() => handleAddReply(comment._id)}
-                        className="px-3 py-1 bg-amber-400 hover:bg-amber-500 text-white rounded text-sm"
+                        className="!px-4 !py-0.5 bg-blue-600 hover:bg-stone-900 text-stone-100 !rounded-sm !text-md"
                       >
                         Reply
                       </button>
@@ -258,7 +258,7 @@ export default function Comments({ projectId }) {
                             [comment._id]: false,
                           })
                         }
-                        className="px-3 py-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded text-sm"
+                        className="!px-3 !py-1 bg-gray-400  hover:bg-stone-900 text-stone-800 hover:text-stone-100 !rounded-sm !text-md"
                       >
                         Cancel
                       </button>

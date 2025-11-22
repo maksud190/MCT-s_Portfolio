@@ -4,7 +4,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-stone-950 text-gray-300 border-t border-gray-800 mt-10 relative">
+    <footer className="bg-stone-900 text-stone-300 relative">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -23,7 +23,7 @@ export default function Footer() {
                <a href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors"
+                className="w-9 h-9 bg-stone-800 hover:bg-blue-600 rounded-sm flex items-center justify-center transition-colors"
                 aria-label="Facebook"
               >
                 <span className="text-lg">📘</span>
@@ -32,7 +32,7 @@ export default function Footer() {
               <a href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-gray-800 hover:bg-sky-500 rounded-lg flex items-center justify-center transition-colors"
+                className="w-9 h-9 bg-stone-800 hover:bg-sky-500 rounded-sm flex items-center justify-center transition-colors"
                 aria-label="Twitter"
               >
                 <span className="text-lg">🐦</span>
@@ -41,7 +41,7 @@ export default function Footer() {
               <a href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-gray-800 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors"
+                className="w-9 h-9 bg-stone-800 hover:bg-pink-600 rounded-sm flex items-center justify-center transition-colors"
                 aria-label="Instagram"
               >
                 <span className="text-lg">📷</span>
@@ -50,7 +50,7 @@ export default function Footer() {
               <a href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-gray-800 hover:bg-blue-700 rounded-lg flex items-center justify-center transition-colors"
+                className="w-9 h-9 bg-stone-800 hover:bg-blue-700 rounded-sm flex items-center justify-center transition-colors"
                 aria-label="LinkedIn"
               >
                 <span className="text-lg">🔗</span>
@@ -256,10 +256,11 @@ export default function Footer() {
       {/* Back to Top Button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 bg-amber-400 hover:bg-amber-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+        className="fixed bottom-6 right-6 bg-blue-800 hover:bg-stone-900 text-white w-12 h-14 !rounded-sm shadow-lg flex items-center justify-center transition-all hover:scale-110"
         aria-label="Back to top"
       >
-        <span className="text-xl">⬆️</span>
+        {/* ⬆️👆🏻🆙 */}
+        <span className="text-2xl">👆🏻</span>
       </button>
     </footer>
   );

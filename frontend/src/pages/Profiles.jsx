@@ -57,85 +57,84 @@ export default function Profiles() {
   const UserCard = ({ user }) => (
     <Link
       to={`/user/${user._id}`}
-      className="bg-white dark:bg-stone-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+      className="hover:shadow-sm transition-all duration-300 overflow-hidden group "
     >
       {/* Avatar */}
-      <div className="relative h-48 bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+      <div className="flex items-center justify-center relative overflow-hidden p-8">
         {user.avatar ? (
           <img
             src={user.avatar}
             alt={user.username}
-            className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300"
+            className="w-24 h-24 rounded-sm object-cover border-4 border-stone-800 group-hover:scale-110 transition-transform duration-300"
           />
         ) : (
-          <div className="w-32 h-32 rounded-full bg-stone-800 border-4 border-white shadow-lg flex items-center justify-center text-white text-4xl font-bold group-hover:scale-110 transition-transform duration-300">
+          <div className="w-24 h-24 rounded-sm bg-stone-800 border-4 border-stone-800 shadow-lg flex items-center justify-center text-white text-4xl font-bold group-hover:scale-110 transition-transform duration-300">
             {user.username?.charAt(0).toUpperCase()}
           </div>
         )}
 
-        {/* Role Badge */}
-        {user.role === "teacher" && (
+        {/*Role Badge */}
+        {/* {user.role === "teacher" && (
           <div className="absolute top-3 right-3 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-            👨‍🏫 Teacher
+            Teacher
           </div>
-        )}
+        )} */}
 
         {/* Role Badge */}
-        {user.role !== "teacher" && (
+        {/* {user.role !== "teacher" && (
           <div className="absolute top-3 right-3 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-            🎓 Student
+            Student
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Info */}
-      <div className="p-5">
+      <div className="pl-2 pr-2 pb-2 text-center">
         {/* Name */}
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-amber-500 transition-colors">
+        <h3 className="text-xl font-extrabold text-stone-800 mb-1">
           {user.username}
         </h3>
 
         {/* Designation */}
         {user.designation && (
-          <p className="text-sm text-amber-600 dark:text-amber-400 font-semibold mb-2">
+          <p className="text-sm text-stone-700 font-semibold mb-2">
             {user.designation}
           </p>
         )}
 
         {/* Department */}
         {user.department && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-            📚 {user.department}
+          <p className="text-xs text-stone-600 mb-1">
+            {user.department}
           </p>
         )}
 
         {/* Student Info */}
         {user.role !== "teacher" && (
-          <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+          <div className="flex justify-center gap-4 text-xs text-stone-600">
             {user.batch && (
-              <span className="flex items-center gap-1">
-                <span>🎓</span>
-                Batch {user.batch}
+              <span className="flex items-center ">
+                
+                Batch: {user.batch}
               </span>
             )}
             {user.studentId && (
-              <span className="flex items-center gap-1">
-                <span>🆔</span>
-                {user.studentId}
+              <span className="flex items-center ">
+                ID: {user.studentId}
               </span>
             )}
           </div>
         )}
 
         {/* Bio Preview */}
-        {user.bio && (
+        {/* {user.bio && (
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 line-clamp-2">
             {user.bio}
           </p>
-        )}
+        )} */}
 
         {/* View Profile Link */}
-        <div className="mt-4 text-amber-500 dark:text-amber-400 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+        <div className="mt-3 mb-3 text-blue-600 text-sm font-semibold flex justify-center items-center  group-hover:gap-2 transition-all">
           View Profile
           <svg
             className="w-4 h-4"
@@ -146,7 +145,7 @@ export default function Profiles() {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={3}
               d="M9 5l7 7-7 7"
             />
           </svg>
@@ -160,34 +159,36 @@ export default function Profiles() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading profiles...</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading profiles...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-200/20 via-indigo-300/20 to-slate-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
       <div className="py-16 px-6 text-center">
         <h1 className="text-5xl font-extrabold mb-4 text-stone-800">
-          👥 MCT Community
+          MCT Community
         </h1>
-        <p className="text-xl max-w-2xl mx-auto text-blue-800">
+        <p className="text-xl max-w-2xl mx-auto text-blue-600">
           Meet our talented teachers and creative students
         </p>
       </div>
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-6 pb-8">
-        <div className="bg-white dark:bg-stone-900 rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-gray-100 border-1 border-stone-400 rounded-sm shadow-md py-4 px-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-stone-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -202,10 +203,10 @@ export default function Profiles() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search by name, designation, or department..."
+                  placeholder="Search by name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                  className="w-full pl-10 pb-1.5 pt-1.5 pr-4 border-b-2 border-stone-800 rounded-sm bg-gray-100 text-stone-800 "
                 />
               </div>
             </div>
@@ -215,18 +216,18 @@ export default function Profiles() {
               <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="w-full md:w-48 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                className="w-full md:w-48 px-4 py-1.5 border-b-2 border-stone-800 rounded-sm bg-gray-100 text-stone-800 focus:border-transparent"
               >
                 <option value="all">All Roles</option>
-                <option value="teacher">👨‍🏫 Teachers</option>
-                <option value="student">🎓 Students</option>
+                <option value="teacher">Teachers</option>
+                <option value="student">Students</option>
               </select>
             </div>
           </div>
 
           {/* Results Count */}
-          <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredUsers.length} of {allUsers.length} profiles
+          <div className="mt-3 text-sm text-stone-700">
+            Showing <span className="text-blue-600">{filteredUsers.length}</span> of <span className="text-blue-600">{allUsers.length}</span> profiles
           </div>
         </div>
 
@@ -234,10 +235,10 @@ export default function Profiles() {
         {teachers.length > 0 && (
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                👨‍🏫 Teachers & Instructors
+              <h2 className="text-3xl font-bold text-stone-900">
+                Teachers & Instructors
               </h2>
-              <span className="bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold">
                 {teachers.length}
               </span>
             </div>
@@ -254,10 +255,8 @@ export default function Profiles() {
         {students.length > 0 && (
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                🎓 Students
-              </h2>
-              <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              <h2 className="text-3xl font-bold text-stone-900">Students</h2>
+              <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold">
                 {students.length}
               </span>
             </div>

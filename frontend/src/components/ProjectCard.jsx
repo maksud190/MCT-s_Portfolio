@@ -108,7 +108,7 @@ export default function ProjectCard({ project }) {
 
   return (
     <Link to={`/project/${project._id}`} className="block group">
-      <div className="bg-white rounded-sm shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
+      <div className="bg-white rounded-sm shadow-sm hover:shadow-md transition-all duration-100 overflow-hidden transform hover:-translate-y-0.5">
         {/* Image Section */}
         <div className="relative overflow-hidden bg-gray-200 dark:bg-gray-700">
           {project.thumbnail && !imageError ? (
@@ -140,12 +140,12 @@ export default function ProjectCard({ project }) {
 
         {/* Content Section */}
         <div className="px-4 pt-2 pb-0 mb-0">
-          <h3 className="text-lg font-semibold text-stone-900 mb-0.5 line-clamp-2">
+          <h3 className="text-md font-bold text-stone-700 mb-0.5 line-clamp-1">
             {project.title}
           </h3>
 
 
-          <h4 className="text-sm rounded-sm text-stone-800 font-semibold">
+          <h4 className="text-sm rounded-sm text-stone-500 font-semibold">
               {project.userId?.username}
             </h4>
 
@@ -178,15 +178,15 @@ export default function ProjectCard({ project }) {
             <span
               onClick={handleLike}
               disabled={loading || !user}
-              className={`flex items-center gap-1 px-3 py-1 rounded-sm transition-all ${
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-sm transition-all ${
                 isLiked
-                  ? "bg-red-100 dark:bg-red-900/30 text-red-500"
-                  : "bg-stone-700 text-stone-300 hover:bg-red-900/20 hover:text-red-500"
+                  ? "bg-red-100 hover:bg-stone-300 text-red-600"
+                  : "bg-stone-300 text-stone-800 hover:bg-red-900 hover:text-red-500"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""} ${!user ? "cursor-not-allowed opacity-70" : ""}`}
               title={!user ? "Login to like" : isLiked ? "Unlike" : "Like"}
             >
               <span className={`text-base transition-transform ${isLiked ? "scale-90" : ""}`}>
-                {isLiked ? "❤️" : "🤍"}
+                {isLiked ? "♥️" : "🩶"}
               </span>
               <span>{likes}</span>
             </span>
