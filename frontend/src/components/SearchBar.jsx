@@ -9,7 +9,6 @@ export default function SearchBar() {
   const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
 
-  // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchQuery.trim().length >= 2) {
@@ -42,7 +41,6 @@ export default function SearchBar() {
     navigate(`/project/${projectId}`);
   };
 
-  // ✅ Highlight matching text
   const highlightText = (text, query) => {
     if (!text || !query) return text;
 
@@ -65,7 +63,6 @@ export default function SearchBar() {
     );
   };
 
-  // ✅ Determine match type for each result
   const getMatchType = (project) => {
     const query = searchQuery.toLowerCase();
     const title = project.title?.toLowerCase() || "";
@@ -89,10 +86,10 @@ export default function SearchBar() {
           placeholder="Search by title, username, or email..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-2 py-1 pl-10 pr-4 border-stone-800 rounded-sm border-b-2 hover:border-b-stone-900 text-stone-900 focus:outline-none focus:border-stone-900 transition-all duration-200"
+          className="w-full px-2 py-1 pl-8 md:pl-10 pr-4 border-stone-800 rounded-sm border-b-2 hover:border-b-stone-900 text-stone-900 focus:outline-none focus:border-stone-900 transition-all duration-200 text-sm md:text-base"
         />
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-800"
+          className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-stone-800"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -105,15 +102,15 @@ export default function SearchBar() {
           />
         </svg>
         {isSearching && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-600"></div>
+          <div className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2">
+            <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-t-2 border-b-2 border-blue-600"></div>
           </div>
         )}
       </div>
 
       {/* Search Results Dropdown */}
       {showResults && searchResults.length > 0 && (
-        <div className="absolute z-50 w-full mt-2 bg-stone-50 rounded-sm shadow-2xl max-h-96 overflow-y-auto border border-stone-700">
+        <div className="absolute z-50 w-full mt-2 bg-stone-50 rounded-sm shadow-2xl max-h-[60vh] md:max-h-96 overflow-y-auto border border-stone-700">
           {searchResults.map((project) => {
             const matchType = getMatchType(project);
 
@@ -121,39 +118,38 @@ export default function SearchBar() {
               <div
                 key={project._id}
                 onClick={() => handleResultClick(project._id)}
-                className="flex items-center gap-3 px-3 py-2 hover:bg-stone-100 cursor-pointer transition-colors border-b border-stone-700 last:border-b-0"
+                className="flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 hover:bg-stone-100 cursor-pointer transition-colors border-b border-stone-700 last:border-b-0"
               >
                 <img
                   src={project.thumbnail}
                   alt={project.title}
-                  className="w-16 h-16 object-cover rounded-sm flex-shrink-0"
+                  className="w-12 h-12 md:w-16 md:h-16 object-cover rounded-sm flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   {/* Project Title */}
-                  <h4 className="font-semibold text-stone-900 line-clamp-1 m-0 p-0">
+                  <h4 className="font-semibold text-stone-900 line-clamp-1 m-0 p-0 text-xs md:text-sm">
                     {highlightText(project.title, searchQuery)}
                   </h4>
 
                   {/* User Info */}
-                  <p className="text-sm text-stone-700">
-                    <span className="font-medium">by</span> {highlightText(project.userId?.username, searchQuery)}
+                  <p className="text-xs md:text-sm text-stone-700">
+                    <span className="font-medium">by</span>{" "}
+                    {highlightText(project.userId?.username, searchQuery)}
                     {project.userId?.email && (
-                      <span className="text-xs text-stone-500 ml-1">
+                      <span className="text-xs text-stone-500 ml-1 hidden sm:inline">
                         ({highlightText(project.userId?.email, searchQuery)})
                       </span>
                     )}
                   </p>
 
                   {/* Match Type Badge & Stats */}
-                  <div className="flex items-center gap-3 text-xs mt-1">
+                  <div className="flex items-center gap-2 md:gap-3 text-xs mt-1">
                     {matchType && (
                       <span className="bg-amber-400 text-stone-900 px-1 py-0.5 rounded-sm text-xs font-medium">
-                        Match: {matchType}
+                        {matchType}
                       </span>
                     )}
-                    <span className="text-stone-600">
-                      👁️ {project.views || 0}
-                    </span>
+                    <span className="text-stone-600">👁️ {project.views || 0}</span>
                     <span className="text-stone-600">
                       ❤️ {project.likes?.length || 0}
                     </span>
@@ -170,9 +166,9 @@ export default function SearchBar() {
         searchQuery.length >= 2 &&
         searchResults.length === 0 &&
         !isSearching && (
-          <div className="absolute z-50 w-full mt-2 bg-stone-50 rounded-sm shadow-xl p-4 text-center border border-stone-700">
-            <div className="text-4xl mb-2">🔍</div>
-            <p className="text-stone-700 font-medium">
+          <div className="absolute z-50 w-full mt-2 bg-stone-50 rounded-sm shadow-xl p-3 md:p-4 text-center border border-stone-700">
+            <div className="text-2xl md:text-4xl mb-2">🔍</div>
+            <p className="text-stone-700 font-medium text-sm md:text-base">
               No projects found
             </p>
             <p className="text-xs text-stone-500 mt-1">

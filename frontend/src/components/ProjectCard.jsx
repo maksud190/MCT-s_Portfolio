@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import toast from "react-hot-toast";
-import { FaBeer } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function ProjectCard({ project }) {
   const [likes, setLikes] = useState(project.likes || 0);
@@ -12,10 +11,9 @@ export default function ProjectCard({ project }) {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  // Check like status
   useEffect(() => {
     if (user) {
-      checkLikeStatus();  
+      checkLikeStatus();
     }
   }, [user, project._id]);
 
@@ -23,7 +21,7 @@ export default function ProjectCard({ project }) {
     try {
       const token = localStorage.getItem("token");
       const res = await API.get(`/projects/${project._id}/like-status`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setIsLiked(res.data.isLiked);
       setLikes(res.data.likes);
@@ -32,10 +30,9 @@ export default function ProjectCard({ project }) {
     }
   };
 
-  // Handle like
   const handleLike = async (e) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error("Please login to like projects");
       return;
@@ -51,21 +48,21 @@ export default function ProjectCard({ project }) {
         `/projects/${project._id}/like`,
         {},
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
+
       setLikes(res.data.likes);
       setIsLiked(res.data.isLiked);
-      
+
       if (res.data.isLiked) {
-        toast.success("Liked! ❤️", { duration: 2000 });
+        toast.success("Liked! ❤️", { autoClose: 2000 });
       } else {
-        toast.success("Unliked", { duration: 2000 });
+        toast.success("Unliked", { autoClose: 2000 });
       }
     } catch (err) {
       console.error("Error liking project:", err);
-      
+
       if (err.response?.status === 401) {
         toast.error("Please login to like projects");
       } else {
@@ -76,13 +73,12 @@ export default function ProjectCard({ project }) {
     }
   };
 
-  // Format date helper function
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) {
       const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
       if (diffHours === 0) {
@@ -116,109 +112,81 @@ export default function ProjectCard({ project }) {
               <img
                 src={project.thumbnail}
                 alt={project.title}
-                className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-32 sm:h-36 md:h-40 object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
                 onError={() => setImageError(true)}
               />
-              
+
               {/* Image count badge */}
               {project.images && project.images.length > 1 && (
-                <div className="absolute top-2 right-2 bg-stone-900/40 text-white text-xs px-2 py-1 rounded-sm flex justify-center items-center gap-1">
-                  <span className="pb-1">📷</span>
-                  <span>{project.images.length}</span>
+                <div className="absolute top-2 right-2 bg-stone-900/40 text-white text-xs px-1.5 md:px-2 py-0.5 md:py-1 rounded-sm flex justify-center items-center gap-1">
+                  <span className="pb-0.5 text-xs md:text-sm">📷</span>
+                  <span className="text-xs md:text-sm">{project.images.length}</span>
                 </div>
               )}
             </>
           ) : (
-            <div className="w-full h-64 flex flex-col items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
-              <p className="text-sm text-gray-500 dark:text-gray-400">No Image</p>
+            <div className="w-full h-32 sm:h-36 md:h-40 flex flex-col items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
+              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                No Image
+              </p>
             </div>
           )}
-          
+
           <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
         </div>
 
         {/* Content Section */}
-        <div className="px-4 pt-2 pb-0 mb-0">
-          <h3 className="text-md font-bold text-stone-700 mb-0.5 line-clamp-1">
+        <div className="px-3 md:px-4 pt-2 pb-0 mb-0">
+          <h3 className="text-sm md:text-md font-bold text-stone-700 mb-0.5 line-clamp-1">
             {project.title}
           </h3>
 
-
-          <h4 className="text-sm rounded-sm text-stone-500 font-semibold">
-              {project.userId?.username}
-            </h4>
-
-
+          <h4 className="text-xs md:text-sm rounded-sm text-stone-500 font-semibold mb-1">
+            {project.userId?.username}
+          </h4>
 
           {/* Stats Row - Views, Comments, Date */}
           <div className="flex items-center justify-between text-xs font-light text-gray-500 dark:text-gray-400 mb-1.5">
             {/* Views */}
-            <div className="flex items-center gap-1">
-              <span className="text-lg">👁️</span>
-              <span className="text-stone-600 font-semibold">{project.views || 0}</span>
+            <div className="flex items-center gap-0.5 md:gap-1">
+              <span className="text-sm md:text-lg">👁️</span>
+              <span className="text-stone-600 font-semibold text-xs md:text-sm">
+                {project.views || 0}
+              </span>
             </div>
 
-            {/* ✅ Comments - Use .length for array */}
-            <div className="flex items-center gap-1">
-              <span className="text-lg">💬</span>
-              <span className="text-stone-600 font-semibold">{project.comments?.length || 0}</span>
+            {/* Comments */}
+            <div className="flex items-center gap-0.5 md:gap-1">
+              <span className="text-sm md:text-lg">💬</span>
+              <span className="text-stone-600 font-semibold text-xs md:text-sm">
+                {project.comments?.length || 0}
+              </span>
             </div>
-
-            {/* Upload Date */}
-            {/* <div className="flex items-center gap-1">
-              <span>📅</span>
-              <span>{formatDate(project.createdAt)}</span>
-            </div> */}
-
-
-            
 
             {/* Like Button */}
             <span
               onClick={handleLike}
               disabled={loading || !user}
-              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-sm transition-all ${
+              className={`flex items-center gap-0.5 md:gap-1 px-1 md:px-1.5 py-0.5 rounded-sm transition-all text-xs md:text-sm ${
                 isLiked
                   ? "bg-red-100 hover:bg-stone-300 text-red-600"
                   : "bg-stone-300 text-stone-800 hover:bg-red-900 hover:text-red-500"
-              } ${loading ? "opacity-50 cursor-not-allowed" : ""} ${!user ? "cursor-not-allowed opacity-70" : ""}`}
+              } ${loading ? "opacity-50 cursor-not-allowed" : ""} ${
+                !user ? "cursor-not-allowed opacity-70" : ""
+              }`}
               title={!user ? "Login to like" : isLiked ? "Unlike" : "Like"}
             >
-              <span className={`text-base transition-transform ${isLiked ? "scale-90" : ""}`}>
+              <span
+                className={`text-xs md:text-base transition-transform ${
+                  isLiked ? "scale-90" : ""
+                }`}
+              >
                 {isLiked ? "♥️" : "🩶"}
               </span>
-              <span>{likes}</span>
+              <span className="text-xs md:text-sm">{likes}</span>
             </span>
-
-
-
-
           </div>
-
-          {/* Footer with category and like button */}
-          {/* <div className="flex items-center justify-between"> */}
-            {/* <span className="text-xs rounded-sm font-extralight text-blue-200 mr-2 dark:text-amber-400 bg-stone-900 px-2 py-1">
-              {project.category}
-            </span> */}
-
-            {/* Like Button */}
-            {/* <span
-              onClick={handleLike}
-              disabled={loading || !user}
-              className={`flex items-center gap-1 px-3 py-1 rounded-sm transition-all ${
-                isLiked
-                  ? "bg-red-100 dark:bg-red-900/30 text-red-500"
-                  : "bg-stone-700 text-stone-300 hover:bg-red-900/20 hover:text-red-500"
-              } ${loading ? "opacity-50 cursor-not-allowed" : ""} ${!user ? "cursor-not-allowed opacity-70" : ""}`}
-              title={!user ? "Login to like" : isLiked ? "Unlike" : "Like"}
-            >
-              <span className={`text-base transition-transform ${isLiked ? "scale-90" : ""}`}>
-                {isLiked ? "❤️" : "🤍"}
-              </span>
-              <span>{likes}</span>
-            </span> */}
-          {/* </div> */}
         </div>
       </div>
     </Link>

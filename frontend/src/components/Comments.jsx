@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function Comments({ projectId }) {
   const { user } = useAuth();
@@ -127,40 +127,40 @@ export default function Comments({ projectId }) {
   };
 
   return (
-    <div className="mt-8 bg-stone-800 rounded-sm p-6">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+    <div className="mt-6 md:mt-8 bg-stone-800 rounded-sm p-4 md:p-6">
+      <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
         Comments ({comments.length})
       </h3>
 
       {/* Add Comment Form */}
       {user ? (
-        <form onSubmit={handleAddComment} className="mb-6">
-          <div className="flex gap-3">
+        <form onSubmit={handleAddComment} className="mb-4 md:mb-6">
+          <div className="flex flex-col sm:flex-row gap-3">
             {user.avatar ? (
               <img
                 src={user.avatar}
                 alt={user.username}
-                className="w-10 h-10 rounded-sm"
+                className="w-10 h-10 rounded-sm flex-shrink-0"
               />
             ) : (
-              <div className="w-10 h-10 rounded-sm bg-stone-800 flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 rounded-sm bg-stone-800 flex items-center justify-center text-white font-bold flex-shrink-0">
                 {user.username?.charAt(0).toUpperCase()}
               </div>
             )}
-            <div className="flex-1">
+            <div className="flex-1 w-full">
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment..."
                 rows="3"
-                className="w-full p-3 font-semibold border border-stone-600 rounded-sm bg-stone-900 text-stone-50 focus:ring-2  resize-none"
+                className="w-full p-2 md:p-3 font-semibold border border-stone-600 rounded-sm bg-stone-900 text-stone-50 focus:ring-2 resize-none text-sm md:text-base"
                 disabled={loading}
               />
               <div className="flex justify-end mt-2">
                 <button
                   type="submit"
                   disabled={loading || !newComment.trim()}
-                  className="px-4 py-2 text-sm bg-blue-600 hover:bg-stone-900 text-white !rounded-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 md:px-4 py-1.5 md:py-2 text-sm bg-blue-600 hover:bg-stone-900 text-white rounded-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? "Posting..." : "Post Comment"}
                 </button>
@@ -169,45 +169,45 @@ export default function Comments({ projectId }) {
           </div>
         </form>
       ) : (
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
-          <p className="text-gray-600 dark:text-gray-400">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+          <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
             Please login to comment
           </p>
         </div>
       )}
 
       {/* Comments List */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {comments.map((comment) => (
-          <div key={comment._id} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0">
+          <div key={comment._id} className="border-b border-gray-200 dark:border-gray-700 pb-3 md:pb-4 last:border-b-0">
             {/* Comment */}
-            <div className="flex gap-3">
+            <div className="flex gap-2 md:gap-3">
               {comment.user?.avatar ? (
                 <img
                   src={comment.user.avatar}
                   alt={comment.user.username}
-                  className="w-10 h-10 rounded-full"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full flex-shrink-0"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm md:text-base flex-shrink-0">
                   {comment.user?.username?.charAt(0).toUpperCase()}
                 </div>
               )}
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-stone-100">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="font-semibold text-stone-100 text-sm md:text-base break-words">
                     {comment.user?.username}
                   </span>
                   <span className="text-xs text-stone-500">
                     {formatDate(comment.createdAt)}
                   </span>
                 </div>
-                <p className="text-stone-300  whitespace-pre-wrap">
+                <p className="text-stone-300 whitespace-pre-wrap text-sm md:text-base break-words">
                   {comment.text}
                 </p>
                 
                 {/* Comment Actions */}
-                <div className="flex items-center gap-4 mt-2">
+                <div className="flex items-center gap-3 md:gap-4 mt-2">
                   <button
                     onClick={() =>
                       setShowReplyBox({
@@ -215,14 +215,14 @@ export default function Comments({ projectId }) {
                         [comment._id]: !showReplyBox[comment._id],
                       })
                     }
-                    className="text-sm text-stone-300 hover:text-blue-600"
+                    className="text-xs md:text-sm text-stone-300 hover:text-blue-600"
                   >
                     Reply
                   </button>
                   {user && (comment.user?._id === user._id) && (
                     <button
                       onClick={() => handleDeleteComment(comment._id)}
-                      className="text-sm text-red-600 hover:text-red-700"
+                      className="text-xs md:text-sm text-red-600 hover:text-red-700"
                     >
                       Delete
                     </button>
@@ -231,7 +231,7 @@ export default function Comments({ projectId }) {
 
                 {/* Reply Box */}
                 {showReplyBox[comment._id] && user && (
-                  <div className="mt-3 ml-8">
+                  <div className="mt-3 ml-0 sm:ml-8">
                     <textarea
                       value={replyText[comment._id] || ""}
                       onChange={(e) =>
@@ -242,12 +242,12 @@ export default function Comments({ projectId }) {
                       }
                       placeholder="Write a reply..."
                       rows="2"
-                      className="w-full p-2 border border-stone-600 rounded-sm  bg-stone-900 text-stone-100 text-sm font-semibold focus:ring-2 resize-none"
+                      className="w-full p-2 border border-stone-600 rounded-sm bg-stone-900 text-stone-100 text-xs md:text-sm font-semibold focus:ring-2 resize-none"
                     />
                     <div className="flex gap-2 mt-2">
                       <button
                         onClick={() => handleAddReply(comment._id)}
-                        className="!px-4 !py-0.5 bg-blue-600 hover:bg-stone-900 text-stone-100 !rounded-sm !text-md"
+                        className="px-3 md:px-4 py-1 md:py-1.5 bg-blue-600 hover:bg-stone-900 text-stone-100 rounded-sm text-xs md:text-sm"
                       >
                         Reply
                       </button>
@@ -258,7 +258,7 @@ export default function Comments({ projectId }) {
                             [comment._id]: false,
                           })
                         }
-                        className="!px-3 !py-1 bg-gray-400  hover:bg-stone-900 text-stone-800 hover:text-stone-100 !rounded-sm !text-md"
+                        className="px-2 md:px-3 py-1 md:py-1.5 bg-gray-400 hover:bg-stone-900 text-stone-800 hover:text-stone-100 rounded-sm text-xs md:text-sm"
                       >
                         Cancel
                       </button>
@@ -268,30 +268,30 @@ export default function Comments({ projectId }) {
 
                 {/* Replies */}
                 {comment.replies && comment.replies.length > 0 && (
-                  <div className="mt-4 ml-8 space-y-3">
+                  <div className="mt-3 md:mt-4 ml-0 sm:ml-8 space-y-2 md:space-y-3">
                     {comment.replies.map((reply, idx) => (
                       <div key={idx} className="flex gap-2">
                         {reply.user?.avatar ? (
                           <img
                             src={reply.user.avatar}
                             alt={reply.user.username}
-                            className="w-8 h-8 rounded-full"
+                            className="w-6 h-6 md:w-8 md:h-8 rounded-full flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-bold">
+                          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs md:text-sm font-bold flex-shrink-0">
                             {reply.user?.username?.charAt(0).toUpperCase()}
                           </div>
                         )}
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-sm text-gray-900 dark:text-white">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <span className="font-semibold text-xs md:text-sm text-gray-900 dark:text-white break-words">
                               {reply.user?.username}
                             </span>
                             <span className="text-xs text-gray-500 dark:text-gray-400">
                               {formatDate(reply.createdAt)}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                          <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300 break-words">
                             {reply.text}
                           </p>
                         </div>
@@ -305,7 +305,7 @@ export default function Comments({ projectId }) {
         ))}
 
         {comments.length === 0 && (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <div className="text-center py-6 md:py-8 text-gray-500 dark:text-gray-400 text-sm md:text-base">
             No comments yet. Be the first to comment!
           </div>
         )}

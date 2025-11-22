@@ -2,7 +2,7 @@ import { useState } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import TagsInput from "../components/TagsInput";
 
 export default function Upload() {
@@ -21,7 +21,7 @@ export default function Upload() {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [tags, setTags] = useState([]); // 🔥 Tags state
+  const [tags, setTags] = useState([]);
 
   const categories = {
     "3d": ["Character Modeling", "Environment Modeling", "Product Visualization", "Architectural Visualization", "3D Animation"],
@@ -139,13 +139,12 @@ export default function Upload() {
     });
     setThumbnailPreview(null);
     setPreviews([]);
-    setTags([]); // 🔥 Reset tags
+    setTags([]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Check if user exists
     if (!user || !user._id) {
       toast.error("Please login to upload projects");
       navigate("/login");
@@ -158,7 +157,6 @@ export default function Upload() {
     }
 
     setLoading(true);
-    const loadingToast = toast.loading("Uploading your project...");
 
     try {
       const form = new FormData();
@@ -168,12 +166,10 @@ export default function Upload() {
       form.append("userId", user._id.toString());
       form.append("thumbnail", data.thumbnail);
       
-      // 🔥 Add tags as JSON string
       if (tags.length > 0) {
         form.append("tags", JSON.stringify(tags));
       }
       
-      // Additional files
       data.files.forEach((file) => {
         form.append("files", file);
       });
@@ -184,13 +180,13 @@ export default function Upload() {
         userId: user._id,
         thumbnail: data.thumbnail?.name,
         additionalFiles: data.files.length,
-        tags: tags // 🔥 Log tags
+        tags: tags
       });
 
       const token = localStorage.getItem("token");
       
       if (!token) {
-        toast.error("Session expired. Please login again.", { id: loadingToast });
+        toast.error("Session expired. Please login again.");
         navigate("/login");
         return;
       }
@@ -204,9 +200,7 @@ export default function Upload() {
 
       console.log("✅ Upload success:", response.data);
 
-      toast.success("Project uploaded successfully! 🎉", {
-        id: loadingToast,
-      });
+      toast.success("Project uploaded successfully! 🎉");
 
       resetForm();
       
@@ -219,14 +213,13 @@ export default function Upload() {
       console.error("Error response:", err.response?.data);
       
       if (err.response?.status === 401) {
-        toast.error("Session expired. Please login again.", { id: loadingToast });
+        toast.error("Session expired. Please login again.");
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         navigate("/login");
       } else {
         toast.error(
-          err.response?.data?.message || "Upload failed. Please try again.",
-          { id: loadingToast }
+          err.response?.data?.message || "Upload failed. Please try again."
         );
       }
     } finally {
@@ -235,32 +228,32 @@ export default function Upload() {
   };
 
   return (
-    <div className="min-h-screen p-6 flex items-center justify-center">
+    <div className="min-h-screen p-3 md:p-6 flex items-center justify-center">
       <div className="w-full max-w-3xl">
-        <form onSubmit={handleSubmit} className="bg-stone-900 p-8 rounded-sm shadow-lg">
-          <h2 className="text-2xl font-bold mb-6 text-white text-center">
+        <form onSubmit={handleSubmit} className="bg-stone-900 p-4 md:p-6 lg:p-8 rounded-sm shadow-lg">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white text-center">
             Upload New Project
           </h2>
 
           {/* Thumbnail Upload */}
           {thumbnailPreview ? (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Thumbnail Image <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <img 
                   src={thumbnailPreview} 
                   alt="Thumbnail" 
-                  className="w-full h-64 object-cover rounded-sm"
+                  className="w-full h-48 md:h-64 object-cover rounded-sm"
                 />
-                <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-sm">
+                <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 md:px-3 py-1 rounded-sm">
                   Thumbnail
                 </span>
                 <button
                   type="button"
                   onClick={removeThumbnail}
-                  className="absolute top-2 right-2 bg-red-600 text-white !px-3 !py-1 !rounded-sm hover:bg-red-700 transition-colors"
+                  className="absolute top-2 right-2 bg-red-600 text-white px-2 md:px-3 py-1 rounded-sm hover:bg-red-700 transition-colors text-sm md:text-base"
                   disabled={loading}
                 >
                   ✕
@@ -268,8 +261,8 @@ export default function Upload() {
               </div>
             </div>
           ) : (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Thumbnail Image <span className="text-red-500">*</span>
               </label>
               <input
@@ -282,11 +275,11 @@ export default function Upload() {
               />
               <label
                 htmlFor="thumbnail-upload"
-                className="flex items-center justify-center w-full h-48 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
+                className="flex items-center justify-center w-full h-40 md:h-48 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
               >
                 <div className="text-center">
-                  <p className="text-4xl mb-2">🖼️</p>
-                  <p className="text-sm text-stone-400 font-medium">
+                  <p className="text-3xl md:text-4xl mb-2">🖼️</p>
+                  <p className="text-xs md:text-sm text-stone-400 font-medium">
                     Click to upload thumbnail
                   </p>
                   <p className="text-xs text-stone-500 mt-1">
@@ -299,22 +292,22 @@ export default function Upload() {
 
           {/* Additional Images */}
           {previews.length > 0 && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Additional Images ({previews.length}/4)
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {previews.map((preview, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={preview}
                       alt={`Preview ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg"
+                      className="w-full h-24 md:h-32 object-cover rounded-lg"
                     />
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute top-1 right-1 bg-red-600 text-white !px-2 !py-0.5 !rounded-sm hover:bg-red-700 transition-colors"
+                      className="absolute top-1 right-1 bg-red-600 text-white px-1.5 md:px-2 py-0.5 rounded-sm hover:bg-red-700 transition-colors text-xs md:text-sm"
                       disabled={loading}
                     >
                       ✕
@@ -327,8 +320,8 @@ export default function Upload() {
 
           {/* Add More Images Button */}
           {data.files.length < 4 && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-stone-200 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-stone-200 mb-2">
                 Add More Images (Optional, max 4 total)
               </label>
               <input
@@ -342,11 +335,11 @@ export default function Upload() {
               />
               <label
                 htmlFor="files-upload"
-                className="flex items-center justify-center w-full p-4 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
+                className="flex items-center justify-center w-full p-3 md:p-4 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
               >
                 <div className="text-center">
-                  <p className="text-2xl mb-1">📁</p>
-                  <p className="text-sm text-stone-500">
+                  <p className="text-xl md:text-2xl mb-1">📁</p>
+                  <p className="text-xs md:text-sm text-stone-500">
                     Click to add more images ({4 - data.files.length} remaining)
                   </p>
                 </div>
@@ -355,15 +348,15 @@ export default function Upload() {
           )}
 
           {/* Title */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="mb-3 md:mb-4">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Project Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={data.title}
               onChange={(e) => setData({ ...data, title: e.target.value })}
-              className="w-full p-3 border-2 border-dashed border-stone-600 rounded-sm cursor-auto dark:hover:border-blue-400 transition-all bg-stone-800"
+              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-auto dark:hover:border-blue-400 transition-all bg-stone-800 text-white"
               placeholder="Enter project title"
               disabled={loading}
               required
@@ -371,15 +364,15 @@ export default function Upload() {
           </div>
 
           {/* Description */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="mb-3 md:mb-4">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Description <span className="text-red-500">*</span>
             </label>
             <textarea
               value={data.description}
               rows="4"
               onChange={(e) => setData({ ...data, description: e.target.value })}
-              className="w-full p-3 border-2 border-dashed border-stone-600 rounded-sm cursor-auto hover:border-blue-400 transition-all bg-stone-800 resize-none"
+              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-auto hover:border-blue-400 transition-all bg-stone-800 resize-none text-white"
               placeholder="Describe your project..."
               disabled={loading}
               required
@@ -387,14 +380,14 @@ export default function Upload() {
           </div>
 
           {/* Category */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="mb-3 md:mb-4">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category <span className="text-red-500">*</span>
             </label>
             <select
               value={data.category}
               onChange={handleCategoryChange}
-              className="w-full p-3 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
+              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white"
               disabled={loading}
               required
             >
@@ -407,14 +400,14 @@ export default function Upload() {
 
           {/* Subcategory */}
           {data.category && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Subcategory <span className="text-red-500">*</span>
               </label>
               <select
                 value={data.subcategory}
                 onChange={(e) => setData({ ...data, subcategory: e.target.value })}
-                className="w-full p-3 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
+                className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white"
                 disabled={loading}
                 required
               >
@@ -426,8 +419,8 @@ export default function Upload() {
             </div>
           )}
 
-          {/* 🔥 Tags Input Component */}
-          <div className="mb-6">
+          {/* Tags Input Component */}
+          <div className="mb-4 md:mb-6">
             <TagsInput tags={tags} setTags={setTags} />
           </div>
 
@@ -435,13 +428,13 @@ export default function Upload() {
           <button
             type="submit"
             disabled={loading || !data.thumbnail}
-            className="w-full bg-blue-600 hover:bg-stone-800 text-white font-semibold px-6 py-3 !rounded-sm transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 hover:bg-stone-800 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-sm transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
           >
             {loading ? "Uploading..." : !data.thumbnail ? "Select Thumbnail to Upload" : "Upload Project"}
           </button>
 
           {!data.thumbnail && (
-            <p className="mt-2 text-sm text-center text-red-500">
+            <p className="mt-2 text-xs md:text-sm text-center text-red-500">
               * Thumbnail is required
             </p>
           )}

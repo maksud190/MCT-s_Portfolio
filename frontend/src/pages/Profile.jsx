@@ -3,7 +3,7 @@ import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import ProjectCard from "../components/ProjectCard";
 import { useNavigate, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const { user: currentUser } = useAuth();
@@ -58,13 +58,11 @@ export default function Profile() {
 
     if (!isConfirmed) return;
 
-    const loadingToast = toast.loading("Deleting project...");
-
     try {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        toast.error("Please login again", { id: loadingToast });
+        toast.error("Please login again");
         navigate("/login");
         return;
       }
@@ -73,13 +71,11 @@ export default function Profile() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Project deleted successfully!", { id: loadingToast });
+      toast.success("Project deleted successfully!");
       setProjects(projects.filter((p) => p._id !== projectId));
     } catch (err) {
       console.error("Error deleting project:", err);
-      toast.error(err.response?.data?.message || "Failed to delete project", {
-        id: loadingToast,
-      });
+      toast.error(err.response?.data?.message || "Failed to delete project");
     }
   };
 
@@ -96,63 +92,62 @@ export default function Profile() {
   if (loading && !displayUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading profile...</div>
+        <div className="text-base md:text-xl">Loading profile...</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8">
       {/* User Info Card */}
-      <div className="bg-stone-900 rounded-sm shadow-md p-6 mb-8">
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+      <div className="bg-stone-900 rounded-sm shadow-md p-4 md:p-6 mb-6 md:mb-8">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
           {/* Avatar */}
           <div className="flex-shrink-0">
             {displayUser?.avatar ? (
               <img
                 src={displayUser.avatar}
                 alt={displayUser.username}
-                className="w-32 h-32 rounded-sm object-cover border-4 border-stone-800"
+                className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-sm object-cover border-4 border-stone-800"
               />
             ) : (
-              <div className="w-32 h-32 rounded-sm bg-stone-800 flex items-center justify-center text-stone-100 text-7xl font-bold">
+              <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-sm bg-stone-800 flex items-center justify-center text-stone-100 text-4xl md:text-5xl lg:text-7xl font-bold">
                 {displayUser?.username?.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
 
           {/* User Details */}
-          <div className="flex-1 text-center md:text-left">
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
+          <div className="flex-1 text-center md:text-left w-full">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-3 md:mb-4">
               <div className="flex-1">
-                <h2 className="text-3xl font-bold text-stone-100 mb-1">
+                <h2 className="text-2xl md:text-3xl font-bold text-stone-100 mb-1">
                   {displayUser?.username}
                 </h2>
-                <p className="text-stone-300">{displayUser?.email}</p>
+                <p className="text-sm md:text-base text-stone-300 break-all">
+                  {displayUser?.email}
+                </p>
                 
-                {/* Designation */}
                 {displayUser?.designation && (
-                  <p className="text-sm text-blue-600 font-semibold mb-1">
+                  <p className="text-xs md:text-sm text-blue-600 font-semibold mb-1">
                     {displayUser.designation}
                   </p>
                 )}
                 
-                {/* Department */}
                 {displayUser?.department && (
-                  <p className="text-sm text-stone-300">
+                  <p className="text-xs md:text-sm text-stone-300">
                     {displayUser.department}
                   </p>
                 )}
               </div>
 
-              {/* Settings Button - Only for own profile */}
               {isOwnProfile && (
                 <button
                   onClick={() => navigate("/settings")}
-                  className="mt-4 md:mt-0 bg-blue-600 hover:bg-stone-800 text-stone-100 px-4 py-2 !rounded-sm font-medium transition-colors flex items-center gap-2 mx-auto md:mx-0"
+                  className="mt-3 md:mt-0 bg-blue-600 hover:bg-stone-800 text-stone-100 px-3 md:px-4 py-2 rounded-sm font-medium transition-colors flex items-center gap-2 mx-auto md:mx-0 text-sm md:text-base"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4 md:w-5 md:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -176,83 +171,84 @@ export default function Profile() {
             </div>
 
             {/* Bio */}
-            <p className="text-stone-300 font-semibold text-sm mb-4">
-              <span className="text-stone-400 font-extrabold">Bio:</span> {displayUser?.bio || "No bio yet."}
+            <p className="text-stone-300 font-semibold text-xs md:text-sm mb-3 md:mb-4">
+              <span className="text-stone-400 font-extrabold">Bio:</span>{" "}
+              {displayUser?.bio || "No bio yet."}
             </p>
 
             {/* Social Links */}
             {hasSocialLinks ? (
-              <div className="mb-4">
-                <p className="text-sm text-stone-500 mb-2 font-semibold">
+              <div className="mb-3 md:mb-4">
+                <p className="text-xs md:text-sm text-stone-500 mb-2 font-semibold">
                   Connect:
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2 md:gap-3 justify-center md:justify-start">
                   {displayUser.socialLinks.linkedin && (
-                    <a
-                      href={displayUser.socialLinks.linkedin}
+                    
+                    <a href={displayUser.socialLinks.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-sm transition-colors"
+                      className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-xs md:text-sm transition-colors"
                     >
                       <span className="text-stone-200">LinkedIn</span>
                     </a>
                   )}
                   {displayUser.socialLinks.github && (
-                    <a
-                      href={displayUser.socialLinks.github}
+                    
+                     <a href={displayUser.socialLinks.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-sm transition-colors"
+                      className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-xs md:text-sm transition-colors"
                     >
                       <span className="text-stone-200">GitHub</span>
                     </a>
                   )}
                   {displayUser.socialLinks.behance && (
-                    <a
-                      href={displayUser.socialLinks.behance}
+                    
+                     <a href={displayUser.socialLinks.behance}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-sm transition-colors"
+                      className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-xs md:text-sm transition-colors"
                     >
                       <span className="text-stone-200">Behance</span>
                     </a>
                   )}
                   {displayUser.socialLinks.portfolio && (
-                    <a
-                      href={displayUser.socialLinks.portfolio}
+                    
+                     <a href={displayUser.socialLinks.portfolio}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-sm transition-colors"
+                      className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-xs md:text-sm transition-colors"
                     >
                       <span className="text-stone-200">Portfolio</span>
                     </a>
                   )}
                   {displayUser.socialLinks.twitter && (
-                    <a
-                      href={displayUser.socialLinks.twitter}
+                    
+                     <a href={displayUser.socialLinks.twitter}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-sm transition-colors"
+                      className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-xs md:text-sm transition-colors"
                     >
                       <span className="text-stone-200">Twitter</span>
                     </a>
                   )}
                   {displayUser.socialLinks.instagram && (
-                    <a
-                      href={displayUser.socialLinks.instagram}
+                    
+                     <a href={displayUser.socialLinks.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-sm transition-colors"
+                      className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-xs md:text-sm transition-colors"
                     >
                       <span className="text-stone-200">Instagram</span>
                     </a>
                   )}
                   {displayUser.socialLinks.facebook && (
-                    <a
-                      href={displayUser.socialLinks.facebook}
+                    
+                     <a href={displayUser.socialLinks.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-sm transition-colors"
+                      className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-stone-800 hover:bg-stone-950 text-white rounded-sm text-xs md:text-sm transition-colors"
                     >
                       <span className="text-stone-200">Facebook</span>
                     </a>
@@ -260,13 +256,13 @@ export default function Profile() {
                 </div>
               </div>
             ) : isOwnProfile ? (
-              <div className="mb-4 p-3 bg-stone-800 rounded-sm">
-                <p className="text-sm text-stone-400 flex items-center gap-2">
+              <div className="mb-3 md:mb-4 p-2 md:p-3 bg-stone-800 rounded-sm">
+                <p className="text-xs md:text-sm text-stone-400 flex flex-wrap items-center gap-1 md:gap-2 justify-center md:justify-start">
                   <span>🔗</span>
                   <span>No social links added yet.</span>
                   <button
                     onClick={() => navigate("/settings")}
-                    className="text-blue-600 hover:text-blue-500 underline ml-2"
+                    className="text-blue-600 hover:text-blue-500 underline"
                   >
                     Add links
                   </button>
@@ -276,7 +272,7 @@ export default function Profile() {
 
             {/* Student Details */}
             {(isOwnProfile || displayUser?.studentId) && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm bg-stone-800 rounded-sm p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3 text-xs md:text-sm bg-stone-800 rounded-sm p-3 md:p-4">
                 {displayUser.studentId && (
                   <div>
                     <span className="font-semibold text-stone-400">
@@ -318,15 +314,15 @@ export default function Profile() {
       </div>
 
       {/* Projects Section */}
-      <h3 className="text-2xl font-bold mb-6 text-gray-800">
+      <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-800">
         {isOwnProfile ? "Your" : `${displayUser?.username}'s`} Projects (
         {projects.length})
       </h3>
 
       {projects.length > 0 ? (
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4">
+        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 md:gap-4">
           {projects.map((p) => (
-            <div key={p._id} className="break-inside-avoid mb-4">
+            <div key={p._id} className="break-inside-avoid mb-3 md:mb-4">
               <div className="relative group">
                 <ProjectCard project={p} />
 
@@ -337,11 +333,11 @@ export default function Profile() {
                         e.preventDefault();
                         handleEdit(p._id);
                       }}
-                      className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white p-2 !rounded-sm shadow-lg transition-all "
+                      className="px-2 md:px-3 py-1.5 md:py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-sm shadow-lg transition-all"
                       title="Edit project"
                     >
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4 md:w-5 md:h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -360,11 +356,11 @@ export default function Profile() {
                         e.preventDefault();
                         handleDelete(p._id, p.title);
                       }}
-                      className="bg-red-700 hover:bg-red-600 text-white px-3 py-2 !rounded-sm shadow-lg transition-all"
+                      className="bg-red-700 hover:bg-red-600 text-white px-2 md:px-3 py-1.5 md:py-2 rounded-sm shadow-lg transition-all"
                       title="Delete project"
                     >
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4 md:w-5 md:h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -384,8 +380,8 @@ export default function Profile() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-stone-900 !rounded-sm">
-          <p className="text-stone-200 mb-4">
+        <div className="text-center py-8 md:py-12 bg-stone-900 rounded-sm">
+          <p className="text-sm md:text-base text-stone-200 mb-3 md:mb-4">
             {isOwnProfile
               ? "You haven't uploaded any projects yet."
               : "No projects uploaded yet."}
@@ -393,7 +389,7 @@ export default function Profile() {
           {isOwnProfile && (
             <button
               onClick={() => navigate("/upload")}
-              className="bg-blue-600 hover:bg-stone-800 text-white px-6 py-2 !rounded-sm font-medium transition-colors"
+              className="bg-blue-600 hover:bg-stone-800 text-white px-4 md:px-6 py-2 rounded-sm font-medium transition-colors text-sm md:text-base"
             >
               Upload Your First Project
             </button>

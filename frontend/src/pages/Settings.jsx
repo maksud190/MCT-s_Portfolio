@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API } from "../api/api";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -67,7 +67,6 @@ export default function Settings() {
       return;
     }
 
-    // Load user data
     setProfileData({
       username: user.username || "",
       bio: user.bio || "",
@@ -95,7 +94,6 @@ export default function Settings() {
     );
   }, [user, navigate]);
 
-  // Avatar handling
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -184,89 +182,51 @@ export default function Settings() {
     }
   };
 
-  // Update Profile (with avatar and social links)
   const handleUpdateProfile = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  const loadingToast = toast.loading("Updating profile...");
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const form = new FormData();
-    form.append("username", profileData.username);
-    form.append("bio", profileData.bio);
-    form.append("studentId", profileData.studentId);
-    form.append("batch", profileData.batch);
-    form.append("batchAdvisor", profileData.batchAdvisor);
-    form.append("batchMentor", profileData.batchMentor);
-    form.append("role", profileData.role);
-    form.append("designation", profileData.designation);
-    form.append("department", profileData.department);
-    form.append("socialLinks", JSON.stringify(socialLinks));
+    try {
+      const form = new FormData();
+      form.append("username", profileData.username);
+      form.append("bio", profileData.bio);
+      form.append("studentId", profileData.studentId);
+      form.append("batch", profileData.batch);
+      form.append("batchAdvisor", profileData.batchAdvisor);
+      form.append("batchMentor", profileData.batchMentor);
+      form.append("role", profileData.role);
+      form.append("designation", profileData.designation);
+      form.append("department", profileData.department);
+      form.append("socialLinks", JSON.stringify(socialLinks));
 
-    if (avatar) {
-      form.append("avatar", avatar);
+      if (avatar) {
+        form.append("avatar", avatar);
+      }
+
+      const token = localStorage.getItem("token");
+
+      const res = await API.put("/users/profile", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      updateUser(res.data.user);
+
+      if (res.data.user.avatar) {
+        setAvatarPreview(res.data.user.avatar);
+      }
+
+      toast.success("Profile updated successfully!");
+    } catch (err) {
+      console.error("❌ Update error:", err);
+      toast.error(err.response?.data?.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // ✅ Log what we're sending
-    console.log("📤 Sending data to API:");
-    console.log({
-      username: profileData.username,
-      role: profileData.role,
-      designation: profileData.designation,
-      department: profileData.department,
-      batch: profileData.batch,
-      studentId: profileData.studentId,
-    });
-
-    const token = localStorage.getItem("token");
-
-    const res = await API.put("/users/profile", form, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    // ✅ Log the full response
-    console.log("📥 Full API response:", res.data);
-    console.log("📥 User data from API:", res.data.user);
-    
-    // ✅ Check specific fields
-    console.log("🔍 Checking received fields:");
-    console.log("  - Role:", res.data.user.role);
-    console.log("  - Designation:", res.data.user.designation);
-    console.log("  - Department:", res.data.user.department);
-
-    // ✅ Update user in context
-    console.log("🔄 Calling updateUser with:", res.data.user);
-    updateUser(res.data.user);
-
-    if (res.data.user.avatar) {
-      setAvatarPreview(res.data.user.avatar);
-    }
-
-    toast.success("Profile updated successfully!", { id: loadingToast });
-    
-    // ✅ Verify localStorage after update
-    setTimeout(() => {
-      const savedUser = JSON.parse(localStorage.getItem("user"));
-      console.log("💾 User in localStorage after update:", savedUser);
-      console.log("  - Role:", savedUser.role);
-      console.log("  - Designation:", savedUser.designation);
-    }, 100);
-    
-  } catch (err) {
-    console.error("❌ Update error:", err);
-    console.error("❌ Error response:", err.response?.data);
-    toast.error(err.response?.data?.message || "Failed to update profile", {
-      id: loadingToast,
-    });
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // Update Account (Password)
   const handleUpdateAccount = async (e) => {
     e.preventDefault();
 
@@ -284,7 +244,6 @@ export default function Settings() {
     }
 
     setLoading(true);
-    const loadingToast = toast.loading("Updating account...");
 
     try {
       const token = localStorage.getItem("token");
@@ -301,9 +260,8 @@ export default function Settings() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Account updated successfully!", { id: loadingToast });
+      toast.success("Account updated successfully!");
 
-      // Clear password fields
       setAccountData({
         currentPassword: "",
         newPassword: "",
@@ -311,15 +269,12 @@ export default function Settings() {
       });
     } catch (err) {
       console.error("Update account error:", err);
-      toast.error(err.response?.data?.message || "Failed to update account", {
-        id: loadingToast,
-      });
+      toast.error(err.response?.data?.message || "Failed to update account");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete Account
   const handleDeleteAccount = async () => {
     const confirmed = window.confirm(
       "⚠️ WARNING: This will permanently delete your account and all your projects!\n\nType 'DELETE' to confirm:"
@@ -334,7 +289,6 @@ export default function Settings() {
     }
 
     setLoading(true);
-    const loadingToast = toast.loading("Deleting account...");
 
     try {
       const token = localStorage.getItem("token");
@@ -343,14 +297,12 @@ export default function Settings() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      toast.success("Account deleted successfully", { id: loadingToast });
+      toast.success("Account deleted successfully");
       logout();
       navigate("/");
     } catch (err) {
       console.error("Delete account error:", err);
-      toast.error(err.response?.data?.message || "Failed to delete account", {
-        id: loadingToast,
-      });
+      toast.error(err.response?.data?.message || "Failed to delete account");
     } finally {
       setLoading(false);
     }
@@ -361,16 +313,16 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-3 md:p-4 lg:p-6">
       {/* Image Cropper Modal */}
       {showCropper && imageToCrop && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-auto">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 md:p-6 w-full max-w-2xl max-h-[90vh] overflow-auto">
+            <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4">
               Crop Profile Picture
             </h3>
 
-            <div className="mb-4 flex justify-center">
+            <div className="mb-3 md:mb-4 flex justify-center">
               <ReactCrop
                 crop={crop}
                 onChange={(c) => setCrop(c)}
@@ -387,11 +339,11 @@ export default function Settings() {
               </ReactCrop>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <button
                 type="button"
                 onClick={handleCropComplete}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm md:text-base"
               >
                 Apply Crop
               </button>
@@ -401,7 +353,7 @@ export default function Settings() {
                   setShowCropper(false);
                   setImageToCrop(null);
                 }}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm md:text-base"
               >
                 Cancel
               </button>
@@ -412,14 +364,14 @@ export default function Settings() {
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
         {/* Header */}
-        <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+        <div className="border-b border-gray-200 dark:border-gray-700 p-4 md:p-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               Settings
             </h1>
             <button
               onClick={() => navigate("/profile")}
-              className="text-gray-600 dark:text-gray-400 hover:text-amber-500 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-amber-500 transition-colors text-sm md:text-base"
             >
               ← Back to Profile
             </button>
@@ -428,11 +380,11 @@ export default function Settings() {
 
         <div className="flex flex-col md:flex-row">
           {/* Sidebar Tabs */}
-          <div className="md:w-64 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 p-6">
+          <div className="md:w-64 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 p-4 md:p-6">
             <nav className="space-y-2">
               <button
                 onClick={() => setActiveTab("profile")}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
                   activeTab === "profile"
                     ? "bg-amber-400 text-white"
                     : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -442,7 +394,7 @@ export default function Settings() {
               </button>
               <button
                 onClick={() => setActiveTab("account")}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
                   activeTab === "account"
                     ? "bg-amber-400 text-white"
                     : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -452,7 +404,7 @@ export default function Settings() {
               </button>
               <button
                 onClick={() => setActiveTab("social")}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
                   activeTab === "social"
                     ? "bg-amber-400 text-white"
                     : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -462,7 +414,7 @@ export default function Settings() {
               </button>
               <button
                 onClick={() => setActiveTab("danger")}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
                   activeTab === "danger"
                     ? "bg-red-500 text-white"
                     : "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
@@ -474,17 +426,17 @@ export default function Settings() {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-4 md:p-6">
             {/* Profile Tab */}
             {activeTab === "profile" && (
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
                   Profile Settings
                 </h2>
                 <form onSubmit={handleUpdateProfile}>
                   {/* Avatar */}
-                  <div className="mb-6 text-center">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="mb-4 md:mb-6 text-center">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Profile Picture
                     </label>
 
@@ -493,10 +445,10 @@ export default function Settings() {
                         <img
                           src={avatarPreview}
                           alt="Avatar"
-                          className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700 mb-4"
+                          className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700 mb-3 md:mb-4"
                         />
                       ) : (
-                        <div className="w-32 h-32 rounded-full bg-amber-400 flex items-center justify-center text-white text-4xl font-bold mb-4">
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-amber-400 flex items-center justify-center text-white text-3xl md:text-4xl font-bold mb-3 md:mb-4">
                           {profileData.username?.charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -511,7 +463,7 @@ export default function Settings() {
                       />
                       <label
                         htmlFor="avatar-upload"
-                        className="bg-amber-400 hover:bg-amber-400/80 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors"
+                        className="bg-amber-400 hover:bg-amber-400/80 text-white px-3 md:px-4 py-2 rounded-lg cursor-pointer transition-colors text-sm md:text-base"
                       >
                         {avatarPreview ? "Change Picture" : "Upload Picture"}
                       </label>
@@ -519,8 +471,8 @@ export default function Settings() {
                   </div>
 
                   {/* Username */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="mb-3 md:mb-4">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Username
                     </label>
                     <input
@@ -529,15 +481,15 @@ export default function Settings() {
                       onChange={(e) =>
                         setProfileData({ ...profileData, username: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       required
                       disabled={loading}
                     />
                   </div>
 
                   {/* Bio */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="mb-3 md:mb-4">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Bio
                     </label>
                     <textarea
@@ -546,15 +498,15 @@ export default function Settings() {
                         setProfileData({ ...profileData, bio: e.target.value })
                       }
                       rows="4"
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
                       disabled={loading}
                       placeholder="Tell us about yourself..."
                     />
                   </div>
 
                   {/* Role Selection */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="mb-3 md:mb-4">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       I am a
                     </label>
                     <select
@@ -562,7 +514,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setProfileData({ ...profileData, role: e.target.value })
                       }
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                     >
                       <option value="student">🎓 Student</option>
@@ -571,8 +523,8 @@ export default function Settings() {
                   </div>
 
                   {/* Designation */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="mb-3 md:mb-4">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Designation
                     </label>
                     <input
@@ -584,15 +536,15 @@ export default function Settings() {
                           designation: e.target.value,
                         })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="e.g. Undergraduate Student, Lecturer, etc."
                     />
                   </div>
 
                   {/* Department */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="mb-3 md:mb-4">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Department
                     </label>
                     <input
@@ -604,16 +556,16 @@ export default function Settings() {
                           department: e.target.value,
                         })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="e.g. Multimedia and Creative Technology"
                     />
                   </div>
 
                   {/* Student Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Student ID
                       </label>
                       <input
@@ -622,14 +574,14 @@ export default function Settings() {
                         onChange={(e) =>
                           setProfileData({ ...profileData, studentId: e.target.value })
                         }
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         disabled={loading}
                         placeholder="e.g. 221-40-041"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Batch
                       </label>
                       <input
@@ -638,14 +590,14 @@ export default function Settings() {
                         onChange={(e) =>
                           setProfileData({ ...profileData, batch: e.target.value })
                         }
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         disabled={loading}
                         placeholder="e.g. 31"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Batch Advisor
                       </label>
                       <input
@@ -657,14 +609,14 @@ export default function Settings() {
                             batchAdvisor: e.target.value,
                           })
                         }
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         disabled={loading}
                         placeholder="Advisor name"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Batch Mentor
                       </label>
                       <input
@@ -676,7 +628,7 @@ export default function Settings() {
                             batchMentor: e.target.value,
                           })
                         }
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         disabled={loading}
                         placeholder="Mentor name"
                       />
@@ -686,7 +638,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                   >
                     {loading ? "Saving..." : "Save Profile"}
                   </button>
@@ -697,19 +649,19 @@ export default function Settings() {
             {/* Account Tab */}
             {activeTab === "account" && (
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
                   Account Settings
                 </h2>
-                <form onSubmit={handleUpdateAccount} className="space-y-4">
+                <form onSubmit={handleUpdateAccount} className="space-y-3 md:space-y-4">
                   {/* Email (Read-only) */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email
                     </label>
                     <input
                       type="email"
                       value={user.email}
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed"
                       disabled
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -718,15 +670,15 @@ export default function Settings() {
                   </div>
 
                   {/* Change Password Section */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  <div className="pt-3 md:pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-3 md:mb-4">
                       Change Password
                     </h3>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3 md:space-y-4">
                       {/* Current Password */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Current Password
                         </label>
                         <input
@@ -738,7 +690,7 @@ export default function Settings() {
                               currentPassword: e.target.value,
                             })
                           }
-                          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                          className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                           disabled={loading}
                           placeholder="Enter current password"
                         />
@@ -746,7 +698,7 @@ export default function Settings() {
 
                       {/* New Password */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           New Password
                         </label>
                         <input
@@ -758,7 +710,7 @@ export default function Settings() {
                               newPassword: e.target.value,
                             })
                           }
-                          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                          className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                           disabled={loading}
                           placeholder="Enter new password (min 6 characters)"
                           minLength={6}
@@ -767,7 +719,7 @@ export default function Settings() {
 
                       {/* Confirm Password */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Confirm New Password
                         </label>
                         <input
@@ -779,7 +731,7 @@ export default function Settings() {
                               confirmPassword: e.target.value,
                             })
                           }
-                          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                          className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                           disabled={loading}
                           placeholder="Confirm new password"
                         />
@@ -790,7 +742,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                   >
                     {loading ? "Saving..." : "Save Changes"}
                   </button>
@@ -801,13 +753,13 @@ export default function Settings() {
             {/* Social Links Tab */}
             {activeTab === "social" && (
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
                   Social Links
                 </h2>
-                <form onSubmit={handleUpdateProfile} className="space-y-4">
+                <form onSubmit={handleUpdateProfile} className="space-y-3 md:space-y-4">
                   {/* LinkedIn */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       🔗 LinkedIn
                     </label>
                     <input
@@ -816,7 +768,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setSocialLinks({ ...socialLinks, linkedin: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="https://linkedin.com/in/username"
                     />
@@ -824,7 +776,7 @@ export default function Settings() {
 
                   {/* GitHub */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       💻 GitHub
                     </label>
                     <input
@@ -833,7 +785,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setSocialLinks({ ...socialLinks, github: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="https://github.com/username"
                     />
@@ -841,7 +793,7 @@ export default function Settings() {
 
                   {/* Behance */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       🎨 Behance
                     </label>
                     <input
@@ -850,7 +802,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setSocialLinks({ ...socialLinks, behance: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="https://behance.net/username"
                     />
@@ -858,7 +810,7 @@ export default function Settings() {
 
                   {/* Portfolio */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       🌐 Portfolio Website
                     </label>
                     <input
@@ -870,7 +822,7 @@ export default function Settings() {
                           portfolio: e.target.value,
                         })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="https://yourportfolio.com"
                     />
@@ -878,7 +830,7 @@ export default function Settings() {
 
                   {/* Twitter */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       🐦 Twitter
                     </label>
                     <input
@@ -887,7 +839,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setSocialLinks({ ...socialLinks, twitter: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="https://twitter.com/username"
                     />
@@ -895,7 +847,7 @@ export default function Settings() {
 
                   {/* Instagram */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       📷 Instagram
                     </label>
                     <input
@@ -907,7 +859,7 @@ export default function Settings() {
                           instagram: e.target.value,
                         })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="https://instagram.com/username"
                     />
@@ -915,7 +867,7 @@ export default function Settings() {
 
                   {/* Facebook */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       📘 Facebook
                     </label>
                     <input
@@ -924,7 +876,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setSocialLinks({ ...socialLinks, facebook: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
                       disabled={loading}
                       placeholder="https://facebook.com/username"
                     />
@@ -933,7 +885,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                   >
                     {loading ? "Saving..." : "Save Social Links"}
                   </button>
@@ -944,22 +896,22 @@ export default function Settings() {
             {/* Danger Zone Tab */}
             {activeTab === "danger" && (
               <div>
-                <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-red-600 dark:text-red-400 mb-4 md:mb-6">
                   ⚠️ Danger Zone
                 </h2>
-                <div className="space-y-4">
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-red-900 dark:text-red-400 mb-2">
+                <div className="space-y-3 md:space-y-4">
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 md:p-6">
+                    <h3 className="text-base md:text-lg font-semibold text-red-900 dark:text-red-400 mb-2">
                       Delete Account
                     </h3>
-                    <p className="text-sm text-red-800 dark:text-red-300 mb-4">
+                    <p className="text-xs md:text-sm text-red-800 dark:text-red-300 mb-3 md:mb-4">
                       Once you delete your account, there is no going back. This will
                       permanently delete all your projects, comments, and data.
                     </p>
                     <button
                       onClick={handleDeleteAccount}
                       disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                     >
                       {loading ? "Deleting..." : "Delete My Account"}
                     </button>

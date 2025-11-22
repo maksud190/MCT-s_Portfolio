@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { API } from "../api/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function Register() {
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
-    role: "student", // Default to student
+    role: "student",
     designation: "",
     department: "Multimedia and Creative Technology",
   });
@@ -25,7 +25,6 @@ export default function Register() {
     }
   }, [user, navigate]);
 
-  // Password strength calculator
   useEffect(() => {
     const calculateStrength = () => {
       let strength = 0;
@@ -53,7 +52,6 @@ export default function Register() {
     return "Strong";
   };
 
-  // Designation options based on role
   const designationOptions = {
     teacher: [
       "Professor",
@@ -83,14 +81,12 @@ export default function Register() {
     }
 
     setLoading(true);
-    const loadingToast = toast.loading("Creating your account...");
 
     try {
       await API.post("/users/register", form);
 
       toast.success("Registration successful! Please login 🎉", {
-        id: loadingToast,
-        duration: 4000,
+        autoClose: 4000,
       });
 
       setForm({
@@ -108,8 +104,7 @@ export default function Register() {
     } catch (err) {
       console.error("Registration error:", err);
       toast.error(
-        err.response?.data?.message || "Registration failed. Please try again.",
-        { id: loadingToast }
+        err.response?.data?.message || "Registration failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -117,33 +112,33 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-stone-900 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6 md:space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h2 className="mt-6 text-4xl font-extrabold text-stone-100">
+          <h2 className="mt-4 md:mt-6 text-3xl md:text-4xl font-extrabold text-stone-100">
             Join Us Today!
           </h2>
-          <p className="mt-2 text-sm text-stone-300">
+          <p className="mt-2 text-xs md:text-sm text-stone-300">
             Create your account and start showcasing your work
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div className="bg-stone-900/50 rounded-sm  p-8 space-y-6 border border-stone-700 ">
+        <form onSubmit={handleSubmit} className="mt-6 md:mt-8 space-y-4 md:space-y-6">
+          <div className="bg-stone-900/50 rounded-sm p-6 md:p-8 space-y-4 md:space-y-6 border border-stone-700">
             {/* Username Input */}
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-stone-200 mb-2"
+                className="block text-xs md:text-sm font-medium text-stone-200 mb-2"
               >
                 Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-stone-400"
+                    className="h-4 w-4 md:h-5 md:w-5 text-stone-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -160,7 +155,7 @@ export default function Register() {
                   id="username"
                   type="text"
                   placeholder="Choose a username"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-stone-200 focus:border-transparent transition-all"
+                  className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2 md:py-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                   value={form.username}
                   onChange={(e) =>
                     setForm({ ...form, username: e.target.value })
@@ -175,14 +170,14 @@ export default function Register() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-stone-200 mb-2"
+                className="block text-xs md:text-sm font-medium text-stone-200 mb-2"
               >
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-stone-400"
+                    className="h-4 w-4 md:h-5 md:w-5 text-stone-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -199,7 +194,7 @@ export default function Register() {
                   id="email"
                   type="email"
                   placeholder="your@email.com"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-stone-200 focus:border-transparent transition-all"
+                  className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2 md:py-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   required
@@ -212,7 +207,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="role"
-                className="block text-sm font-medium text-stone-200 mb-2"
+                className="block text-xs md:text-sm font-medium text-stone-200 mb-2"
               >
                 I am a
               </label>
@@ -222,7 +217,7 @@ export default function Register() {
                 onChange={(e) => {
                   setForm({ ...form, role: e.target.value, designation: "" });
                 }}
-                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
+                className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                 required
                 disabled={loading}
               >
@@ -235,7 +230,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="designation"
-                className="block text-sm font-medium text-stone-200 mb-2"
+                className="block text-xs md:text-sm font-medium text-stone-200 mb-2"
               >
                 Designation
               </label>
@@ -245,7 +240,7 @@ export default function Register() {
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
+                className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                 required
                 disabled={loading}
               >
@@ -258,11 +253,11 @@ export default function Register() {
               </select>
             </div>
 
-            {/* Department (Pre-filled for MCT) */}
+            {/* Department */}
             <div>
               <label
                 htmlFor="department"
-                className="block text-sm font-medium text-stone-200 mb-2"
+                className="block text-xs md:text-sm font-medium text-stone-200 mb-2"
               >
                 Department
               </label>
@@ -273,7 +268,7 @@ export default function Register() {
                 onChange={(e) =>
                   setForm({ ...form, department: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
+                className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-700 text-stone-200 focus:border-transparent transition-all"
                 required
                 disabled={loading}
               />
@@ -283,14 +278,14 @@ export default function Register() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-stone-200 mb-2"
+                className="block text-xs md:text-sm font-medium text-stone-200 mb-2"
               >
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-stone-400"
+                    className="h-4 w-4 md:h-5 md:w-5 text-stone-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -307,7 +302,7 @@ export default function Register() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
-                  className="w-full pl-10 pr-4 py-3 border border-stone-600 rounded-sm bg-stone-700  text-white focus:border-transparent transition-all"
+                  className="w-full pl-9 md:pl-10 pr-10 md:pr-12 py-2 md:py-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-700 text-white focus:border-transparent transition-all"
                   value={form.password}
                   onChange={(e) =>
                     setForm({ ...form, password: e.target.value })
@@ -323,7 +318,7 @@ export default function Register() {
                 >
                   {showPassword ? (
                     <svg
-                      className="h-5 w-5"
+                      className="h-4 w-4 md:h-5 md:w-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -337,7 +332,7 @@ export default function Register() {
                     </svg>
                   ) : (
                     <svg
-                      className="h-5 w-5"
+                      className="h-4 w-4 md:h-5 md:w-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -390,12 +385,12 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-stone-900 !text-stone-100 py-3 px-4 !rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-blue-600 hover:bg-stone-900 text-stone-100 py-2 md:py-3 px-4 rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm md:text-base font-bold"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    className="animate-spin -ml-1 mr-3 h-4 w-4 md:h-5 md:w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -424,11 +419,11 @@ export default function Register() {
 
           {/* Login Link */}
           <div className="text-center">
-            <p className="text-sm text-stone-400">
+            <p className="text-xs md:text-sm text-stone-400">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="font-semibold !text-amber-500 hover:text-amber-400/80 dark:text-amber-400 dark:hover:text-amber-400/80 transition-colors"
+                className="font-semibold text-amber-500 hover:text-amber-400 dark:text-amber-400 dark:hover:text-amber-400/80 transition-colors"
               >
                 Sign in here
               </Link>
@@ -437,9 +432,9 @@ export default function Register() {
         </form>
 
         {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-40 h-40 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 right-0 w-40 h-40 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-0 left-20 w-40 h-40 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 left-0 w-32 h-32 md:w-40 md:h-40 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-0 left-20 w-32 h-32 md:w-40 md:h-40 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
     </div>
   );

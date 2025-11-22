@@ -3,7 +3,8 @@ import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import TagsInput from "../components/TagsInput";
-// Edit Project Page component
+import { toast } from "react-toastify";
+
 export default function EditProject() {
   const { projectId } = useParams();
   const [data, setData] = useState({
@@ -249,12 +250,12 @@ export default function EditProject() {
         }
       });
 
-      alert("✅ Project updated successfully!");
+      toast.success("✅ Project updated successfully!");
       navigate("/profile");
       
     } catch (err) {
       console.error("Update error:", err);
-      alert("❌ " + (err.response?.data?.message || "Update failed"));
+      toast.error("❌ " + (err.response?.data?.message || "Update failed"));
     } finally {
       setLoading(false);
     }
@@ -268,24 +269,23 @@ export default function EditProject() {
     );
   }
 
-  // ✅ DEFINE THESE VARIABLES BEFORE RETURN
   const thumbnailCount = (currentThumbnail ? 1 : 0) + (newThumbnail ? 1 : 0);
   const totalImages = thumbnailCount + existingImages.length + newFiles.length;
   const canAddMore = totalImages < 5;
   const hasThumbnail = currentThumbnail || newThumbnail;
 
   return (
-    <div className="min-h-screen p-6 flex items-center justify-center">
+    <div className="min-h-screen p-3 md:p-6 flex items-center justify-center">
       <div className="w-full max-w-3xl">
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-4 md:p-6 lg:p-8 rounded-xl shadow-lg">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
               Edit Project
             </h2>
             <button
               type="button"
               onClick={() => navigate("/profile")}
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-500"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-500 text-sm md:text-base"
             >
               ← Back
             </button>
@@ -293,19 +293,19 @@ export default function EditProject() {
 
           {/* Current Thumbnail */}
           {currentThumbnail && !newThumbnail && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Current Thumbnail
               </label>
-              <div className="relative w-full h-64">
+              <div className="relative w-full h-48 md:h-64">
                 <img src={currentThumbnail} alt="Current Thumbnail" className="w-full h-full object-cover rounded-lg" />
-                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
+                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 md:px-3 py-1 rounded-full">
                   Current Thumbnail
                 </div>
                 <button
                   type="button"
                   onClick={removeCurrentThumbnail}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                  className="absolute top-2 right-2 bg-red-500 text-white p-1.5 md:p-2 rounded-full hover:bg-red-600 transition-colors"
                   title="Remove current thumbnail"
                 >
                   ✕
@@ -316,19 +316,19 @@ export default function EditProject() {
 
           {/* New Thumbnail Preview */}
           {newThumbnailPreview && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 New Thumbnail {currentThumbnail && "(will replace current)"}
               </label>
-              <div className="relative w-full h-64">
+              <div className="relative w-full h-48 md:h-64">
                 <img src={newThumbnailPreview} alt="New Thumbnail" className="w-full h-full object-cover rounded-lg" />
-                <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-3 py-1 rounded-full">
+                <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 md:px-3 py-1 rounded-full">
                   New Thumbnail
                 </div>
                 <button
                   type="button"
                   onClick={removeNewThumbnail}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                  className="absolute top-2 right-2 bg-red-500 text-white p-1.5 md:p-2 rounded-full hover:bg-red-600"
                 >
                   ✕
                 </button>
@@ -338,8 +338,8 @@ export default function EditProject() {
 
           {/* Upload New Thumbnail */}
           {!newThumbnailPreview && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {currentThumbnail ? "Replace Thumbnail (Optional)" : "Upload Thumbnail *"}
               </label>
               <input
@@ -352,11 +352,11 @@ export default function EditProject() {
               />
               <label
                 htmlFor="thumbnail-upload"
-                className="flex items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
+                className="flex items-center justify-center w-full h-40 md:h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
               >
                 <div className="text-center">
-                  <p className="text-4xl mb-2">🖼️</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  <p className="text-3xl md:text-4xl mb-2">🖼️</p>
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 font-medium">
                     Click to {currentThumbnail ? "replace" : "upload"} thumbnail
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
@@ -369,18 +369,18 @@ export default function EditProject() {
 
           {/* Existing Additional Images */}
           {existingImages.length > 0 && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Additional Images ({existingImages.length})
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
                 {existingImages.map((img, index) => (
                   <div key={index} className="relative group">
-                    <img src={img} alt={`Additional ${index + 1}`} className="w-full h-40 object-cover rounded-lg" />
+                    <img src={img} alt={`Additional ${index + 1}`} className="w-full h-32 md:h-40 object-cover rounded-lg" />
                     <button
                       type="button"
                       onClick={() => removeExistingImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1 md:top-2 right-1 md:right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm"
                     >
                       ✕
                     </button>
@@ -392,18 +392,18 @@ export default function EditProject() {
 
           {/* New Additional Images Preview */}
           {newPreviews.length > 0 && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 New Additional Images ({newPreviews.length})
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
                 {newPreviews.map((preview, index) => (
                   <div key={index} className="relative group">
-                    <img src={preview} alt={`New ${index + 1}`} className="w-full h-40 object-cover rounded-lg" />
+                    <img src={preview} alt={`New ${index + 1}`} className="w-full h-32 md:h-40 object-cover rounded-lg" />
                     <button
                       type="button"
                       onClick={() => removeNewFile(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1 md:top-2 right-1 md:right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm"
                     >
                       ✕
                     </button>
@@ -415,8 +415,8 @@ export default function EditProject() {
 
           {/* Upload Additional Images */}
           {canAddMore && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Add More Images ({totalImages}/5)
               </label>
               <input
@@ -430,11 +430,11 @@ export default function EditProject() {
               />
               <label
                 htmlFor="files-upload"
-                className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
+                className="flex items-center justify-center w-full p-3 md:p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-all bg-gray-50 dark:bg-gray-700"
               >
                 <div className="text-center">
-                  <p className="text-2xl mb-1">📁</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-xl md:text-2xl mb-1">📁</p>
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                     Click to add more images ({5 - totalImages} remaining)
                   </p>
                 </div>
@@ -443,44 +443,44 @@ export default function EditProject() {
           )}
 
           {/* Title */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="mb-3 md:mb-4">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Project Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={data.title}
               onChange={(e) => setData({ ...data, title: e.target.value })}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
               disabled={loading}
               required
             />
           </div>
 
           {/* Description */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="mb-3 md:mb-4">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Description <span className="text-red-500">*</span>
             </label>
             <textarea
               value={data.description}
               rows="4"
               onChange={(e) => setData({ ...data, description: e.target.value })}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
               disabled={loading}
               required
             />
           </div>
 
           {/* Category */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="mb-3 md:mb-4">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category <span className="text-red-500">*</span>
             </label>
             <select
               value={data.category}
               onChange={handleCategoryChange}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 cursor-pointer"
               disabled={loading}
               required
             >
@@ -493,14 +493,14 @@ export default function EditProject() {
 
           {/* Subcategory */}
           {data.category && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mb-4 md:mb-6">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Subcategory <span className="text-red-500">*</span>
               </label>
               <select
                 value={data.subcategory}
                 onChange={(e) => setData({ ...data, subcategory: e.target.value })}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 disabled={loading}
                 required
               >
@@ -513,32 +513,32 @@ export default function EditProject() {
           )}
 
           {/* Tags Input */}
-          <div className="mb-6">
+          <div className="mb-4 md:mb-6">
             <TagsInput tags={tags} setTags={setTags} />
           </div>
 
           {/* Warning if no thumbnail */}
           {!hasThumbnail && (
-            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 rounded-lg">
-              <p className="text-sm text-red-800 dark:text-red-300">
+            <div className="mb-3 md:mb-4 p-2 md:p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 rounded-lg">
+              <p className="text-xs md:text-sm text-red-800 dark:text-red-300">
                 ⚠️ Thumbnail is required. Please upload a thumbnail.
               </p>
             </div>
           )}
 
           {/* Buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
             <button
               type="submit"
               disabled={loading || !hasThumbnail}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="flex-1 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
             >
               {loading ? "Updating..." : !hasThumbnail ? "Thumbnail Required" : "Update Project"}
             </button>
             <button
               type="button"
               onClick={() => navigate("/profile")}
-              className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="px-4 md:px-6 py-2 md:py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm md:text-base"
             >
               Cancel
             </button>

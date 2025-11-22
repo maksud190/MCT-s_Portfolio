@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import Comments from "../components/Comments";
-import FollowButton from "../components/FollowButton";
 import ContactModal from "../components/ContactModal";
-import LazyImage from "../components/LazyImage";
 
 export default function ProjectDetails() {
   const { projectId } = useParams();
@@ -113,7 +111,7 @@ export default function ProjectDetails() {
   if (!project) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-amber-400"></div>
+        <div className="animate-spin rounded-full h-12 w-12 md:h-16 md:w-16 border-t-2 border-b-2 border-amber-400"></div>
       </div>
     );
   }
@@ -121,14 +119,14 @@ export default function ProjectDetails() {
   const isOwner = user && project.userId._id === user._id;
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-3 md:p-4 lg:p-6">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
-        className="mb-6 flex items-center gap-2 text-stone-700 hover:text-blue-600 transition-colors"
+        className="mb-4 md:mb-6 flex items-center gap-2 text-stone-700 hover:text-blue-600 transition-colors text-sm md:text-base"
       >
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4 md:w-5 md:h-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -143,16 +141,16 @@ export default function ProjectDetails() {
         Back
       </button>
 
-      <div className="">
-        {/* Main Content - 2 columns */}
+      <div>
+        {/* Main Content */}
         <div className="lg:col-span-2">
           {/* Image Gallery */}
-          <div className="rounded-sm overflow-hidden shadow-sm pt-8 mb-6 bg-stone-800">
+          <div className="rounded-sm overflow-hidden shadow-sm pt-4 md:pt-8 mb-4 md:mb-6 bg-stone-800">
             <div className="relative flex justify-center items-center">
-              <LazyImage
+              <img
                 src={project.images[currentImageIndex]}
                 alt={project.title}
-                className="w-full h-120 justify-center items-center object-contain bg-stone-800"
+                className="w-full h-60 sm:h-80 md:h-96 lg:h-120 object-contain bg-stone-800"
               />
 
               {/* Navigation Arrows */}
@@ -164,10 +162,10 @@ export default function ProjectDetails() {
                         prev === 0 ? project.images.length - 1 : prev - 1
                       )
                     }
-                    className="absolute left-4 top-1/2 -translate-y-1/2 !px-3 !py-1 !rounded-sm shadow-sm hover:bg-stone-700/70 transition-colors"
+                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 px-2 md:px-3 py-1 rounded-sm shadow-sm hover:bg-stone-700/70 transition-colors"
                   >
                     <svg
-                      className="w-8 h-8 text-blue-600"
+                      className="w-6 h-6 md:w-8 md:h-8 text-blue-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -186,10 +184,10 @@ export default function ProjectDetails() {
                         prev === project.images.length - 1 ? 0 : prev + 1
                       )
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 !px-3 !py-1 !rounded-sm shadow-sm hover:bg-stone-700/70 transition-colors"
+                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 px-2 md:px-3 py-1 rounded-sm shadow-sm hover:bg-stone-700/70 transition-colors"
                   >
                     <svg
-                      className="w-8 h-8 text-blue-600"
+                      className="w-6 h-6 md:w-8 md:h-8 text-blue-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -206,19 +204,19 @@ export default function ProjectDetails() {
               )}
 
               {/* Image Counter */}
-              <div className="absolute bottom-4 right-4 bg-black/90 text-white px-3 py-1 rounded-sm text-sm">
+              <div className="absolute bottom-2 md:bottom-4 right-2 md:right-4 bg-black/90 text-white px-2 md:px-3 py-1 rounded-sm text-xs md:text-sm">
                 {currentImageIndex + 1} / {project.images.length}
               </div>
             </div>
 
             {/* Thumbnail Strip */}
             {project.images.length > 1 && (
-              <div className="p-4 flex gap-2 overflow-x-auto justify-center">
+              <div className="p-3 md:p-4 flex gap-2 overflow-x-auto justify-center">
                 {project.images.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`flex-shrink-0 w-20 h-20 rounded overflow-hidden border-2 transition-all ${
+                    className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded overflow-hidden border-2 transition-all ${
                       currentImageIndex === idx
                         ? "border-amber-400 scale-105"
                         : "border-transparent hover:border-gray-300 dark:hover:border-gray-600"
@@ -236,13 +234,13 @@ export default function ProjectDetails() {
           </div>
 
           {/* Project Info */}
-          <div className="">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h1 className="!text-3xl font-bold text-stone-800 mb-2">
+          <div>
+            <div className="flex items-start justify-between mb-3 md:mb-4 gap-2">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl md:text-3xl font-bold text-stone-800 mb-2 break-words">
                   {project.title}
                 </h1>
-                <span className="inline-block text-blue-600/90 text-sm italic">
+                <span className="inline-block text-blue-600/90 text-xs md:text-sm italic break-words">
                   <span className="text-stone-600">Category: </span>
                   {project.category}
                 </span>
@@ -250,14 +248,14 @@ export default function ProjectDetails() {
 
               {/* Owner Actions */}
               {isOwner && (
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => navigate(`/edit-project/${projectId}`)}
-                    className="p-2 text-blue-600 hover:text-stone-50 hover:bg-blue-600 !rounded-sm transition-colors"
+                    className="p-1.5 md:p-2 text-blue-600 hover:text-stone-50 hover:bg-blue-600 rounded-sm transition-colors"
                     title="Edit"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 md:w-5 md:h-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -272,11 +270,11 @@ export default function ProjectDetails() {
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="p-2 text-red-600 hover:text-stone-50 hover:bg-red-700 !rounded-sm transition-colors"
+                    className="p-1.5 md:p-2 text-red-600 hover:text-stone-50 hover:bg-red-700 rounded-sm transition-colors"
                     title="Delete"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 md:w-5 md:h-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -295,44 +293,42 @@ export default function ProjectDetails() {
 
             <Link
               to={`/user/${project.userId._id}`}
-              className="flex items-center mb-6 gap-4"
+              className="flex items-center mb-4 md:mb-6 gap-3 md:gap-4"
             >
-              <>
-                {project.userId.avatar ? (
-                  <img
-                    src={project.userId.avatar}
-                    alt={project.userId.username}
-                    className="w-12 h-12 rounded-sm border-4 border-stone-800 "
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-sm bg-stone-800 border-4 border-stone-800 text-white text-3xl font-bold flex items-center justify-center">
-                    {project.userId.username?.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </>
+              {project.userId.avatar ? (
+                <img
+                  src={project.userId.avatar}
+                  alt={project.userId.username}
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-sm border-4 border-stone-800"
+                />
+              ) : (
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-stone-800 border-4 border-stone-800 text-white text-2xl md:text-3xl font-bold flex items-center justify-center">
+                  {project.userId.username?.charAt(0).toUpperCase()}
+                </div>
+              )}
 
-              <p className="text-lg font-bold !text-stone-800 hover:!text-stone-600 transition-colors">
+              <p className="text-base md:text-lg font-bold text-stone-800 hover:text-stone-600 transition-colors">
                 {project.userId.username}
               </p>
             </Link>
 
             {/* Description */}
-            <p className="text-stone-800 mb-6 whitespace-pre-wrap leading-relaxed bg-stone-200 py-3 px-5 rounded-sm font-semibold">
+            <p className="text-sm md:text-base text-stone-800 mb-4 md:mb-6 whitespace-pre-wrap leading-relaxed bg-stone-200 py-3 px-4 md:px-5 rounded-sm font-semibold break-words">
               <span className="font-extrabold">Description:</span> <br />
               {project.description}
             </p>
 
             {/* Stats */}
-            <div className="flex items-center gap-6 text-stone-600 border-t border-gray-200 dark:border-gray-700 pt-4">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4 md:gap-6 text-xs md:text-base text-stone-600 border-t border-gray-200 dark:border-gray-700 pt-3 md:pt-4 flex-wrap">
+              <div className="flex items-center gap-1 md:gap-2">
                 <span>👁️</span>
                 <span>{project.views || 0} views</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 md:gap-2">
                 <span>❤️</span>
                 <span>{likes} likes</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 md:gap-2">
                 <span>📅</span>
                 <span>{formatDate(project.createdAt)}</span>
               </div>
@@ -342,7 +338,7 @@ export default function ProjectDetails() {
             {!isOwner && (
               <button
                 onClick={handleLike}
-                className={`mt-4 w-full py-3 !rounded-sm font-medium transition-all ${
+                className={`mt-3 md:mt-4 w-full py-2 md:py-3 rounded-sm font-medium transition-all text-sm md:text-base ${
                   isLiked
                     ? "bg-red-700 hover:bg-stone-500 text-stone-50"
                     : "dark:bg-stone-500 text-stone-50 hover:bg-red-700"
@@ -356,8 +352,6 @@ export default function ProjectDetails() {
           {/* Comments Section */}
           <Comments projectId={projectId} />
         </div>
-
-        
       </div>
 
       {/* Contact Modal */}

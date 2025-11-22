@@ -1,37 +1,28 @@
-export default function CategorySidebar({ 
-  categories, 
-  selectedCategory, 
-  setSelectedCategory, 
-  projects 
+export default function CategorySidebar({
+  categories,
+  selectedCategory,
+  setSelectedCategory,
+  projects,
 }) {
   return (
-    <div className="w-60 pt-7 mb-20 bg-gray-100 shadow-xl left-6 rounded-sm p-4 border-1 border-stone-400 sticky top-22 h-screen overflow-y-auto hidden lg:block">
-      <h2 className="text-xl pb-4 font-bold mb-2 text-stone-900 border-b border-stone-700">
+    <aside className="hidden lg:block w-48 xl:w-56 border-r border-gray-200 dark:border-gray-700 px-3 py-6 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+      <h3 className="text-base xl:text-lg font-bold text-gray-900 dark:text-white mb-4">
         Categories
-      </h2>
+      </h3>
 
-      {/* 🔥 Categories List */}
-      <ul className="space-y-0.5 space-x-0">
+      <ul className="space-y-1">
         {categories.map((cat) => (
-          <li className="" key={cat}>
+          <li key={cat}>
             <button
               onClick={() => setSelectedCategory(cat)}
-              className={`w-full !text-sm text-left !px-1.5 !py-2 !rounded-sm transition-all ${
+              className={`w-full text-sm xl:text-base text-left px-2 xl:px-3 py-1.5 xl:py-2 rounded-sm transition-all ${
                 selectedCategory === cat
                   ? "bg-stone-800 text-stone-100 font-bold"
                   : "text-stone-700 hover:bg-stone-300"
               }`}
             >
               {cat}
-              
-              {/* 🔥 Count badge */}
-              <span
-                className={`float-right !text-xs px-1.5 py-0.5 rounded-sm ${
-                  selectedCategory === cat
-                    ? "bg-stone-300 text-stone-900 font-semibold"
-                    : "bg-stone-800/70 text-stone-100"
-                }`}
-              >
+              <span className="ml-2 text-xs xl:text-sm text-stone-500">
                 {cat === "All"
                   ? projects.length
                   : projects.filter((p) => p.category.startsWith(cat)).length}
@@ -40,6 +31,6 @@ export default function CategorySidebar({
           </li>
         ))}
       </ul>
-    </div>
+    </aside>
   );
 }

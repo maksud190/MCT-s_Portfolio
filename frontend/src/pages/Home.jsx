@@ -11,7 +11,6 @@ export default function Home() {
   const [sortBy, setSortBy] = useState("random");
   const [dateRange, setDateRange] = useState("all");
   
-  // ✅ Store shuffled version to prevent re-shuffling on every filter change
   const shuffledProjectsRef = useRef(null);
   const lastSortRef = useRef("random");
 
@@ -30,7 +29,6 @@ export default function Home() {
     "Writing",
   ];
 
-  // ✅ Shuffle function
   const shuffleArray = (array) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -40,7 +38,6 @@ export default function Home() {
     return shuffled;
   };
 
-  // ✅ Fetch projects - Only once on mount
   useEffect(() => {
     API.get("/projects")
       .then((res) => {
@@ -49,12 +46,8 @@ export default function Home() {
       .catch((err) => console.error("❌ Error fetching projects:", err));
   }, []);
 
-  // ✅ Create shuffled version when projects load or when switching TO random sort
   useEffect(() => {
     if (projects.length > 0 && sortBy === "random") {
-      // Only shuffle if:
-      // 1. We don't have a shuffled version yet, OR
-      // 2. User just switched from another sort to random
       if (!shuffledProjectsRef.current || lastSortRef.current !== "random") {
         shuffledProjectsRef.current = shuffleArray(projects);
       }
@@ -62,25 +55,21 @@ export default function Home() {
     lastSortRef.current = sortBy;
   }, [projects, sortBy]);
 
-  // ✅ Filter and sort projects
   useEffect(() => {
     if (projects.length === 0) return;
 
     let filtered = [...projects];
 
-    // ✅ For random sort, use the stored shuffled version
     if (sortBy === "random" && shuffledProjectsRef.current) {
       filtered = [...shuffledProjectsRef.current];
     }
 
-    // Category filter
     if (selectedCategory !== "All") {
       filtered = filtered.filter((p) =>
         p.category.startsWith(selectedCategory)
       );
     }
 
-    // Date range filter
     if (dateRange !== "all") {
       const now = new Date();
       const filterDate = new Date();
@@ -109,7 +98,6 @@ export default function Home() {
       filtered = filtered.filter((p) => new Date(p.createdAt) >= filterDate);
     }
 
-    // ✅ Sort projects (except random, already handled above)
     if (sortBy !== "random") {
       switch (sortBy) {
         case "latest":
@@ -140,21 +128,19 @@ export default function Home() {
 
   return (
     <div>
-      <div>
-        {/* Hero Section */}
-        <div className="bg-gradient-to-b from-indigo-200/20 via-indigo-300/20 to-slate-50 py-52 px-6 text-center mb-8 hidden lg:block sm:block md:block">
-          <h1 className="!text-7xl font-extrabold mb-4 text-stone-800">
-            Discover Amazing Projects
-          </h1>
-          <p className="text-xl max-w-2xl mx-auto text-blue-600">
-            Explore a diverse collection of projects across various categories.
-            Find inspiration, collaborate, and showcase your own work.
-            <br />
-            <span className="text-sm text-stone-800">
-              -Multimedia and Creative Technology
-            </span>
-          </p>
-        </div>
+      {/* Hero Section - Hidden on mobile */}
+      <div className="bg-gradient-to-b from-indigo-200/20 via-indigo-300/20 to-slate-50 py-16 sm:py-32 md:py-40 lg:py-52 px-4 md:px-6 text-center mb-6 md:mb-8 hidden sm:block">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-3 md:mb-4 text-stone-800">
+          Discover Amazing Projects
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-blue-600">
+          Explore a diverse collection of projects across various categories.
+          Find inspiration, collaborate, and showcase your own work.
+          <br />
+          <span className="text-xs sm:text-sm text-stone-800">
+            -Multimedia and Creative Technology
+          </span>
+        </p>
       </div>
 
       <div className="flex">
@@ -167,7 +153,7 @@ export default function Home() {
         />
 
         {/* Main Content */}
-        <div className="flex-1 px-6 pb-20">
+        <div className="flex-1 px-3 md:px-6 pb-12 md:pb-20">
           {/* Filter Bar */}
           <FilterBar
             categories={categories}
@@ -183,18 +169,18 @@ export default function Home() {
 
           {/* Projects Grid */}
           {filteredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 px-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6 px-2 sm:px-4 md:px-8 lg:px-12">
               {filteredProjects.map((project) => (
                 <ProjectCard key={project._id} project={project} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-stone-800 mb-2">
+            <div className="text-center py-12 md:py-20">
+              <div className="text-4xl md:text-6xl mb-3 md:mb-4">🔍</div>
+              <h3 className="text-lg md:text-xl font-semibold text-stone-800 mb-2">
                 No Projects Found
               </h3>
-              <p className="text-stone-700">
+              <p className="text-sm md:text-base text-stone-700">
                 Try adjusting your filters or check back later
               </p>
             </div>
