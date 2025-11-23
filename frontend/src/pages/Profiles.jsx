@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { API } from "../api/api";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function Profiles() {
   const [allUsers, setAllUsers] = useState([]);

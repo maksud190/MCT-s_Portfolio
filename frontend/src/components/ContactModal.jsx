@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function ContactModal({ targetUser, projectId, onClose }) {
   const { user } = useAuth();

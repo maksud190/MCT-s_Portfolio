@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { API } from "../api/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -40,7 +40,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-950 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-stone-900 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-6 md:space-y-8">
         {/* Header */}
         <div className="text-center">
@@ -54,10 +54,10 @@ export default function Login() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="mt-6 md:mt-8 space-y-4 md:space-y-6">
-          <div className="bg-stone-900/50 rounded-sm shadow-2xl p-6 md:p-8 space-y-4 md:space-y-6 border border-stone-800">
+          <div className="bg-stone-900/50 rounded-sm shadow-2xl p-6 md:p-8 space-y-4 md:space-y-6 border border-stone-700">
             {/* Email Input */}
             <div>
-              <label htmlFor="email" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -81,7 +81,7 @@ export default function Login() {
 
             {/* Password Input */}
             <div>
-              <label htmlFor="password" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -123,7 +123,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-stone-900 text-white font-extrabold py-2 md:py-3 px-4 rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm md:text-base"
+              className="w-full bg-blue-600 hover:bg-stone-800 text-white font-extrabold py-2 md:py-3 px-4 !rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm md:text-base"
             >
               {loading ? (
                 <span className="flex items-center justify-center">

@@ -45,7 +45,7 @@ export default function FilterBar({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full p-1 md:p-0.5 text-xs md:text-sm font-light rounded-sm bg-stone-800 text-stone-100 transition-colors cursor-pointer"
+              className="w-full p-1 md:p-0.5 border-1 border-stone-400 text-xs md:text-sm font-bold rounded-sm bg-white text-stone-800 transition-colors cursor-pointer"
             >
               <option value="random">🎲 Default</option>
               <option value="latest">📅 Latest First</option>
@@ -65,7 +65,7 @@ export default function FilterBar({
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="w-full p-1 md:p-0.5 text-xs md:text-sm font-light rounded-sm bg-stone-800 text-stone-100 transition-colors cursor-pointer"
+              className="w-full p-1 md:p-0.5 border-1 border-stone-400 text-xs md:text-sm font-bold rounded-sm bg-white text-stone-800 transition-colors cursor-pointer"
             >
               <option value="all">⏰ All Time</option>
               <option value="week">📆 Last Week</option>
@@ -80,7 +80,7 @@ export default function FilterBar({
       </div>
 
       {/* Results Count */}
-      <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+      <div className="mt-2 pt-2">
         <p className="text-xs md:text-sm text-stone-500 font-light">
           Showing{" "}
           <span className="font-semibold text-blue-600">
@@ -97,7 +97,7 @@ export default function FilterBar({
             <span>
               {" "}
               from{" "}
-              <span className="font-semibold text-amber-400">
+              <span className="font-semibold text-blue-600">
                 {dateRange === "week" && "last week"}
                 {dateRange === "month" && "last month"}
                 {dateRange === "3months" && "last 3 months"}

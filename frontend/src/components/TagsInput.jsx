@@ -26,23 +26,23 @@ export default function TagsInput({ tags, setTags }) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <label className="block text-sm font-medium text-stone-300 mb-2">
         Tags (Press Enter or comma to add)
       </label>
       <div className="flex flex-wrap gap-2 p-2 md:p-3 border-2 border-dashed border-stone-600 rounded-sm bg-stone-800 min-h-[3rem] md:min-h-[3.5rem]">
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-1 bg-stone-700 text-stone-100 px-2 py-1 rounded-sm text-xs md:text-sm"
+            className="inline-flex items-center gap-1 bg-stone-700 text-stone-100 pl-2 rounded-sm text-xs font-medium md:text-sm"
           >
             #{tag}
             <button
               type="button"
               onClick={() => removeTag(index)}
-              className="hover:text-red-600 px-0 py-1"
+              className="hover:text-red-600 !px-1 !py-1"
             >
               <svg
-                className="w-3 h-3 md:w-4 md:h-4"
+                className="w-1 h-1 md:w-4 md:h-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -68,7 +68,7 @@ export default function TagsInput({ tags, setTags }) {
         />
       </div>
 
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+      <p className="text-xs text-stone-400 mt-2">
         Suggested: design, illustration, photography, ui/ux, 3d, animation
       </p>
     </div>

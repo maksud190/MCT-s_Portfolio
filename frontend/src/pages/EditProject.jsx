@@ -3,7 +3,7 @@ import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import TagsInput from "../components/TagsInput";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function EditProject() {
   const { projectId } = useParams();

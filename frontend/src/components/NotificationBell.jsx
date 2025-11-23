@@ -148,7 +148,7 @@ export default function NotificationBell() {
           <div className="absolute right-0 mt-2 w-[90vw] sm:w-96 bg-stone-900 rounded-sm shadow-2xl z-50 max-h-[70vh] sm:max-h-[500px] overflow-hidden flex flex-col border border-stone-700">
             {/* Header */}
             <div className="p-3 md:p-4 border-b border-stone-700 flex items-center justify-between sticky top-0 bg-stone-900 z-10">
-              <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-white">
+              <h3 className="text-base md:text-lg font-bold text-stone-100">
                 Notifications
               </h3>
               {unreadCount > 0 && (
@@ -168,7 +168,7 @@ export default function NotificationBell() {
                   <div
                     key={notif._id}
                     onClick={() => handleNotificationClick(notif)}
-                    className={`p-3 md:p-4 border-b border-stone-700 hover:bg-gray-50 dark:hover:bg-stone-800 cursor-pointer transition-colors ${
+                    className={`p-3 md:p-4 border-b border-stone-700 hover:bg-stone-900 cursor-pointer transition-colors ${
                       !notif.read ? "bg-stone-800" : ""
                     }`}
                   >
@@ -182,7 +182,7 @@ export default function NotificationBell() {
                             className="w-8 h-8 md:w-10 md:h-10 rounded-sm border-2 border-stone-500"
                           />
                         ) : (
-                          <div className="w-8 h-8 md:w-10 md:h-10 rounded-sm bg-stone-900 border-2 border-stone-500 flex items-center justify-center text-white font-bold text-xs md:text-sm">
+                          <div className="w-8 h-8 md:w-10 md:h-10 rounded-sm bg-stone-900 border-2 border-stone-500 flex items-center justify-center text-white font-bold text-lg md:text-lg">
                             {notif.from?.username?.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -191,7 +191,7 @@ export default function NotificationBell() {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-xs md:text-sm text-gray-900 dark:text-white break-words">
+                          <p className="text-xs md:text-sm text-stone-200 break-words">
                             <span className="font-semibold">
                               {notif.from?.username}
                             </span>{" "}
@@ -211,7 +211,7 @@ export default function NotificationBell() {
                           />
                         )}
 
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-xs text-stone-500 mt-1">
                           {formatDate(notif.createdAt)}
                         </p>
                       </div>
@@ -224,7 +224,7 @@ export default function NotificationBell() {
                   </div>
                 ))
               ) : (
-                <div className="p-6 md:p-8 text-center text-gray-500 dark:text-gray-400">
+                <div className="p-6 md:p-8 text-center text-stone-400">
                   <div className="text-3xl md:text-4xl mb-2">🔔</div>
                   <p className="text-sm md:text-base">No notifications yet</p>
                 </div>

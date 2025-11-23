@@ -1,11 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import SearchBar from "./SearchBar";
 import NotificationBell from "./NotificationBell";
+// import ThemeToggle from "./ThemeToggle";
+
 
 export default function Navbar() {
+  
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -33,7 +36,10 @@ export default function Navbar() {
           {/* Left Section */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Logo */}
-            <Link to="/" className="font-bold text-base md:text-xl whitespace-nowrap">
+            <Link
+              to="/"
+              className="font-bold text-base md:text-xl whitespace-nowrap"
+            >
               <span className="text-stone-800">
                 MCT's <span className="text-stone-800">Portfolio</span>
               </span>
@@ -65,7 +71,7 @@ export default function Navbar() {
           <div className="hidden md:block flex-1 max-w-xl mx-4 lg:mx-8">
             <SearchBar />
           </div>
-
+ {/* <ThemeToggle /> */}
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-2 lg:gap-3">
             {user ? (
@@ -99,6 +105,7 @@ export default function Navbar() {
                       {user.username}
                     </span>
                   </Link>
+              
 
                   {/* Dropdown Menu */}
                   <div className="absolute right-0 mt-2 w-42 bg-stone-900 rounded-sm shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-slate-700">
@@ -149,7 +156,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-stone-800 text-stone-100 hover:text-stone-800 px-3 py-2 rounded-sm hover:bg-white transition-all duration-200 font-medium text-sm"
+                  className="bg-stone-800 !text-stone-100 hover:!text-stone-800 px-3 py-2 rounded-sm hover:bg-white transition-all duration-200 font-medium text-sm"
                 >
                   Register
                 </Link>
@@ -195,8 +202,8 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {showMobileMenu && (
-        <div className="md:hidden bg-stone-800 border-t border-stone-700">
-          <div className="px-4 py-3 space-y-2">
+        <div className="md:hidden mx-4 my-4 rounded-sm bg-slate-100 border-x-2 border-y-2 border-stone-600">
+          <div className="px-3 py-3 space-y-2">
             {user ? (
               <>
                 {/* User Info */}
@@ -256,7 +263,7 @@ export default function Navbar() {
                 >
                   Upload Project
                 </Link>
-                
+
                 <Link
                   to="/settings"
                   onClick={() => setShowMobileMenu(false)}
@@ -264,7 +271,7 @@ export default function Navbar() {
                 >
                   Settings
                 </Link>
-                
+
                 {user.role === "admin" && (
                   <Link
                     to="/admin"
@@ -274,7 +281,7 @@ export default function Navbar() {
                     Admin Panel
                   </Link>
                 )}
-                
+
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 text-red-400 hover:bg-red-900/20 rounded-sm transition-colors font-bold"
@@ -287,7 +294,7 @@ export default function Navbar() {
                 <Link
                   to="/"
                   onClick={() => setShowMobileMenu(false)}
-                  className="block px-4 py-2 text-slate-200 hover:bg-stone-700 rounded-sm transition-colors font-medium"
+                  className="block px-4 py-2 !text-stone-800 rounded-sm transition-colors font-medium"
                 >
                   Explore
                 </Link>
@@ -295,7 +302,7 @@ export default function Navbar() {
                 <Link
                   to="/profiles"
                   onClick={() => setShowMobileMenu(false)}
-                  className="block px-4 py-2 text-slate-200 hover:bg-stone-700 rounded-sm transition-colors font-medium"
+                  className="block px-4 py-2 !text-stone-800 rounded-sm transition-colors font-medium"
                 >
                   Profiles
                 </Link>
@@ -303,7 +310,7 @@ export default function Navbar() {
                 <Link
                   to="/imageConverter"
                   onClick={() => setShowMobileMenu(false)}
-                  className="block px-4 py-2 text-slate-200 hover:bg-stone-700 rounded-sm transition-colors font-medium"
+                  className="block px-4 py-2 !text-stone-800 rounded-sm transition-colors font-medium"
                 >
                   Image Converter
                 </Link>
@@ -311,15 +318,15 @@ export default function Navbar() {
                 <Link
                   to="/login"
                   onClick={() => setShowMobileMenu(false)}
-                  className="block px-4 py-2 text-slate-200 hover:bg-stone-700 rounded-sm transition-colors font-medium"
+                  className="block px-4 py-2 !text-blue-600  rounded-sm transition-colors font-bold"
                 >
                   Login
                 </Link>
-                
+
                 <Link
                   to="/register"
                   onClick={() => setShowMobileMenu(false)}
-                  className="block px-4 py-2 bg-blue-600 text-white text-center rounded-sm font-bold hover:bg-stone-900 transition-colors"
+                  className="block px-4 py-2 !text-blue-600 rounded-sm font-bold hover:bg-stone-900 transition-colors"
                 >
                   Register
                 </Link>

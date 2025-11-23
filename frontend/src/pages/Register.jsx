@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { API } from "../api/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -385,7 +385,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-stone-900 text-stone-100 py-2 md:py-3 px-4 rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm md:text-base font-bold"
+              className="w-full bg-blue-600 hover:bg-stone-800 text-stone-100 py-2 md:py-3 px-4 !rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm md:text-base font-bold"
             >
               {loading ? (
                 <span className="flex items-center justify-center">

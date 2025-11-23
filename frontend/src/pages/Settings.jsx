@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API } from "../api/api";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -362,16 +362,16 @@ export default function Settings() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+      <div className="bg-stone-900 rounded-lg shadow-lg">
         {/* Header */}
-        <div className="border-b border-gray-200 dark:border-gray-700 p-4 md:p-6">
+        <div className="border-b-1 border-stone-700 p-4 md:p-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl md:text-3xl font-bold text-stone-100">
               Settings
             </h1>
             <button
               onClick={() => navigate("/profile")}
-              className="text-gray-600 dark:text-gray-400 hover:text-amber-500 transition-colors text-sm md:text-base"
+              className="text-stone-300 hover:text-blue-400 transition-colors text-sm md:text-base"
             >
               ← Back to Profile
             </button>
@@ -380,47 +380,47 @@ export default function Settings() {
 
         <div className="flex flex-col md:flex-row">
           {/* Sidebar Tabs */}
-          <div className="md:w-64 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 p-4 md:p-6">
+          <div className="md:w-64 border-b md:border-b-0 md:border-r border-stone-700 p-4 md:p-6">
             <nav className="space-y-2">
               <button
                 onClick={() => setActiveTab("profile")}
-                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
+                className={`w-full text-left px-3 md:px-4 py-2 !rounded-sm transition-colors text-sm md:text-base ${
                   activeTab === "profile"
-                    ? "bg-amber-400 text-white"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-blue-600 text-stone-100"
+                    : "text-stone-300 hover:bg-stone-800"
                 }`}
               >
-                👤 Profile
+                 Profile
               </button>
               <button
                 onClick={() => setActiveTab("account")}
-                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
+                className={`w-full text-left px-3 md:px-4 py-2 !rounded-sm transition-colors text-sm md:text-base ${
                   activeTab === "account"
-                    ? "bg-amber-400 text-white"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-blue-600 text-stone-100"
+                    : "text-stone-300 hover:bg-stone-800"
                 }`}
               >
-                🔐 Account
+                 Account
               </button>
               <button
                 onClick={() => setActiveTab("social")}
-                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
+                className={`w-full text-left px-3 md:px-4 py-2 !rounded-sm transition-colors text-sm md:text-base ${
                   activeTab === "social"
-                    ? "bg-amber-400 text-white"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-blue-600 text-stone-100"
+                    : "text-stone-300 hover:bg-stone-800"
                 }`}
               >
-                🔗 Social Links
+                 Social Links
               </button>
               <button
                 onClick={() => setActiveTab("danger")}
-                className={`w-full text-left px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
+                className={`w-full text-left px-3 md:px-4 py-2 !rounded-sm transition-colors text-sm md:text-base ${
                   activeTab === "danger"
-                    ? "bg-red-500 text-white"
-                    : "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    ? "bg-red-600 text-stone-100"
+                    : "text-red-600 hover:bg-red-900/40"
                 }`}
               >
-                ⚠️ Danger Zone
+                 Danger Zone
               </button>
             </nav>
           </div>
@@ -430,13 +430,13 @@ export default function Settings() {
             {/* Profile Tab */}
             {activeTab === "profile" && (
               <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-stone-100 mb-4 md:mb-6">
                   Profile Settings
                 </h2>
                 <form onSubmit={handleUpdateProfile}>
                   {/* Avatar */}
                   <div className="mb-4 md:mb-6 text-center">
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                       Profile Picture
                     </label>
 
@@ -445,10 +445,10 @@ export default function Settings() {
                         <img
                           src={avatarPreview}
                           alt="Avatar"
-                          className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700 mb-3 md:mb-4"
+                          className="w-24 h-24 md:w-32 md:h-32 rounded-sm object-cover border-4 border-stone-800 mb-3 md:mb-4"
                         />
                       ) : (
-                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-amber-400 flex items-center justify-center text-white text-3xl md:text-4xl font-bold mb-3 md:mb-4">
+                        <div className="w-24 h-24 md:w-32 md:h-32 border-4 border-stone-800 rounded-sm bg-stone-900 flex items-center justify-center text-stone-100 !text-5xl md:text-4xl font-bold mb-3 md:mb-4">
                           {profileData.username?.charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -463,7 +463,7 @@ export default function Settings() {
                       />
                       <label
                         htmlFor="avatar-upload"
-                        className="bg-amber-400 hover:bg-amber-400/80 text-white px-3 md:px-4 py-2 rounded-lg cursor-pointer transition-colors text-sm md:text-base"
+                        className="bg-blue-600 hover:bg-stone-800 text-white px-3 md:px-4 py-2 rounded-sm cursor-pointer transition-colors text-sm md:text-base"
                       >
                         {avatarPreview ? "Change Picture" : "Upload Picture"}
                       </label>
@@ -472,7 +472,7 @@ export default function Settings() {
 
                   {/* Username */}
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                       Username
                     </label>
                     <input
@@ -481,7 +481,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setProfileData({ ...profileData, username: e.target.value })
                       }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       required
                       disabled={loading}
                     />
@@ -489,7 +489,7 @@ export default function Settings() {
 
                   {/* Bio */}
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                       Bio
                     </label>
                     <textarea
@@ -498,7 +498,7 @@ export default function Settings() {
                         setProfileData({ ...profileData, bio: e.target.value })
                       }
                       rows="4"
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                       placeholder="Tell us about yourself..."
                     />
@@ -506,7 +506,7 @@ export default function Settings() {
 
                   {/* Role Selection */}
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                       I am a
                     </label>
                     <select
@@ -514,17 +514,17 @@ export default function Settings() {
                       onChange={(e) =>
                         setProfileData({ ...profileData, role: e.target.value })
                       }
-                      className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full h-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                     >
-                      <option value="student">🎓 Student</option>
-                      <option value="teacher">👨‍🏫 Teacher/Instructor</option>
+                      <option value="student">Student</option>
+                      <option value="teacher">Teacher/Instructor</option>
                     </select>
                   </div>
 
                   {/* Designation */}
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                       Designation
                     </label>
                     <input
@@ -536,7 +536,7 @@ export default function Settings() {
                           designation: e.target.value,
                         })
                       }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                       placeholder="e.g. Undergraduate Student, Lecturer, etc."
                     />
@@ -544,7 +544,7 @@ export default function Settings() {
 
                   {/* Department */}
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                       Department
                     </label>
                     <input
@@ -556,7 +556,7 @@ export default function Settings() {
                           department: e.target.value,
                         })
                       }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                       placeholder="e.g. Multimedia and Creative Technology"
                     />
@@ -565,7 +565,7 @@ export default function Settings() {
                   {/* Student Details */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
                     <div>
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                         Student ID
                       </label>
                       <input
@@ -574,14 +574,14 @@ export default function Settings() {
                         onChange={(e) =>
                           setProfileData({ ...profileData, studentId: e.target.value })
                         }
-                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                         disabled={loading}
                         placeholder="e.g. 221-40-041"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                         Batch
                       </label>
                       <input
@@ -590,14 +590,14 @@ export default function Settings() {
                         onChange={(e) =>
                           setProfileData({ ...profileData, batch: e.target.value })
                         }
-                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                         disabled={loading}
                         placeholder="e.g. 31"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                         Batch Advisor
                       </label>
                       <input
@@ -609,14 +609,14 @@ export default function Settings() {
                             batchAdvisor: e.target.value,
                           })
                         }
-                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                         disabled={loading}
                         placeholder="Advisor name"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                         Batch Mentor
                       </label>
                       <input
@@ -628,7 +628,7 @@ export default function Settings() {
                             batchMentor: e.target.value,
                           })
                         }
-                        className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                         disabled={loading}
                         placeholder="Mentor name"
                       />
@@ -638,7 +638,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
+                    className="w-full bg-blue-600 hover:bg-stone-800 text-white font-semibold px-4 md:px-6 py-2 md:py-3 !rounded-sm transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                   >
                     {loading ? "Saving..." : "Save Profile"}
                   </button>
@@ -649,36 +649,36 @@ export default function Settings() {
             {/* Account Tab */}
             {activeTab === "account" && (
               <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-stone-100 mb-4 md:mb-6">
                   Account Settings
                 </h2>
                 <form onSubmit={handleUpdateAccount} className="space-y-3 md:space-y-4">
                   {/* Email (Read-only) */}
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                       Email
                     </label>
                     <input
                       type="email"
                       value={user.email}
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-500"
                       disabled
                     />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-xs text-stone-400 mt-1">
                       Email cannot be changed
                     </p>
                   </div>
 
                   {/* Change Password Section */}
-                  <div className="pt-3 md:pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-3 md:mb-4">
+                  <div className="pt-3 md:pt-4 border-t border-stone-700">
+                    <h3 className="text-base md:text-lg font-semibold text-stone-200 mb-3 md:mb-4">
                       Change Password
                     </h3>
 
                     <div className="space-y-3 md:space-y-4">
                       {/* Current Password */}
                       <div>
-                        <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                           Current Password
                         </label>
                         <input
@@ -690,7 +690,7 @@ export default function Settings() {
                               currentPassword: e.target.value,
                             })
                           }
-                          className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                          className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                           disabled={loading}
                           placeholder="Enter current password"
                         />
@@ -698,7 +698,7 @@ export default function Settings() {
 
                       {/* New Password */}
                       <div>
-                        <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                           New Password
                         </label>
                         <input
@@ -710,7 +710,7 @@ export default function Settings() {
                               newPassword: e.target.value,
                             })
                           }
-                          className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                          className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                           disabled={loading}
                           placeholder="Enter new password (min 6 characters)"
                           minLength={6}
@@ -719,7 +719,7 @@ export default function Settings() {
 
                       {/* Confirm Password */}
                       <div>
-                        <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                           Confirm New Password
                         </label>
                         <input
@@ -731,7 +731,7 @@ export default function Settings() {
                               confirmPassword: e.target.value,
                             })
                           }
-                          className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                          className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                           disabled={loading}
                           placeholder="Confirm new password"
                         />
@@ -742,7 +742,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
+                    className="w-full bg-blue-600 hover:bg-stone-800 text-white font-semibold px-4 md:px-6 py-2 md:py-3 !rounded-sm transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                   >
                     {loading ? "Saving..." : "Save Changes"}
                   </button>
@@ -753,65 +753,15 @@ export default function Settings() {
             {/* Social Links Tab */}
             {activeTab === "social" && (
               <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-stone-100 mb-4 md:mb-6">
                   Social Links
                 </h2>
                 <form onSubmit={handleUpdateProfile} className="space-y-3 md:space-y-4">
-                  {/* LinkedIn */}
-                  <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      🔗 LinkedIn
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.linkedin || ""}
-                      onChange={(e) =>
-                        setSocialLinks({ ...socialLinks, linkedin: e.target.value })
-                      }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
-                      disabled={loading}
-                      placeholder="https://linkedin.com/in/username"
-                    />
-                  </div>
-
-                  {/* GitHub */}
-                  <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      💻 GitHub
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.github || ""}
-                      onChange={(e) =>
-                        setSocialLinks({ ...socialLinks, github: e.target.value })
-                      }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
-                      disabled={loading}
-                      placeholder="https://github.com/username"
-                    />
-                  </div>
-
-                  {/* Behance */}
-                  <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      🎨 Behance
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.behance || ""}
-                      onChange={(e) =>
-                        setSocialLinks({ ...socialLinks, behance: e.target.value })
-                      }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
-                      disabled={loading}
-                      placeholder="https://behance.net/username"
-                    />
-                  </div>
-
+                  
                   {/* Portfolio */}
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      🌐 Portfolio Website
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+                      Portfolio Website
                     </label>
                     <input
                       type="url"
@@ -822,16 +772,69 @@ export default function Settings() {
                           portfolio: e.target.value,
                         })
                       }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                       placeholder="https://yourportfolio.com"
                     />
                   </div>
+                  
+                  {/* LinkedIn */}
+                  <div>
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+                      LinkedIn
+                    </label>
+                    <input
+                      type="url"
+                      value={socialLinks.linkedin || ""}
+                      onChange={(e) =>
+                        setSocialLinks({ ...socialLinks, linkedin: e.target.value })
+                      }
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
+                      disabled={loading}
+                      placeholder="https://linkedin.com/in/username"
+                    />
+                  </div>
+
+                  {/* GitHub */}
+                  <div>
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+                      GitHub
+                    </label>
+                    <input
+                      type="url"
+                      value={socialLinks.github || ""}
+                      onChange={(e) =>
+                        setSocialLinks({ ...socialLinks, github: e.target.value })
+                      }
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
+                      disabled={loading}
+                      placeholder="https://github.com/username"
+                    />
+                  </div>
+
+                  {/* Behance */}
+                  <div>
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+                      Behance
+                    </label>
+                    <input
+                      type="url"
+                      value={socialLinks.behance || ""}
+                      onChange={(e) =>
+                        setSocialLinks({ ...socialLinks, behance: e.target.value })
+                      }
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
+                      disabled={loading}
+                      placeholder="https://behance.net/username"
+                    />
+                  </div>
+
+                  
 
                   {/* Twitter */}
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      🐦 Twitter
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+                      Twitter
                     </label>
                     <input
                       type="url"
@@ -839,7 +842,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setSocialLinks({ ...socialLinks, twitter: e.target.value })
                       }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                       placeholder="https://twitter.com/username"
                     />
@@ -847,8 +850,8 @@ export default function Settings() {
 
                   {/* Instagram */}
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      📷 Instagram
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+                       Instagram
                     </label>
                     <input
                       type="url"
@@ -859,7 +862,7 @@ export default function Settings() {
                           instagram: e.target.value,
                         })
                       }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                       placeholder="https://instagram.com/username"
                     />
@@ -867,8 +870,8 @@ export default function Settings() {
 
                   {/* Facebook */}
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      📘 Facebook
+                    <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+                       Facebook
                     </label>
                     <input
                       type="url"
@@ -876,7 +879,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setSocialLinks({ ...socialLinks, facebook: e.target.value })
                       }
-                      className="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400"
+                      className="w-full p-2 md:p-3 text-sm md:text-base border border-stone-600 rounded-sm bg-stone-800 text-stone-200"
                       disabled={loading}
                       placeholder="https://facebook.com/username"
                     />
@@ -885,7 +888,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
+                    className="w-full bg-blue-600 hover:bg-stone-800 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                   >
                     {loading ? "Saving..." : "Save Social Links"}
                   </button>
@@ -900,18 +903,18 @@ export default function Settings() {
                   ⚠️ Danger Zone
                 </h2>
                 <div className="space-y-3 md:space-y-4">
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 md:p-6">
-                    <h3 className="text-base md:text-lg font-semibold text-red-900 dark:text-red-400 mb-2">
+                  <div className="bg-red-900/20 border border-red-800 rounded-sm p-4 md:p-6">
+                    <h3 className="text-base md:text-lg font-semibold text-red-400 mb-2">
                       Delete Account
                     </h3>
-                    <p className="text-xs md:text-sm text-red-800 dark:text-red-300 mb-3 md:mb-4">
+                    <p className="text-xs md:text-sm text-red-300 mb-3 md:mb-4">
                       Once you delete your account, there is no going back. This will
                       permanently delete all your projects, comments, and data.
                     </p>
                     <button
                       onClick={handleDeleteAccount}
                       disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
+                      className="bg-red-600 hover:bg-stone-800 text-stone-100 font-semibold px-4 md:px-6 py-2 md:py-3 !rounded-sm transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
                     >
                       {loading ? "Deleting..." : "Delete My Account"}
                     </button>

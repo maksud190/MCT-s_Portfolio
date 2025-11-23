@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function ProjectCard({ project }) {
   const [likes, setLikes] = useState(project.likes || 0);

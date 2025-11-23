@@ -2,7 +2,7 @@ import { useState } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 import TagsInput from "../components/TagsInput";
 
 export default function Upload() {
@@ -238,7 +238,7 @@ export default function Upload() {
           {/* Thumbnail Upload */}
           {thumbnailPreview ? (
             <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs md:text-sm font-medium text-white mb-2">
                 Thumbnail Image <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -293,7 +293,7 @@ export default function Upload() {
           {/* Additional Images */}
           {previews.length > 0 && (
             <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                 Additional Images ({previews.length}/4)
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -349,7 +349,7 @@ export default function Upload() {
 
           {/* Title */}
           <div className="mb-3 md:mb-4">
-            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
               Project Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -365,7 +365,7 @@ export default function Upload() {
 
           {/* Description */}
           <div className="mb-3 md:mb-4">
-            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
               Description <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -381,13 +381,13 @@ export default function Upload() {
 
           {/* Category */}
           <div className="mb-3 md:mb-4">
-            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
               Category <span className="text-red-500">*</span>
             </label>
             <select
               value={data.category}
               onChange={handleCategoryChange}
-              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white"
+              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white font-medium"
               disabled={loading}
               required
             >
@@ -401,7 +401,7 @@ export default function Upload() {
           {/* Subcategory */}
           {data.category && (
             <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
                 Subcategory <span className="text-red-500">*</span>
               </label>
               <select

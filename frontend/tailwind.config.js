@@ -1,11 +1,11 @@
 export default {
-  content: ["./index.html", "./src/**/*.{js,jsx}"],
-  darkMode: 'class', // 🔥 এটা theme এর আগে রাখুন
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  // darktMode: 'class', // ✅ This is IMPORTANT
   theme: {
     extend: {
       fontFamily: {
         // ✅ Add Poppins as default sans font
-        sans: ['Poppins', 'sans-serif'],
+        sans: ["Poppins", "sans-serif"],
       },
     },
   },

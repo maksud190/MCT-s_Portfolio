@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 import Comments from "../components/Comments";
 import ContactModal from "../components/ContactModal";
 

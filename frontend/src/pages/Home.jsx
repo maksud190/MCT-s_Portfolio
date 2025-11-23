@@ -129,7 +129,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section - Hidden on mobile */}
-      <div className="bg-gradient-to-b from-indigo-200/20 via-indigo-300/20 to-slate-50 py-16 sm:py-32 md:py-40 lg:py-52 px-4 md:px-6 text-center mb-6 md:mb-8 hidden sm:block">
+      <div className="bg-gradient-to-b from-indigo-200/20 via-indigo-300/20 to-gray-100 py-16 sm:py-32 md:py-40 lg:py-52 px-4 md:px-6 text-center mb-6 md:mb-8 hidden sm:block">
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-3 md:mb-4 text-stone-800">
           Discover Amazing Projects
         </h1>

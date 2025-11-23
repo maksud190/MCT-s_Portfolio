@@ -3,7 +3,7 @@ import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import ProjectCard from "../components/ProjectCard";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function Profile() {
   const { user: currentUser } = useAuth();

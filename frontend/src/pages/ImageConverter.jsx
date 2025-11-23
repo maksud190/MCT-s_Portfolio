@@ -1,5 +1,388 @@
+// import { useState } from "react";
+
+
+// export default function ImageConverter() {
+//   const [selectedFile, setSelectedFile] = useState(null);
+//   const [previewUrl, setPreviewUrl] = useState(null);
+//   const [convertedImage, setConvertedImage] = useState(null);
+//   const [outputFormat, setOutputFormat] = useState("jpeg");
+//   const [isConverting, setIsConverting] = useState(false);
+//   const [quality, setQuality] = useState(0.9);
+
+//   const supportedFormats = [
+//     { value: "jpeg", label: "JPEG", extension: ".jpg" },
+//     { value: "png", label: "PNG", extension: ".png" },
+//     { value: "webp", label: "WebP", extension: ".webp" },
+//     { value: "bmp", label: "BMP", extension: ".bmp" },
+//   ];
+
+//   // Handle file selection
+//   const handleFileSelect = (e) => {
+//     const file = e.target.files[0];
+    
+//     if (!file) return;
+
+//     // Check if it's an image
+//     if (!file.type.startsWith("image/")) {
+//       toast.error("Please select a valid image file!");
+//       return;
+//     }
+
+//     // Check file size (max 10MB)
+//     if (file.size > 10 * 1024 * 1024) {
+//       toast.error("File size should be less than 10MB!");
+//       return;
+//     }
+
+//     setSelectedFile(file);
+//     setConvertedImage(null);
+
+//     // Create preview
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       setPreviewUrl(reader.result);
+//     };
+//     reader.readAsDataURL(file);
+
+//     toast.success("Image loaded successfully!");
+//   };
+
+//   // Convert image
+//   const handleConvert = async () => {
+//     if (!selectedFile) {
+//       toast.error("Please select an image first!");
+//       return;
+//     }
+
+//     setIsConverting(true);
+
+//     try {
+//       // Create image element
+//       const img = new Image();
+//       img.src = previewUrl;
+
+//       img.onload = () => {
+//         // Create canvas
+//         const canvas = document.createElement("canvas");
+//         canvas.width = img.width;
+//         canvas.height = img.height;
+
+//         const ctx = canvas.getContext("2d");
+//         ctx.drawImage(img, 0, 0);
+
+//         // Convert to desired format
+//         let mimeType = `image/${outputFormat}`;
+        
+//         // Handle special cases
+//         if (outputFormat === "jpeg" || outputFormat === "jpg") {
+//           mimeType = "image/jpeg";
+//         }
+
+//         canvas.toBlob(
+//           (blob) => {
+//             if (!blob) {
+//               toast.error("Conversion failed!");
+//               setIsConverting(false);
+//               return;
+//             }
+
+//             // Create download URL
+//             const url = URL.createObjectURL(blob);
+//             setConvertedImage({
+//               url,
+//               blob,
+//               size: blob.size,
+//               format: outputFormat,
+//             });
+
+//             setIsConverting(false);
+//             toast.success(`Converted to ${outputFormat.toUpperCase()} successfully!`);
+//           },
+//           mimeType,
+//           quality
+//         );
+//       };
+
+//       img.onerror = () => {
+//         toast.error("Failed to load image!");
+//         setIsConverting(false);
+//       };
+//     } catch (error) {
+//       console.error("Conversion error:", error);
+//       toast.error("Conversion failed!");
+//       setIsConverting(false);
+//     }
+//   };
+
+//   // Download converted image
+//   const handleDownload = () => {
+//     if (!convertedImage) return;
+
+//     const link = document.createElement("a");
+//     link.href = convertedImage.url;
+    
+//     const originalName = selectedFile.name.split(".")[0];
+//     const extension = supportedFormats.find(f => f.value === outputFormat)?.extension || ".jpg";
+//     link.download = `${originalName}_converted${extension}`;
+    
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+
+//     toast.success("Image downloaded!");
+//   };
+
+//   // Reset everything
+//   const handleReset = () => {
+//     setSelectedFile(null);
+//     setPreviewUrl(null);
+//     setConvertedImage(null);
+//     setOutputFormat("jpeg");
+//     setQuality(0.9);
+//   };
+
+//   // Format file size
+//   const formatFileSize = (bytes) => {
+//     if (bytes === 0) return "0 Bytes";
+//     const k = 1024;
+//     const sizes = ["Bytes", "KB", "MB"];
+//     const i = Math.floor(Math.log(bytes) / Math.log(k));
+//     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-b from-indigo-200/20 via-indigo-300/20 to-slate-50">
+//       {/* Hero Section */}
+//       <div className="py-16 px-6 text-center">
+//         <h1 className="text-5xl font-extrabold mb-4 text-stone-800">
+//           🖼️ Image Converter
+//         </h1>
+//         <p className="text-xl max-w-2xl mx-auto text-blue-800">
+//           Convert your images to different formats easily. Support for JPEG, PNG, WebP, and more!
+//         </p>
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="max-w-6xl mx-auto px-6 pb-16">
+//         <div className="bg-white rounded-sm shadow-lg p-8">
+          
+//           {/* File Upload Section */}
+//           <div className="mb-8">
+//             <label className="block mb-4">
+//               <span className="text-lg font-semibold text-gray-800 mb-2 block">
+//                 📁 Select Image
+//               </span>
+//               <div className="relative">
+//                 <input
+//                   type="file"
+//                   accept="image/*"
+//                   onChange={handleFileSelect}
+//                   className="block w-full text-sm text-gray-500
+//                     file:mr-4 file:py-3 file:px-6
+//                     file:rounded-sm file:border-0
+//                     file:text-sm file:font-semibold
+//                     file:bg-stone-800 file:text-white
+//                     hover:file:bg-stone-900
+//                     file:cursor-pointer cursor-pointer
+//                     border-2 border-dashed border-gray-300 rounded-sm p-4
+//                     hover:border-stone-800 transition-colors"
+//                 />
+//               </div>
+//               <p className="text-sm text-gray-500 mt-2">
+//                 Supported formats: JPG, PNG, WebP, BMP | Max size: 10MB
+//               </p>
+//             </label>
+//           </div>
+
+//           {/* Preview & Conversion Options */}
+//           {previewUrl && (
+//             <div className="grid md:grid-cols-2 gap-8 mb-8">
+              
+//               {/* Original Image Preview */}
+//               <div>
+//                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
+//                   📷 Original Image
+//                 </h3>
+//                 <div className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50">
+//                   <img
+//                     src={previewUrl}
+//                     alt="Original"
+//                     className="w-full h-auto rounded-lg shadow-md"
+//                   />
+//                   <div className="mt-4 text-sm text-gray-600">
+//                     <p><strong>File:</strong> {selectedFile.name}</p>
+//                     <p><strong>Size:</strong> {formatFileSize(selectedFile.size)}</p>
+//                     <p><strong>Type:</strong> {selectedFile.type}</p>
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* Conversion Options */}
+//               <div>
+//                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
+//                   ⚙️ Conversion Options
+//                 </h3>
+                
+//                 {/* Output Format */}
+//                 <div className="mb-6">
+//                   <label className="block mb-2 text-sm font-medium text-gray-700">
+//                     Output Format
+//                   </label>
+//                   <select
+//                     value={outputFormat}
+//                     onChange={(e) => setOutputFormat(e.target.value)}
+//                     className="w-full px-4 py-3 border-2 border-gray-300 text-stone-800 rounded-sm focus:border-stone-800 focus:outline-none transition-colors"
+//                   >
+//                     {supportedFormats.map((format) => (
+//                       <option key={format.value} value={format.value}>
+//                         {format.label} ({format.extension})
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </div>
+
+//                 {/* Quality Slider (for JPEG/WebP) */}
+//                 {(outputFormat === "jpeg" || outputFormat === "webp") && (
+//                   <div className="mb-6">
+//                     <label className="block mb-2 text-sm font-medium text-gray-700">
+//                       Quality: {Math.round(quality * 100)}%
+//                     </label>
+//                     <input
+//                       type="range"
+//                       min="0.1"
+//                       max="1"
+//                       step="0.1"
+//                       value={quality}
+//                       onChange={(e) => setQuality(parseFloat(e.target.value))}
+//                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-stone-800"
+//                     />
+//                     <div className="flex justify-between text-xs text-gray-500 mt-1">
+//                       <span>Low</span>
+//                       <span>High</span>
+//                     </div>
+//                   </div>
+//                 )}
+
+//                 {/* Convert Button */}
+//                 <button
+//                   onClick={handleConvert}
+//                   disabled={isConverting}
+//                   className="w-full bg-stone-800 text-white py-3 px-6 !rounded-sm font-semibold hover:bg-stone-900 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+//                 >
+//                   {isConverting ? (
+//                     <>
+//                       <div className="animate-spin !rounded-sm h-5 w-5 border-b-2 border-white"></div>
+//                       Converting...
+//                     </>
+//                   ) : (
+//                     <>
+//                       🔄 Convert Image
+//                     </>
+//                   )}
+//                 </button>
+
+//                 {/* Converted Image Preview */}
+//                 {convertedImage && (
+//                   <div className="mt-6 p-4 bg-green-50 border-2 border-green-300 rounded-lg">
+//                     <h4 className="font-semibold text-green-800 mb-2">
+//                       ✅ Conversion Successful!
+//                     </h4>
+//                     <img
+//                       src={convertedImage.url}
+//                       alt="Converted"
+//                       className="w-full h-auto rounded-lg shadow-md mb-3"
+//                     />
+//                     <div className="text-sm text-gray-700 mb-3">
+//                       <p><strong>Format:</strong> {convertedImage.format.toUpperCase()}</p>
+//                       <p><strong>Size:</strong> {formatFileSize(convertedImage.size)}</p>
+//                       <p className={`font-semibold ${
+//                         convertedImage.size < selectedFile.size ? "text-green-600" : "text-orange-600"
+//                       }`}>
+//                         {convertedImage.size < selectedFile.size ? "📉" : "📈"} {" "}
+//                         {((convertedImage.size / selectedFile.size) * 100).toFixed(1)}% of original
+//                       </p>
+//                     </div>
+                    
+//                     {/* Download Button */}
+//                     <button
+//                       onClick={handleDownload}
+//                       className="w-full bg-green-600 text-white py-2 px-4 !rounded-sm font-semibold hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+//                     >
+//                       📥 Download Image
+//                     </button>
+//                   </div>
+//                 )}
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Reset Button */}
+//           {previewUrl && (
+//             <div className="text-center">
+//               <button
+//                 onClick={handleReset}
+//                 className="bg-gray-500 text-white py-2 px-6 !rounded-sm font-semibold hover:bg-gray-600 transition-colors"
+//               >
+//                 🔄 Convert Another Image
+//               </button>
+//             </div>
+//           )}
+
+//           {/* Empty State */}
+//           {!previewUrl && (
+//             <div className="text-center py-16">
+//               <div className="text-8xl mb-6">🖼️</div>
+//               <h3 className="text-2xl font-semibold text-gray-800 mb-3">
+//                 No Image Selected
+//               </h3>
+//               <p className="text-gray-600 max-w-md mx-auto">
+//                 Upload an image to get started. You can convert between JPEG, PNG, WebP, and BMP formats.
+//               </p>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Features Section */}
+//         <div className="grid md:grid-cols-3 gap-6 mt-12">
+//           <div className="bg-white p-6 rounded-sm shadow-md text-center">
+//             <div className="text-4xl mb-3">⚡</div>
+//             <h3 className="font-semibold text-gray-800 mb-2">Fast Conversion</h3>
+//             <p className="text-sm text-gray-600">
+//               Convert images instantly in your browser
+//             </p>
+//           </div>
+          
+//           <div className="bg-white p-6 rounded-sm shadow-md text-center">
+//             <div className="text-4xl mb-3">🔒</div>
+//             <h3 className="font-semibold text-gray-800 mb-2">100% Private</h3>
+//             <p className="text-sm text-gray-600">
+//               All processing happens locally, no upload to servers
+//             </p>
+//           </div>
+          
+//           <div className="bg-white p-6 rounded-sm shadow-md text-center">
+//             <div className="text-4xl mb-3">🎨</div>
+//             <h3 className="font-semibold text-gray-800 mb-2">Quality Control</h3>
+//             <p className="text-sm text-gray-600">
+//               Adjust compression quality for optimal results
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from 'sonner';
 
 export default function ImageConverter() {
   const [selectedFile, setSelectedFile] = useState(null);
