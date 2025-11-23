@@ -27,7 +27,7 @@
 //         <Route path="/user/:userId" element={<Profile />} />
 //         <Route path="/project/:projectId" element={<ProjectDetails />} />
 //         <Route path="/image-converter" element={<ImageConverter />} />
-        
+
 //         <Route
 //           path="/profile"
 //           element={
@@ -61,30 +61,15 @@
 //           }
 //         />
 //       </Routes>
-      
+
 //       {/* ✅ Sonner Toaster - Much simpler! */}
 //       <Toaster position="top-right" richColors />
-      
+
 //     </>
 //   );
 // }
 
 // export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -99,7 +84,8 @@ import Settings from "./pages/Settings";
 import Profiles from "./pages/Profiles";
 import ImageConverter from "./pages/ImageConverter";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
+import Footer from "./components/Footer";
 // import ThemeToggle from "./components/ThemeToggle";
 
 function App() {
@@ -114,7 +100,7 @@ function App() {
         <Route path="/user/:userId" element={<Profile />} />
         <Route path="/project/:projectId" element={<ProjectDetails />} />
         <Route path="/imageConverter" element={<ImageConverter />} />
-        
+
         <Route
           path="/profile"
           element={
@@ -148,9 +134,9 @@ function App() {
           }
         />
       </Routes>
-      
+
       <Toaster position="top-right" richColors />
-      
+      <Footer />
     </div>
   );
 }

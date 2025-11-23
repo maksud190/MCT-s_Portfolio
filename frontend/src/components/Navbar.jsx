@@ -6,9 +6,7 @@ import SearchBar from "./SearchBar";
 import NotificationBell from "./NotificationBell";
 // import ThemeToggle from "./ThemeToggle";
 
-
 export default function Navbar() {
-  
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -71,7 +69,7 @@ export default function Navbar() {
           <div className="hidden md:block flex-1 max-w-xl mx-4 lg:mx-8">
             <SearchBar />
           </div>
- {/* <ThemeToggle /> */}
+          {/* <ThemeToggle /> */}
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-2 lg:gap-3">
             {user ? (
@@ -105,7 +103,6 @@ export default function Navbar() {
                       {user.username}
                     </span>
                   </Link>
-              
 
                   {/* Dropdown Menu */}
                   <div className="absolute right-0 mt-2 w-42 bg-stone-900 rounded-sm shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-slate-700">
@@ -150,13 +147,13 @@ export default function Navbar() {
             ) : (
               <>
                 <Link to="/login">
-                  <span className="font-bold text-sm text-gray-800 hover:text-stone-100 hover:bg-stone-800 px-3 py-2 rounded-sm duration-200">
+                  <span className="font-bold text-sm text-blue-600 hover:text-stone-100 hover:bg-stone-800 px-3 py-2 rounded-sm duration-200">
                     Login
                   </span>
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-stone-800 !text-stone-100 hover:!text-stone-800 px-3 py-2 rounded-sm hover:bg-white transition-all duration-200 font-medium text-sm"
+                  className="bg-blue-600 !text-stone-100 hover:!text-stone-100 px-3 py-2 rounded-sm hover:bg-stone-800 transition-all duration-200 font-medium text-sm"
                 >
                   Register
                 </Link>
