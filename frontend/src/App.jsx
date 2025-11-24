@@ -11,13 +11,13 @@
 // import Profiles from "./pages/Profiles";
 // import ImageConverter from "./pages/ImageConverter";
 // import ProtectedRoute from "./components/ProtectedRoute";
-
-// // ✅ Use Sonner instead
-// import { Toaster } from 'sonner';
+// import { Toaster } from "sonner";
+// import Footer from "./components/Footer";
+// // import ThemeToggle from "./components/ThemeToggle";
 
 // function App() {
 //   return (
-//     <>
+//     <div className="min-h-screen bg-gray-100 transition-colors duration-300">
 //       <Navbar />
 //       <Routes>
 //         <Route path="/" element={<Home />} />
@@ -26,7 +26,7 @@
 //         <Route path="/profiles" element={<Profiles />} />
 //         <Route path="/user/:userId" element={<Profile />} />
 //         <Route path="/project/:projectId" element={<ProjectDetails />} />
-//         <Route path="/image-converter" element={<ImageConverter />} />
+//         <Route path="/imageConverter" element={<ImageConverter />} />
 
 //         <Route
 //           path="/profile"
@@ -62,17 +62,34 @@
 //         />
 //       </Routes>
 
-//       {/* ✅ Sonner Toaster - Much simpler! */}
 //       <Toaster position="top-right" richColors />
-
-//     </>
+//       <Footer />
+//     </div>
 //   );
 // }
 
 // export default App;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -84,60 +101,106 @@ import Settings from "./pages/Settings";
 import Profiles from "./pages/Profiles";
 import ImageConverter from "./pages/ImageConverter";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { Toaster } from "sonner";
-import Footer from "./components/Footer";
-// import ThemeToggle from "./components/ThemeToggle";
+import { Toaster } from 'sonner';
+
+// ✅ Admin imports
+import { AdminProvider } from './context/AdminContext';
+import AdminRoute from './components/AdminRoute';
+import AdminLogin from './admin/pages/AdminLogin';
+import AdminLayout from './admin/layouts/AdminLayout';
+import AdminDashboard from './admin/pages/AdminDashboard';
+import UsersManagement from './admin/pages/UsersManagement';
+import ProjectsManagement from './admin/pages/ProjectsManagement';
+import CommentsModeration from './admin/pages/CommentsModeration';
+import Categories from './admin/pages/Categories';
+import Announcements from './admin/pages/Announcements';
+import Analytics from './admin/pages/Analytics';
+import SiteSettings from './admin/pages/SiteSettings';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 transition-colors duration-300">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profiles" element={<Profiles />} />
-        <Route path="/user/:userId" element={<Profile />} />
-        <Route path="/project/:projectId" element={<ProjectDetails />} />
-        <Route path="/imageConverter" element={<ImageConverter />} />
+    <AdminProvider>
+      <div className="min-h-screen bg-gray-100 transition-colors duration-300">
+        <Routes>
+          {/* ========================================
+              PUBLIC ROUTES (with Navbar & Footer)
+          ======================================== */}
+          <Route path="/*" element={
+            <>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/profiles" element={<Profiles />} />
+                <Route path="/user/:userId" element={<Profile />} />
+                <Route path="/project/:projectId" element={<ProjectDetails />} />
+                <Route path="/image-converter" element={<ImageConverter />} />
+                
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/upload"
+                  element={
+                    <ProtectedRoute>
+                      <Upload />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/edit-project/:projectId"
+                  element={
+                    <ProtectedRoute>
+                      <EditProject />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+              <Footer />
+            </>
+          } />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/upload"
-          element={
-            <ProtectedRoute>
-              <Upload />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/edit-project/:projectId"
-          element={
-            <ProtectedRoute>
-              <EditProject />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-
-      <Toaster position="top-right" richColors />
-      <Footer />
-    </div>
+          {/* ========================================
+              ADMIN ROUTES (no Navbar/Footer)
+          ======================================== */}
+          
+          {/* Admin Login (public) */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          
+          {/* Admin Panel (protected) */}
+          <Route path="/admin/*" element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<UsersManagement />} />
+            <Route path="projects" element={<ProjectsManagement />} />
+            <Route path="comments" element={<CommentsModeration />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="announcements" element={<Announcements />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="settings" element={<SiteSettings />} />
+          </Route>
+        </Routes>
+        
+        <Toaster position="top-right" richColors />
+      </div>
+    </AdminProvider>
   );
 }
 

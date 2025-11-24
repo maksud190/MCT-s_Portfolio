@@ -60,6 +60,7 @@ const userSchema = new mongoose.Schema(
     
     // 🔥 Admin & Status
     isActive: { type: Boolean, default: true },
+    isBlocked: { type: Boolean, default: false },  // ✅ NEW
     
     // 🔥 Notifications
     notifications: [{

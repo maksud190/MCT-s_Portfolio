@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js"; // 🔥 NEW
+import adminRoutes from "./routes/adminRoutes.js";
 
 dotenv.config();
 
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 // ✅ Routes
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
-app.use("/api/admin", adminRoutes); // 🔥 NEW
+app.use("/api/admin", adminRoutes);
 
 // Database connection
 mongoose
