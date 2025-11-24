@@ -161,16 +161,16 @@ export default function Announcements() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="!text-3xl md:text-3xl font-bold text-stone-800 dark:text-stone-100">
             Announcements
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-stone-600 dark:text-stone-400 mt-0 font-medium">
             Manage site-wide announcements and notices
           </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-blue-600 hover:bg-stone-900 text-white !rounded-sm font-medium transition-colors flex items-center gap-2"
         >
           <svg
             className="w-5 h-5"
@@ -195,7 +195,7 @@ export default function Announcements() {
           [...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse"
+              className="bg-white dark:bg-gray-800 rounded-sm shadow p-6 animate-pulse"
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-gray-300 dark:bg-gray-700 rounded-lg"></div>
@@ -208,7 +208,7 @@ export default function Announcements() {
             </div>
           ))
         ) : announcements.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 !rounded-sm shadow p-12 text-center">
             <svg
               className="w-16 h-16 text-gray-400 mx-auto mb-4"
               fill="none"
@@ -234,14 +234,14 @@ export default function Announcements() {
             return (
               <div
                 key={announcement._id}
-                className={`bg-white dark:bg-gray-800 rounded-lg shadow p-6 ${
+                className={`bg-white dark:bg-gray-800/50 rounded-sm shadow p-6 ${
                   expired ? "opacity-60" : ""
                 }`}
               >
                 <div className="flex items-start gap-4">
                   {/* Icon */}
                   <div
-                    className={`flex-shrink-0 w-12 h-12 ${typeColor.bg} rounded-lg flex items-center justify-center text-2xl`}
+                    className={`flex-shrink-0 w-12 h-12 ${typeColor.bg} rounded-sm flex items-center justify-center text-2xl`}
                   >
                     {typeColor.icon}
                   </div>
@@ -250,16 +250,16 @@ export default function Announcements() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-1">
+                        <h3 className="font-bold text-lg text-stone-800 dark:text-stone-100 mb-1">
                           {announcement.title}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-stone-700 dark:text-stone-400">
                           {announcement.content}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          className={`px-3 py-1 rounded-sm text-xs font-semibold ${
                             announcement.isActive && !expired
                               ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                               : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400"
@@ -272,7 +272,7 @@ export default function Announcements() {
                             : "Inactive"}
                         </span>
                         <span
-                          className={`px-3 py-1 ${typeColor.bg} ${typeColor.text} rounded-full text-xs font-semibold capitalize`}
+                          className={`px-3 py-1 ${typeColor.bg} ${typeColor.text} rounded-sm text-xs font-semibold capitalize`}
                         >
                           {announcement.type}
                         </span>
@@ -280,7 +280,7 @@ export default function Announcements() {
                     </div>
 
                     {/* Meta Info */}
-                    <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    <div className="flex flex-wrap gap-4 text-xs font-medium text-stone-500 dark:text-stone-500 mb-4">
                       <span>
                         📅 Created:{" "}
                         {new Date(announcement.createdAt).toLocaleDateString()}
@@ -297,7 +297,7 @@ export default function Announcements() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(announcement)}
-                        className="px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-sm font-medium transition-colors"
+                        className="!px-4 !py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 !rounded-sm text-sm font-medium transition-colors"
                       >
                         ✏️ Edit
                       </button>
@@ -305,7 +305,7 @@ export default function Announcements() {
                         onClick={() =>
                           handleDelete(announcement._id, announcement.title)
                         }
-                        className="px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 rounded-lg text-sm font-medium transition-colors"
+                        className="!px-4 !py-2 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 !rounded-sm text-sm font-medium transition-colors"
                       >
                         🗑️ Delete
                       </button>

@@ -148,7 +148,7 @@ export default function UsersManagement() {
           </select>
           <button
             type="submit"
-            className="px-6 !py-1.5 bg-blue-600 hover:bg-blue-700 text-white !rounded-sm font-medium transition-colors"
+            className="px-6 !py-1.5 bg-blue-600 hover:bg-stone-900 text-white !rounded-sm font-medium transition-colors"
           >
             Search
           </button>
@@ -156,10 +156,10 @@ export default function UsersManagement() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-sm shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800/50 rounded-sm shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-stone-300 uppercase tracking-wider">
                   User
@@ -277,7 +277,7 @@ export default function UsersManagement() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <div className="px-6 py-4 border-t border-gray-200 dark:!border-stone-700 flex items-center justify-between">
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
