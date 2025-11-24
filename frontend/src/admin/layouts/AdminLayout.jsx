@@ -16,8 +16,8 @@ export default function AdminLayout() {
       {/* Main Content */}
       <div className="lg:pl-64">
         {/* Top Bar */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30">
-          <div className="flex items-center justify-between px-4 py-4">
+        <header className="bg-white dark:bg-stone-900 border-b border-stone-300 dark:border-stone-700 sticky top-0 z-30">
+          <div className="flex items-center justify-between px-4 py-3.5">
             {/* Mobile Menu Button */}
             <button
               onClick={() => setSidebarOpen(true)}
@@ -29,10 +29,10 @@ export default function AdminLayout() {
             </button>
 
             {/* Page Title (will be set by each page) */}
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white ml-4 lg:ml-0">
+            <div className="flex-1 ">
+              <p className="!text-4xl font-bold text-stone-800 dark:text-stone-100 ml-4 lg:ml-0">
                 Admin Dashboard
-              </h1>
+              </p>
             </div>
 
             {/* Quick Actions */}

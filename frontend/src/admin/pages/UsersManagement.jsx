@@ -112,17 +112,17 @@ export default function UsersManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="!text-3xl md:text-3xl font-bold text-gray-900 dark:text-stone-100">
             Users Management
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-stone-600 dark:text-stone-400 font-medium mt-0">
             Manage all registered users
           </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+      <div className="bg-white dark:bg-stone-800 rounded-sm shadow p-4">
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <input
@@ -130,7 +130,7 @@ export default function UsersManagement() {
               placeholder="Search by username or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-sm bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100"
             />
           </div>
           <select
@@ -139,7 +139,7 @@ export default function UsersManagement() {
               setRoleFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="px-4 !py-1.5 border border-stone-300 dark:border-stone-700 rounded-sm bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100"
           >
             <option value="">All Roles</option>
             <option value="student">Students</option>
@@ -148,7 +148,7 @@ export default function UsersManagement() {
           </select>
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            className="px-6 !py-1.5 bg-blue-600 hover:bg-blue-700 text-white !rounded-sm font-medium transition-colors"
           >
             Search
           </button>
@@ -156,24 +156,24 @@ export default function UsersManagement() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-sm shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-stone-300 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-stone-300 uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-stone-300 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-stone-300 uppercase tracking-wider">
                   Joined
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-stone-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -193,17 +193,17 @@ export default function UsersManagement() {
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {user.avatar ? (
                           <img
                             src={user.avatar}
                             alt={user.username}
-                            className="w-10 h-10 rounded-full object-cover"
+                            className="w-10 h-10 rounded-sm border-1 border-stone-300 object-cover"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold">
+                          <div className="w-10 h-10 rounded-sm bg-stone-900 border-1 border-stone-300 flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold">
                             {user.username?.charAt(0).toUpperCase()}
                           </div>
                         )}

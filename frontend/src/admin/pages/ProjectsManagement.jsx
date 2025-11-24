@@ -101,10 +101,10 @@ export default function ProjectsManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="!text-3xl md:text-3xl font-bold text-stone-800 dark:text-stone-100">
             Projects Management
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-stone-600 dark:text-stone-400 font-medium mt-0">
             Manage and moderate all projects
           </p>
         </div>
@@ -144,11 +144,11 @@ export default function ProjectsManagement() {
       </div>
 
       {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
         {loading ? (
           // Loading skeleton
           [...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden animate-pulse">
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-sm shadow overflow-hidden animate-pulse">
               <div className="w-full h-48 bg-gray-300 dark:bg-gray-700"></div>
               <div className="p-4 space-y-3">
                 <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
@@ -169,7 +169,7 @@ export default function ProjectsManagement() {
                 <img
                   src={project.thumbnail}
                   alt={project.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-40 object-cover"
                 />
                 
                 {/* Featured Badge */}
@@ -185,11 +185,11 @@ export default function ProjectsManagement() {
                 {/* Status Badge */}
                 <div className="absolute top-2 right-2">
                   {project.isApproved ? (
-                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                    <span className="bg-green-500 text-white px-2 py-1 rounded-sm text-xs font-medium">
                       ✓ Approved
                     </span>
                   ) : (
-                    <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                    <span className="bg-yellow-500 text-white px-2 py-1 rounded-sm text-xs font-medium">
                       ⏳ Pending
                     </span>
                   )}
@@ -197,7 +197,7 @@ export default function ProjectsManagement() {
 
                 {/* Stats Overlay */}
                 <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-white text-xs">
-                  <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                  <div className="flex items-center gap-3 bg-stone-800/40 backdrop-blur-sm px-1.5 py-1 rounded-sm">
                     <span className="flex items-center gap-1">
                       👁️ {project.views || 0}
                     </span>
@@ -219,23 +219,23 @@ export default function ProjectsManagement() {
                     <img
                       src={project.userId.avatar}
                       alt={project.userId.username}
-                      className="w-6 h-6 rounded-full object-cover"
+                      className="w-6 h-6 rounded-sm object-cover"
                     />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-300">
+                    <div className="w-6 h-6 rounded-sm bg-stone-900 border-1 border-stone-300 flex items-center justify-center text-xs font-bold text-stone-100">
                       {project.userId?.username?.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-sm text-stone-700 dark:text-stone-300">
                     {project.userId?.username}
                   </span>
                 </div>
 
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">
                   {project.category}
                 </p>
                 
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                <p className="text-xs text-stone-500 dark:text-stone-400 mb-4">
                   {new Date(project.createdAt).toLocaleDateString()}
                 </p>
 
@@ -244,16 +244,16 @@ export default function ProjectsManagement() {
                   <Link
                     to={`/project/${project._id}`}
                     target="_blank"
-                    className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition-colors text-center"
+                    className=" bg-blue-600 hover:bg-blue-700 !text-white !text-sm rounded-sm !font-sm transition-colors !pt-2 px-2"
                   >
                     View
                   </Link>
                   
                   <button
                     onClick={() => handleApproveProject(project._id, project.isApproved)}
-                    className={`flex-1 px-3 py-2 text-sm rounded-lg font-medium transition-colors ${
+                    className={`flex-1 !px-0 !py-0 !text-sm !rounded-sm !font-sm transition-colors ${
                       project.isApproved
-                        ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400'
+                        ? 'bg-red-200 text-red-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400'
                         : 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400'
                     }`}
                   >
@@ -262,21 +262,21 @@ export default function ProjectsManagement() {
                   
                   <button
                     onClick={() => handleToggleFeatured(project._id)}
-                    className={`p-2 rounded-lg transition-colors ${
+                    className={`!p-2 !rounded-sm transition-colors ${
                       project.isFeatured
                         ? 'bg-yellow-500 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}
                     title={project.isFeatured ? 'Remove featured' : 'Make featured'}
                   >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 " fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   </button>
                   
                   <button
                     onClick={() => handleDeleteProject(project._id, project.title)}
-                    className="p-2 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 rounded-lg transition-colors"
+                    className="!p-2 bg-red-200 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 !rounded-sm transition-colors"
                     title="Delete project"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

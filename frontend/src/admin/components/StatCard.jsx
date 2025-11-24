@@ -23,7 +23,7 @@ export default function StatCard({ title, value, icon, color = "blue", trend, lo
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow p-6">
+    <div className="bg-white dark:bg-stone-800 rounded-sm shadow hover:shadow-lg transition-shadow p-6">
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">

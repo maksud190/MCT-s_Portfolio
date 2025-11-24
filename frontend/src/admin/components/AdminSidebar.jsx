@@ -95,26 +95,26 @@ export default function AdminSidebar({ isOpen, onClose }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-gray-900 border-r border-gray-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white dark:bg-stone-900  border-r border-stone-300 dark:border-stone-700 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-800">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-stone-300 dark:border-stone-700">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-600 rounded-sm flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
               </svg>
             </div>
             <div>
-              <h2 className="text-white font-bold text-lg">Admin</h2>
-              <p className="text-gray-400 text-xs">Management</p>
+              <h2 className="text-stone-800 dark:text-stone-100 font-bold text-lg">Admin</h2>
+              <p className="text-stone-700 dark:text-stone-400 text-xs">Management</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="lg:hidden text-gray-400 hover:text-white"
+            className="lg:hidden text-stone-100 hover:text-white"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -123,16 +123,16 @@ export default function AdminSidebar({ isOpen, onClose }) {
         </div>
 
         {/* User Info */}
-        <div className="p-4 border-b border-gray-800">
+        <div className="px-4 py-3 border-b border-stone-300 dark:border-stone-700">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
+            <div className="w-10 h-10 bg-stone-900 border-1 border-stone-100 rounded-sm flex items-center justify-center text-stone-100 text-xl font-bold">
               {adminUser?.username?.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white font-medium text-sm truncate">
+              <p className="text-stone-800 dark:text-stone-100 font-medium text-sm truncate">
                 {adminUser?.username}
               </p>
-              <p className="text-gray-400 text-xs truncate">
+              <p className="text-stone-700 dark:text-stone-400 text-xs truncate">
                 {adminUser?.email}
               </p>
             </div>
@@ -147,10 +147,10 @@ export default function AdminSidebar({ isOpen, onClose }) {
                 <Link
                   to={item.path}
                   onClick={onClose}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-2 rounded-sm transition-colors ${
                     isActive(item.path)
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'bg-blue-600 !text-stone-100'
+                      : '!text-stone-700 dark:!text-stone-400 hover:bg-blue-400/30 dark:hover:!text-stone-100'
                   }`}
                 >
                   {item.icon}
@@ -162,10 +162,10 @@ export default function AdminSidebar({ isOpen, onClose }) {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-stone-300 dark:border-stone-700">
           
           <a href="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors mb-2"
+            className="flex items-center gap-3 px-4 py-3 rounded-sm text-gray-300 hover:bg-blue-400/30 dark:hover:!text-stone-100 transition-colors mb-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -174,7 +174,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
           </a>
           <button
             onClick={logoutAdmin}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 !rounded-sm text-red-600 hover:bg-red-400/40 dark:hover:text-stone-100 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
