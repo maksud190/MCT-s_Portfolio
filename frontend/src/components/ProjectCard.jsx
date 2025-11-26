@@ -388,10 +388,10 @@ export default function ProjectCard({ project }) {
               <img
                 src={project.userId.avatar}
                 alt={project.userId.username}
-                className="w-7 h-7 rounded-sm object-cover"
+                className="w-7 h-7 rounded-lg object-cover"
               />
             ) : (
-              <div className="w-7 h-7 rounded-sm bg-stone-900 flex items-center justify-center text-stone-100 text-sm font-bold shadow-sm">
+              <div className="w-7 h-7 rounded-lg bg-stone-900 flex items-center justify-center text-stone-100 text-sm font-bold shadow-sm">
                 {project.userId?.username?.charAt(0).toUpperCase()}
               </div>
             )}

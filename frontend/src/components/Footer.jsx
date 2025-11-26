@@ -31,7 +31,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-white border-t border-gray-200 mt-20">
+    <footer className="relative bg-stone-900 border-t border-gray-200 mt-20">
       {/* Top Stats Banner */}
       <div className="relative -mt-16 mb-12">
         <div className="max-w-6xl mx-auto px-6">
@@ -57,7 +57,7 @@ export default function Footer() {
               </div>
               <div className="group">
                 <div className="text-4xl font-black mb-2 group-hover:scale-110 transition-transform">
-                  100+
+                  10+
                 </div>
                 <div className="text-sm font-medium opacity-90">Categories</div>
               </div>
@@ -77,12 +77,12 @@ export default function Footer() {
                 <span className="text-2xl font-black text-white">M</span>
               </div>
               <div>
-                <div className="text-xl font-black text-gray-900">MCT Portfolio</div>
-                <div className="text-xs text-gray-500">Showcase Your Creativity</div>
+                <div className="text-xl font-black text-white">MCT Portfolio</div>
+                <div className="text-xs text-stone-400">Showcase Your Creativity</div>
               </div>
             </Link>
             
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed max-w-sm">
+            <p className="text-sm text-stone-300 mb-6 leading-relaxed max-w-sm">
               The ultimate platform for Multimedia & Creative Technology students to showcase their work and connect with the creative community.
             </p>
 
@@ -92,7 +92,7 @@ export default function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
+                className="px-4 py-2 bg-gradient-to-br from-blue-600 to-indigo-600 hover:!text-stone-800 !text-stone-100 rounded-full text-sm font-medium transition-all"
               >
                 Facebook
               </a>
@@ -100,7 +100,7 @@ export default function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-gray-100 hover:bg-sky-500 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
+                className="px-4 py-2 bg-gradient-to-br from-blue-600 to-indigo-600 hover:!text-stone-800 !text-stone-100 rounded-full text-sm font-medium transition-all"
               >
                 Twitter
               </a>
@@ -108,7 +108,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-gray-100 hover:bg-pink-600 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
+                className="px-4 py-2 bg-gradient-to-br from-blue-600 to-indigo-600 hover:!text-stone-800 !text-stone-100 rounded-full text-sm font-medium transition-all"
               >
                 Instagram
               </a>
@@ -116,7 +116,7 @@ export default function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-gray-100 hover:bg-blue-700 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
+                className="px-4 py-2 bg-gradient-to-br from-blue-600 to-indigo-600 hover:!text-stone-800 !text-stone-100 rounded-full text-sm font-medium transition-all"
               >
                 LinkedIn
               </a>
@@ -125,7 +125,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
+            <h4 className="text-sm font-bold text-stone-100 mb-4 uppercase tracking-wider">
               Explore
             </h4>
             <ul className="space-y-3">
@@ -138,7 +138,7 @@ export default function Footer() {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-gray-600 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                    className="text-sm !text-blue-400 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
                     {link.label}
@@ -150,7 +150,7 @@ export default function Footer() {
 
           {/* Categories */}
           <div>
-            <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
+            <h4 className="text-sm font-bold text-stone-100 mb-4 uppercase tracking-wider">
               Categories
             </h4>
             <ul className="space-y-3">
@@ -164,9 +164,9 @@ export default function Footer() {
                 <li key={cat}>
                   
                    <a href={`/?category=${cat}`}
-                    className="text-sm text-gray-600 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                    className="text-sm !text-blue-400 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
                   >
-                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
+                    <span className="w-1.5 h-1.5 bg-blue-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
                     {cat}
                   </a>
                 </li>
@@ -176,7 +176,7 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
+            <h4 className="text-sm font-bold text-stone-100 mb-4 uppercase tracking-wider">
               Support
             </h4>
             <ul className="space-y-3 mb-6">
@@ -189,7 +189,7 @@ export default function Footer() {
                 <li key={item}>
                   
                    <a href="#"
-                    className="text-sm text-gray-600 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                    className="text-sm !text-blue-400 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
                     {item}
@@ -199,13 +199,13 @@ export default function Footer() {
             </ul>
 
             {/* Contact Email */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
-              <div className="text-xs font-semibold text-gray-700 mb-2">
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl p-4">
+              <div className="text-xs font-semibold text-stone-100 mb-2">
                 Get in Touch
               </div>
               <a 
                 href="mailto:support@mctportfolio.com"
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium break-all"
+                className="text-sm !text-stone-300 hover:!text-stone-800 font-medium break-all"
               >
                 support@mctportfolio.com
               </a>
@@ -216,14 +216,14 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-stone-300">
               © {currentYear} MCT Portfolio. All rights reserved.
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">Made with</span>
+              <span className="text-xs text-stone-400">Made with</span>
               <span className="text-red-500 text-lg animate-pulse">♥</span>
-              <span className="text-xs text-gray-400">by MCT Students</span>
+              <span className="text-xs text-stone-400">by MCT Students</span>
             </div>
 
             <div className="flex gap-2">
