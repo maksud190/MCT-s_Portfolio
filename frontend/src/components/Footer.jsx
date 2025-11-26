@@ -5,13 +5,11 @@ import { API } from "../api/api";
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   
-  // ✅ Dynamic stats state
   const [stats, setStats] = useState({
     projects: 0,
     users: 0
   });
 
-  // ✅ Fetch stats on mount
   useEffect(() => {
     fetchStats();
   }, []);
@@ -33,255 +31,222 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-stone-900 text-stone-300 relative">
+    <footer className="relative bg-white border-t border-gray-200 mt-20">
+      {/* Top Stats Banner */}
+      <div className="relative -mt-16 mb-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl shadow-2xl p-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-white text-center">
+              <div className="group">
+                <div className="text-4xl font-black mb-2 group-hover:scale-110 transition-transform">
+                  {stats.projects}+
+                </div>
+                <div className="text-sm font-medium opacity-90">Projects</div>
+              </div>
+              <div className="group">
+                <div className="text-4xl font-black mb-2 group-hover:scale-110 transition-transform">
+                  {stats.users}+
+                </div>
+                <div className="text-sm font-medium opacity-90">Creators</div>
+              </div>
+              <div className="group">
+                <div className="text-4xl font-black mb-2 group-hover:scale-110 transition-transform">
+                  50K+
+                </div>
+                <div className="text-sm font-medium opacity-90">Views</div>
+              </div>
+              <div className="group">
+                <div className="text-4xl font-black mb-2 group-hover:scale-110 transition-transform">
+                  100+
+                </div>
+                <div className="text-sm font-medium opacity-90">Categories</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="max-w-6xl mx-auto px-6 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           
-          {/* About Section */}
-          <div>
-            <h3 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
-              MCT's Portfolio
-            </h3>
-            <p className="text-sm text-gray-400 mb-4 leading-relaxed">
-              A platform for Multimedia & Creative Technology students to showcase their creative works, connect with peers, and build their professional portfolio.
+          {/* Brand Column - Larger */}
+          <div className="lg:col-span-2">
+            <Link to="/" className="inline-flex items-center gap-3 mb-4 group">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center transform group-hover:rotate-6 transition-transform">
+                <span className="text-2xl font-black text-white">M</span>
+              </div>
+              <div>
+                <div className="text-xl font-black text-gray-900">MCT Portfolio</div>
+                <div className="text-xs text-gray-500">Showcase Your Creativity</div>
+              </div>
+            </Link>
+            
+            <p className="text-sm text-gray-600 mb-6 leading-relaxed max-w-sm">
+              The ultimate platform for Multimedia & Creative Technology students to showcase their work and connect with the creative community.
             </p>
-            <div className="">
+
+            {/* Social Media - Modern Pills */}
+            <div className="flex flex-wrap gap-2">
               <a 
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className=""
-                aria-label="Facebook"
+                className="px-4 py-2 bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
               >
-                <span></span>
-                <span className="text-lg">Facebook</span>
+                Facebook
               </a>
-              <br />
               <a 
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className=""
-                aria-label="Twitter"
+                className="px-4 py-2 bg-gray-100 hover:bg-sky-500 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
               >
-                <span className="text-lg">Website</span>
+                Twitter
+              </a>
+              <a 
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-gray-100 hover:bg-pink-600 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
+              >
+                Instagram
+              </a>
+              <a 
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-gray-100 hover:bg-blue-700 hover:text-white text-gray-700 rounded-full text-sm font-medium transition-all"
+              >
+                LinkedIn
               </a>
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2.5">
-              <li>
-                <Link
-                  to="/"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>🏠</span>
-                  <span>Home</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/upload"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>⬆️</span>
-                  <span>Upload Project</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/profile"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>👤</span>
-                  <span>My Profile</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/settings"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>⚙️</span>
-                  <span>Settings</span>
-                </Link>
-              </li>
+            <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
+              Explore
+            </h4>
+            <ul className="space-y-3">
+              {[
+                { to: "/", label: "Home" },
+                { to: "/profiles", label: "Browse Creators" },
+                { to: "/upload", label: "Upload Project" },
+                { to: "/profile", label: "My Profile" }
+              ].map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-sm text-gray-600 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                  >
+                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Categories */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-4">Categories</h3>
-            <ul className="space-y-2.5">
-              <li>
-                <Link
-                  to="/?category=3d"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>🎲</span>
-                  <span>3D Modeling</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/?category=Graphics Design"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>🎨</span>
-                  <span>Graphics Design</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/?category=Web Development"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>💻</span>
-                  <span>Web Development</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/?category=Video Production"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>🎬</span>
-                  <span>Video Production</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/?category=Photography"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>📸</span>
-                  <span>Photography</span>
-                </Link>
-              </li>
+            <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
+              Categories
+            </h4>
+            <ul className="space-y-3">
+              {[
+                "3D Modeling",
+                "Graphics Design",
+                "Web Development",
+                "Photography",
+                "Video Production"
+              ].map((cat) => (
+                <li key={cat}>
+                  
+                   <a href={`/?category=${cat}`}
+                    className="text-sm text-gray-600 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                  >
+                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
+                    {cat}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Resources & Contact */}
+          {/* Support */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-4">Resources</h3>
-            <ul className="space-y-2.5 mb-6">
-              <li>
-                <a 
-                  href="#"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>📚</span>
-                  <span>Guidelines</span>
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>❓</span>
-                  <span>FAQ</span>
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>📧</span>
-                  <span>Contact Support</span>
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>🔒</span>
-                  <span>Privacy Policy</span>
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#"
-                  className="text-sm hover:text-amber-400 transition-colors flex items-center gap-2"
-                >
-                  <span>📜</span>
-                  <span>Terms of Service</span>
-                </a>
-              </li>
+            <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
+              Support
+            </h4>
+            <ul className="space-y-3 mb-6">
+              {[
+                "Help Center",
+                "Guidelines",
+                "Privacy Policy",
+                "Terms of Use"
+              ].map((item) => (
+                <li key={item}>
+                  
+                   <a href="#"
+                    className="text-sm text-gray-600 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                  >
+                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
 
-            {/* Contact Info */}
-            <div className="bg-stone-800/50 p-4 rounded-sm">
-              <p className="text-xs text-gray-400 mb-2 font-semibold">Contact Us</p>
+            {/* Contact Email */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+              <div className="text-xs font-semibold text-gray-700 mb-2">
+                Get in Touch
+              </div>
               <a 
                 href="mailto:support@mctportfolio.com"
-                className="text-sm !text-blue-400 hover:!text-blue-600 transition-colors block mb-1"
-              >
-                support@mctportfolio.com
-              </a>
-              <a 
-                href="mailto:support@mctportfolio.com"
-                className="text-sm !text-blue-400 hover:!text-blue-600 transition-colors block mb-1"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium break-all"
               >
                 support@mctportfolio.com
               </a>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Bottom Section */}
+        <div className="pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-stone-400 text-center md:text-left">
-              © {currentYear} MCT's Portfolio. All rights reserved.
-            </div>
-            
-            <div className="flex items-center gap-6 text-xs text-stone-500">
-              <span className="flex items-center gap-1">
-                <span>💡</span>
-                <span>Made with passion by MCT students</span>
-              </span>
-              <span className="hidden md:block">•</span>
-              <span className="flex items-center gap-1">
-                <span>🚀</span>
-                <span>Powered by creativity</span>
-              </span>
+            <div className="text-sm text-gray-500">
+              © {currentYear} MCT Portfolio. All rights reserved.
             </div>
 
-            {/* ✅ Dynamic Stats */}
-            <div className="flex gap-4 text-xs">
-              <div className="bg-stone-800 px-3 py-1.5 rounded-sm">
-                <span className="text-stone-500">Projects:</span>
-                <span className="text-blue-400 ml-1 font-semibold">
-                  {stats.projects}+
-                </span>
-              </div>
-              <div className="bg-stone-800 px-3 py-1.5 rounded-sm">
-                <span className="text-stone-500">Users:</span>
-                <span className="text-blue-400 ml-1 font-semibold">
-                  {stats.users}+
-                </span>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400">Made with</span>
+              <span className="text-red-500 text-lg animate-pulse">♥</span>
+              <span className="text-xs text-gray-400">by MCT Students</span>
+            </div>
+
+            <div className="flex gap-2">
+              <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium">
+                v1.0
+              </span>
+              <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium">
+                Live
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Back to Top Button */}
+      {/* Floating Back to Top */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 bg-stone-800 hover:bg-stone-900 text-white w-14 h-14 !rounded-sm shadow-lg flex items-center justify-center transition-all hover:scale-110"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl shadow-xl flex items-center justify-center transition-all hover:scale-110 z-50 group"
         aria-label="Back to top"
       >
-        <span className="text-2xl">👆🏻</span>
+        <svg className="w-6 h-6 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
       </button>
     </footer>
   );

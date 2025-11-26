@@ -120,7 +120,7 @@ import SiteSettings from './admin/pages/SiteSettings';
 function App() {
   return (
     <AdminProvider>
-      <div className="min-h-screen bg-gray-100 transition-colors duration-300">
+      <div className="min-h-screen transition-colors duration-300">
         <Routes>
           {/* ========================================
               PUBLIC ROUTES (with Navbar & Footer)
@@ -135,7 +135,7 @@ function App() {
                 <Route path="/profiles" element={<Profiles />} />
                 <Route path="/user/:userId" element={<Profile />} />
                 <Route path="/project/:projectId" element={<ProjectDetails />} />
-                <Route path="/image-converter" element={<ImageConverter />} />
+                <Route path="/imageConverter" element={<ImageConverter />} />
                 
                 <Route
                   path="/profile"
