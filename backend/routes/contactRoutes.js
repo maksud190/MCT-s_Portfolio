@@ -1,11 +1,12 @@
-const express = require("express");
+import express from "express";
+import Contact from "../models/contactModel.js";
+import User from "../models/userModel.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
-const Contact = require("../models/Contact");
-const User = require("../models/User");
-const auth = require("../middleware/auth"); // Your auth middleware
 
 // Send contact message
-router.post("/send", auth, async (req, res) => {
+router.post("/send", authMiddleware, async (req, res) => {
   try {
     const { recipientId, projectId, subject, message } = req.body;
 
@@ -21,13 +22,13 @@ router.post("/send", auth, async (req, res) => {
     }
 
     // Prevent sending message to self
-    if (req.user.userId === recipientId) {
+    if (req.userId === recipientId) {
       return res.status(400).json({ message: "You cannot send a message to yourself" });
     }
 
     // Create contact message
     const contact = new Contact({
-      senderId: req.user.userId,
+      senderId: req.userId,
       recipientId,
       projectId: projectId || null,
       subject: subject.trim(),
@@ -44,43 +45,43 @@ router.post("/send", auth, async (req, res) => {
       contact,
     });
   } catch (error) {
-    console.error("Send contact error:", error);
+    console.error("❌ Send contact error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
 // Get received messages (inbox)
-router.get("/inbox", auth, async (req, res) => {
+router.get("/inbox", authMiddleware, async (req, res) => {
   try {
-    const messages = await Contact.find({ recipientId: req.user.userId })
+    const messages = await Contact.find({ recipientId: req.userId })
       .populate("senderId", "username email avatar designation")
       .populate("projectId", "title thumbnail")
       .sort({ createdAt: -1 });
 
     res.json(messages);
   } catch (error) {
-    console.error("Get inbox error:", error);
+    console.error("❌ Get inbox error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 // Get sent messages (outbox)
-router.get("/sent", auth, async (req, res) => {
+router.get("/sent", authMiddleware, async (req, res) => {
   try {
-    const messages = await Contact.find({ senderId: req.user.userId })
+    const messages = await Contact.find({ senderId: req.userId })
       .populate("recipientId", "username email avatar designation")
       .populate("projectId", "title thumbnail")
       .sort({ createdAt: -1 });
 
     res.json(messages);
   } catch (error) {
-    console.error("Get sent messages error:", error);
+    console.error("❌ Get sent messages error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 // Mark message as read
-router.patch("/:messageId/read", auth, async (req, res) => {
+router.patch("/:messageId/read", authMiddleware, async (req, res) => {
   try {
     const message = await Contact.findById(req.params.messageId);
 
@@ -89,7 +90,7 @@ router.patch("/:messageId/read", auth, async (req, res) => {
     }
 
     // Only recipient can mark as read
-    if (message.recipientId.toString() !== req.user.userId) {
+    if (message.recipientId.toString() !== req.userId) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
@@ -98,13 +99,13 @@ router.patch("/:messageId/read", auth, async (req, res) => {
 
     res.json({ message: "Message marked as read" });
   } catch (error) {
-    console.error("Mark as read error:", error);
+    console.error("❌ Mark as read error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 // Delete message
-router.delete("/:messageId", auth, async (req, res) => {
+router.delete("/:messageId", authMiddleware, async (req, res) => {
   try {
     const message = await Contact.findById(req.params.messageId);
 
@@ -114,8 +115,8 @@ router.delete("/:messageId", auth, async (req, res) => {
 
     // Only sender or recipient can delete
     if (
-      message.senderId.toString() !== req.user.userId &&
-      message.recipientId.toString() !== req.user.userId
+      message.senderId.toString() !== req.userId &&
+      message.recipientId.toString() !== req.userId
     ) {
       return res.status(403).json({ message: "Unauthorized" });
     }
@@ -124,24 +125,24 @@ router.delete("/:messageId", auth, async (req, res) => {
 
     res.json({ message: "Message deleted successfully" });
   } catch (error) {
-    console.error("Delete message error:", error);
+    console.error("❌ Delete message error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 // Get unread count
-router.get("/unread-count", auth, async (req, res) => {
+router.get("/unread-count", authMiddleware, async (req, res) => {
   try {
     const count = await Contact.countDocuments({
-      recipientId: req.user.userId,
+      recipientId: req.userId,
       isRead: false,
     });
 
     res.json({ count });
   } catch (error) {
-    console.error("Get unread count error:", error);
+    console.error("❌ Get unread count error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-module.exports = router;
+export default router;
