@@ -153,7 +153,7 @@ import ImageConverter from "./pages/ImageConverter";
 import Messages from "./pages/Messages"; // 🔥 NEW
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from 'sonner';
-import Announcements from "./pages/TeacherAnnouncements";
+import TeacherAnnouncements from "./pages/TeacherAnnouncements";
 
 // ✅ Admin imports
 import { AdminProvider } from './context/AdminContext';
