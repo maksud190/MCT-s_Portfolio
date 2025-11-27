@@ -448,7 +448,7 @@ export default function SearchBar() {
         ></div>
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes slideIn {
           from {
             opacity: 0;

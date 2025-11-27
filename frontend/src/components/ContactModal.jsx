@@ -1,127 +1,269 @@
 import { useState } from "react";
 import { API } from "../api/api";
-import { useAuth } from "../context/AuthContext";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export default function ContactModal({ targetUser, projectId, onClose }) {
-  const { user } = useAuth();
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    subject: "",
+    message: "",
+  });
+  const [sending, setSending] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user) {
+    if (!formData.subject.trim() || !formData.message.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
       toast.error("Please login to send messages");
       return;
     }
 
-    if (!message.trim()) {
-      toast.error("Please enter a message");
-      return;
-    }
+    setSending(true);
 
-    setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      await API.post(
-        "/users/contact",
+      // ✅ CORRECT ENDPOINT
+      const response = await API.post(
+        "/contact/send",
         {
-          toUserId: targetUser._id,
-          message,
-          projectId
+          recipientId: targetUser._id,
+          projectId: projectId,
+          subject: formData.subject,
+          message: formData.message,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      toast.success("Message sent successfully!");
-      setMessage("");
+      console.log("✅ Message sent:", response.data);
+      toast.success("Message sent successfully! 🎉");
       onClose();
     } catch (err) {
-      console.error("Send message error:", err);
-      toast.error("Failed to send message");
+      console.error("❌ Send message error:", err);
+      
+      // Better error handling
+      if (err.response?.status === 500) {
+        toast.error("Server error. Please try again later.");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message || "Invalid request");
+      } else if (err.response?.status === 401) {
+        toast.error("Please login again");
+      } else {
+        toast.error(err.response?.data?.message || "Failed to send message");
+      }
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md mx-4 p-4 md:p-6 max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-            Contact {targetUser.username}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
-          >
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      ></div>
 
-        {/* User Info */}
-        <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          {targetUser.avatar ? (
-            <img
-              src={targetUser.avatar}
-              alt={targetUser.username}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0"
-            />
-          ) : (
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-amber-400 flex items-center justify-center text-white font-bold text-base md:text-lg flex-shrink-0">
-              {targetUser.username?.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-900 dark:text-white text-sm md:text-base truncate">
-              {targetUser.username}
-            </p>
-            {targetUser.isAvailableForHire && (
-              <p className="text-xs md:text-sm text-green-600 dark:text-green-400 truncate">
-                ✅ Available for hire
-                {targetUser.hourlyRate && ` - ${targetUser.hourlyRate}/hr`}
+      {/* Modal */}
+      <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5 rounded-t-3xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-white mb-1">
+                Contact Creator
+              </h2>
+              <p className="text-blue-100 text-sm">
+                Send a message to {targetUser.username}
               </p>
-            )}
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all hover:scale-110"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Your Message
+        {/* Body */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Recipient Info */}
+          <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+            {targetUser.avatar ? (
+              <img
+                src={targetUser.avatar}
+                alt={targetUser.username}
+                className="w-16 h-16 rounded-2xl object-cover border-4 border-white shadow-md"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-2xl font-bold flex items-center justify-center border-4 border-white shadow-md">
+                {targetUser.username?.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <h3 className="font-bold text-gray-900 text-lg">
+                {targetUser.username}
+              </h3>
+              {targetUser.designation && (
+                <p className="text-sm text-gray-600">
+                  {targetUser.designation}
+                </p>
+              )}
+              {targetUser.email && (
+                <p className="text-xs text-gray-500">{targetUser.email}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Subject */}
+          <div>
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-2">
+              <svg
+                className="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                />
+              </svg>
+              Subject
+              <span className="text-red-500">*</span>
             </label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Write your message here..."
-              rows="6"
-              className="w-full p-2 md:p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400 resize-none text-sm md:text-base"
-              disabled={loading}
+            <input
+              type="text"
+              value={formData.subject}
+              onChange={(e) =>
+                setFormData({ ...formData, subject: e.target.value })
+              }
+              placeholder="What's this about?"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900 placeholder-gray-400"
+              disabled={sending}
               required
             />
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          {/* Message */}
+          <div>
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-2">
+              <svg
+                className="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h7"
+                />
+              </svg>
+              Message
+              <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={formData.message}
+              onChange={(e) =>
+                setFormData({ ...formData, message: e.target.value })
+              }
+              placeholder="Write your message here..."
+              rows="6"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900 placeholder-gray-400 resize-none"
+              disabled={sending}
+              required
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              {formData.message.length} / 1000 characters
+            </p>
+          </div>
+
+          {/* Info Box */}
+          <div className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl">
+            <div className="flex items-start gap-3">
+              <svg
+                className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div className="text-sm text-gray-700">
+                <p className="font-semibold mb-1">Please note:</p>
+                <p>
+                  Your message will be sent directly to the creator. Be
+                  respectful and professional.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm md:text-base"
-              disabled={loading}
+              className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-all"
+              disabled={sending}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={loading || !message.trim()}
-              className="flex-1 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm md:text-base"
+              disabled={sending}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {loading ? "Sending..." : "Send Message"}
+              {sending ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    />
+                  </svg>
+                  <span>Send Message</span>
+                </>
+              )}
             </button>
           </div>
         </form>

@@ -18,7 +18,7 @@ export default function Messages() {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const endpoint = activeTab === "inbox" ? "/contact/inbox" : "/contact/sent";
+      const endpoint = activeTab === "inbox" ? "/users/contact/inbox" : "/users/contact/sent";
       
       const res = await API.get(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
@@ -36,7 +36,7 @@ export default function Messages() {
   const fetchUnreadCount = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await API.get("/contact/unread-count", {
+      const res = await API.get("/users/contact/unread-count", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUnreadCount(res.data.count);
@@ -48,7 +48,7 @@ export default function Messages() {
   const handleMarkAsRead = async (messageId) => {
     try {
       const token = localStorage.getItem("token");
-      await API.patch(`/contact/${messageId}/read`, {}, {
+      await API.patch(`/users/contact/${messageId}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -66,7 +66,7 @@ export default function Messages() {
 
     try {
       const token = localStorage.getItem("token");
-      await API.delete(`/contact/${messageId}`, {
+      await API.delete(`/users/contact/${messageId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       

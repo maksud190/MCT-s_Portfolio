@@ -289,6 +289,10 @@
 
 
 
+
+
+
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../api/api";
@@ -300,20 +304,27 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [messages, setMessages] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [activeTab, setActiveTab] = useState("notifications"); // 🔥 NEW
+  const [activeTab, setActiveTab] = useState("notifications");
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      fetchMessages(); // 🔥 NEW
+      fetchMessages();
       const interval = setInterval(() => {
         fetchNotifications();
-        fetchMessages(); // 🔥 NEW
+        fetchMessages();
       }, 30000);
       return () => clearInterval(interval);
     }
   }, [user]);
+
+  // 🔥 FIX: Define updateUnreadCount function BEFORE using it
+  const updateUnreadCount = (notifs = notifications, msgs = messages) => {
+    const unreadNotifs = notifs.filter((n) => !n.read).length;
+    const unreadMsgs = msgs.filter((m) => !m.isRead).length;
+    setUnreadCount(unreadNotifs + unreadMsgs);
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -322,18 +333,17 @@ export default function NotificationBell() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications(res.data);
-      updateUnreadCount(res.data);
+      updateUnreadCount(res.data, messages);
     } catch (err) {
       console.error("Fetch notifications error:", err);
       setNotifications([]);
     }
   };
 
-  // 🔥 NEW: Fetch Messages
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await API.get("/contact/inbox", {
+      const res = await API.get("/users/contact/inbox", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessages(res.data);
@@ -342,13 +352,6 @@ export default function NotificationBell() {
       console.error("Fetch messages error:", err);
       setMessages([]);
     }
-  };
-
-  // 🔥 NEW: Combined Unread Count
-  const updateUnreadCount = (notifs = notifications, msgs = messages) => {
-    const unreadNotifs = notifs.filter((n) => !n.read).length;
-    const unreadMsgs = msgs.filter((m) => !m.isRead).length;
-    setUnreadCount(unreadNotifs + unreadMsgs);
   };
 
   const markAsRead = async (notificationId) => {
@@ -377,11 +380,10 @@ export default function NotificationBell() {
         );
         fetchNotifications();
       } else {
-        // Mark all messages as read
         const unreadMessages = messages.filter(m => !m.isRead);
         await Promise.all(
           unreadMessages.map(msg =>
-            API.patch(`/contact/${msg._id}/read`, {}, {
+            API.patch(`/users/contact/${msg._id}/read`, {}, {
               headers: { Authorization: `Bearer ${token}` }
             })
           )
@@ -393,11 +395,10 @@ export default function NotificationBell() {
     }
   };
 
-  // 🔥 NEW: Mark Message as Read
   const markMessageAsRead = async (messageId) => {
     try {
       const token = localStorage.getItem("token");
-      await API.patch(`/contact/${messageId}/read`, {}, {
+      await API.patch(`/users/contact/${messageId}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchMessages();
@@ -417,7 +418,6 @@ export default function NotificationBell() {
     }
   };
 
-  // 🔥 NEW: Handle Message Click
   const handleMessageClick = (message) => {
     markMessageAsRead(message._id);
     setShowDropdown(false);
@@ -476,7 +476,6 @@ export default function NotificationBell() {
     );
   };
 
-  // 🔥 NEW: Get unread count for each tab
   const getTabUnreadCount = (tab) => {
     if (tab === "notifications") {
       return notifications.filter(n => !n.read).length;
@@ -525,7 +524,7 @@ export default function NotificationBell() {
 
           {/* Dropdown Panel */}
           <div className="absolute right-0 mt-2 w-[90vw] sm:w-96 bg-white rounded-2xl shadow-2xl z-50 max-h-[70vh] sm:max-h-[500px] overflow-hidden flex flex-col border border-gray-200">
-            {/* Header with Tabs 🔥 NEW */}
+            {/* Header with Tabs */}
             <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-black text-gray-900">
@@ -605,7 +604,6 @@ export default function NotificationBell() {
                       }`}
                     >
                       <div className="flex gap-3">
-                        {/* User Avatar */}
                         <div className="flex-shrink-0">
                           {notif.from?.avatar ? (
                             <img
@@ -620,7 +618,6 @@ export default function NotificationBell() {
                           )}
                         </div>
 
-                        {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <p className="text-sm text-gray-700 break-words">
@@ -634,7 +631,6 @@ export default function NotificationBell() {
                             </div>
                           </div>
 
-                          {/* Project Thumbnail */}
                           {notif.project?.thumbnail && (
                             <img
                               src={notif.project.thumbnail}
@@ -674,7 +670,7 @@ export default function NotificationBell() {
               </div>
             )}
 
-            {/* Content - Messages Tab 🔥 NEW */}
+            {/* Content - Messages Tab */}
             {activeTab === "messages" && (
               <div className="overflow-y-auto flex-1">
                 {messages.length > 0 ? (
@@ -687,7 +683,6 @@ export default function NotificationBell() {
                       }`}
                     >
                       <div className="flex gap-3">
-                        {/* Sender Avatar */}
                         <div className="flex-shrink-0">
                           {msg.senderId?.avatar ? (
                             <img
@@ -702,7 +697,6 @@ export default function NotificationBell() {
                           )}
                         </div>
 
-                        {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <div className="flex-1 min-w-0">
