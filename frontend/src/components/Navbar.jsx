@@ -232,7 +232,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl text-sm"
+                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl text-sm"
                 >
                   Register
                 </Link>
@@ -552,7 +552,7 @@ export default function Navbar() {
                 <Link
                   to="/register"
                   onClick={() => setShowMobileMenu(false)}
-                  className="block px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                  className="block px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600  text-center rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 !text-white transition-all shadow-lg"
                 >
                   Register
                 </Link>
