@@ -153,6 +153,7 @@ import ImageConverter from "./pages/ImageConverter";
 import Messages from "./pages/Messages"; // 🔥 NEW
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from 'sonner';
+import Announcements from "./pages/TeacherAnnouncements";
 
 // ✅ Admin imports
 import { AdminProvider } from './context/AdminContext';
@@ -167,7 +168,6 @@ import Categories from './admin/pages/Categories';
 import Announcements from './admin/pages/Announcements';
 import Analytics from './admin/pages/Analytics';
 import SiteSettings from './admin/pages/SiteSettings';
-import TeacherAnnouncement from "./pages/TeacherAnnouncement";
 
 function App() {
   return (
@@ -188,7 +188,8 @@ function App() {
                 <Route path="/user/:userId" element={<Profile />} />
                 <Route path="/project/:projectId" element={<ProjectDetails />} />
                 <Route path="/imageConverter" element={<ImageConverter />} />
-                <Route path="/teacher/announcements" element={<TeacherAnnouncement />} />
+                <Route path="/teacherAnnouncements" element={<TeacherAnnouncements />} />
+
 
                 <Route
                   path="/profile"
