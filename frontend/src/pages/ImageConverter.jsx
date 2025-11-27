@@ -659,7 +659,7 @@ export default function ImageConverter() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-10 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-10 via-indigo-50 to-purple-50 mb-20">
       {/* Modern Hero Section */}
       <div className="relative py-20 px-6 text-center overflow-hidden">
         {/* Background Decoration */}

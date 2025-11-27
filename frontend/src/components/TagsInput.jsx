@@ -24,25 +24,40 @@ export default function TagsInput({ tags, setTags }) {
     setTags(tags.filter((_, i) => i !== index));
   };
 
+  const suggestedTags = ["design", "illustration", "photography", "ui/ux", "3d", "animation", "web", "mobile"];
+
+  const addSuggestedTag = (tag) => {
+    if (!tags.includes(tag)) {
+      setTags([...tags, tag]);
+    }
+  };
+
   return (
     <div>
-      <label className="block text-sm font-medium text-stone-300 mb-2">
-        Tags (Press Enter or comma to add)
+      <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-2">
+        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        Tags
+        <span className="text-gray-500 font-normal text-xs">(Optional)</span>
       </label>
-      <div className="flex flex-wrap gap-2 p-2 md:p-3 border-2 border-dashed border-stone-600 rounded-sm bg-stone-800 min-h-[3rem] md:min-h-[3.5rem]">
+
+      {/* Tags Input Container */}
+      <div className="flex flex-wrap gap-2 p-3 border-2 border-gray-200 rounded-xl bg-white min-h-[3.5rem] focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100 transition-all">
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-1 bg-stone-700 text-stone-100 pl-2 rounded-sm text-xs font-medium md:text-sm"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-lg text-sm font-semibold group"
           >
-            #{tag}
+            <span className="text-blue-500">#</span>
+            {tag}
             <button
               type="button"
               onClick={() => removeTag(index)}
-              className="hover:text-red-600 !px-1 !py-1"
+              className="p-0.5 hover:bg-red-100 rounded-md transition-colors group"
             >
               <svg
-                className="w-1 h-1 md:w-4 md:h-4"
+                className="w-4 h-4 text-blue-600 group-hover:text-red-600 transition-colors"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -57,20 +72,48 @@ export default function TagsInput({ tags, setTags }) {
             </button>
           </span>
         ))}
+        
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={addTag}
-          placeholder={tags.length === 0 ? "Add tags..." : ""}
-          className="flex-1 min-w-[100px] md:min-w-[120px] outline-none bg-transparent text-white text-sm md:text-base"
+          placeholder={tags.length === 0 ? "Type and press Enter..." : ""}
+          className="flex-1 min-w-[150px] outline-none bg-transparent text-gray-900 text-sm placeholder-gray-400"
         />
       </div>
 
-      <p className="text-xs text-stone-400 mt-2">
-        Suggested: design, illustration, photography, ui/ux, 3d, animation
-      </p>
+      {/* Help Text */}
+      <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Press <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Enter</kbd> or <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono">,</kbd> to add tags</span>
+      </div>
+
+      {/* Suggested Tags */}
+      <div className="mt-3">
+        <p className="text-xs font-semibold text-gray-700 mb-2">Suggested tags:</p>
+        <div className="flex flex-wrap gap-2">
+          {suggestedTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => addSuggestedTag(tag)}
+              disabled={tags.includes(tag)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                tags.includes(tag)
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600'
+              }`}
+            >
+              <span className="text-gray-400">#</span>
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

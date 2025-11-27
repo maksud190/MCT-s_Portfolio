@@ -31,7 +31,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-stone-900 border-t border-gray-200 mt-20">
+    <footer className="relative bg-stone-900 border-t border-gray-200 ">
       {/* Top Stats Banner */}
       <div className="relative -mt-16 mb-12">
         <div className="max-w-6xl mx-auto px-6">
@@ -51,7 +51,7 @@ export default function Footer() {
               </div>
               <div className="group">
                 <div className="text-4xl font-black mb-2 group-hover:scale-110 transition-transform">
-                  50K+
+                  50+
                 </div>
                 <div className="text-sm font-medium opacity-90">Views</div>
               </div>

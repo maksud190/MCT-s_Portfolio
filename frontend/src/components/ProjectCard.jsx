@@ -347,7 +347,7 @@ export default function ProjectCard({ project }) {
 
                 {/* Category Badge - Better Positioned */}
                 {project.category && (
-                  <div className="absolute top-4 left-4 bg-blue-500/60 text-white text-xs px-2 py-1 rounded-lg font-light shadow-lg">
+                  <div className="absolute top-4 left-4 bg-blue-500/80 text-white text-xs px-2 py-1 rounded-lg font-light shadow-lg">
                     {project.category}
                   </div>
                 )}

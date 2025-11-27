@@ -1,3 +1,472 @@
+// import { useState } from "react";
+// import { API } from "../api/api";
+// import { useAuth } from "../context/AuthContext";
+// import { useNavigate } from "react-router-dom";
+// import { toast } from 'sonner';
+// import TagsInput from "../components/TagsInput";
+
+// export default function Upload() {
+//   const { user } = useAuth();
+//   const navigate = useNavigate();
+  
+//   const [data, setData] = useState({
+//     title: "",
+//     description: "",
+//     category: "",
+//     subcategory: "",
+//     thumbnail: null,
+//     files: [],
+//   });
+  
+//   const [thumbnailPreview, setThumbnailPreview] = useState(null);
+//   const [previews, setPreviews] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [tags, setTags] = useState([]);
+
+//   const categories = {
+//     "3d": ["Character Modeling", "Environment Modeling", "Product Visualization", "Architectural Visualization", "3D Animation"],
+//     "Art": ["Digital Art", "Traditional Art", "3D Modeling", "Character Design", "Concept Art"],
+//     "Branding": ["Brand Strategy", "Visual Identity", "Brand Guidelines", "Rebranding", "Brand Messaging"],
+//     "Web Development": ["Frontend", "Backend", "Full Stack", "UI/UX Design", "E-commerce"],
+//     "Game Development": ["2D Games", "3D Games", "Unity", "Unreal Engine", "Mobile Games"],
+//     "Graphics Design": ["Logo Design", "Branding", "Illustration", "Print Design", "Social Media"],
+//     "Mobile Apps": ["Android", "iOS", "React Native", "Flutter", "Cross-platform"],
+//     "Music": ["Production", "Composition", "Sound Design", "Mixing", "Cover Songs"],
+//     "Photography": ["Portrait", "Landscape", "Product", "Wildlife", "Fashion"],
+//     "Video Production": ["Animation", "Video Editing", "Motion Graphics", "Documentary", "Commercial"],
+//     "Writing": ["Blog Posts", "Copywriting", "Technical Writing", "Creative Writing", "Content Strategy"],
+//   };
+
+//   const handleThumbnailChange = (e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+
+//     if (!file.type.startsWith('image/')) {
+//       toast.error("Please select an image file");
+//       return;
+//     }
+    
+//     if (file.size > 5 * 1024 * 1024) {
+//       toast.error("Image size should be less than 5MB");
+//       return;
+//     }
+
+//     setData({ ...data, thumbnail: file });
+    
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       setThumbnailPreview(reader.result);
+//     };
+//     reader.readAsDataURL(file);
+    
+//     toast.success("Thumbnail selected!");
+//   };
+
+//   const handleFileChange = (e) => {
+//     const files = Array.from(e.target.files);
+    
+//     if (files.length === 0) return;
+    
+//     if (data.files.length + files.length > 4) {
+//       toast.error("You can upload maximum 4 additional images");
+//       return;
+//     }
+
+//     const validFiles = [];
+//     const newPreviews = [];
+//     let hasError = false;
+
+//     files.forEach((file) => {
+//       if (!file.type.startsWith('image/')) {
+//         toast.error(`${file.name} is not an image file`);
+//         hasError = true;
+//         return;
+//       }
+      
+//       if (file.size > 5 * 1024 * 1024) {
+//         toast.error(`${file.name} is too large (max 5MB)`);
+//         hasError = true;
+//         return;
+//       }
+
+//       validFiles.push(file);
+      
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         newPreviews.push(reader.result);
+//         if (newPreviews.length === validFiles.length) {
+//           setPreviews([...previews, ...newPreviews]);
+//         }
+//       };
+//       reader.readAsDataURL(file);
+//     });
+
+//     if (validFiles.length > 0) {
+//       setData({ ...data, files: [...data.files, ...validFiles] });
+//       if (!hasError) {
+//         toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} selected!`);
+//       }
+//     }
+//   };
+
+//   const removeThumbnail = () => {
+//     setData({ ...data, thumbnail: null });
+//     setThumbnailPreview(null);
+//     toast.success("Thumbnail removed");
+//   };
+
+//   const removeImage = (index) => {
+//     const newFiles = data.files.filter((_, i) => i !== index);
+//     const newPreviews = previews.filter((_, i) => i !== index);
+    
+//     setData({ ...data, files: newFiles });
+//     setPreviews(newPreviews);
+//     toast.success("Image removed");
+//   };
+
+//   const handleCategoryChange = (e) => {
+//     setData({ ...data, category: e.target.value, subcategory: "" });
+//   };
+
+//   const resetForm = () => {
+//     setData({
+//       title: "",
+//       description: "",
+//       category: "",
+//       subcategory: "",
+//       thumbnail: null,
+//       files: [],
+//     });
+//     setThumbnailPreview(null);
+//     setPreviews([]);
+//     setTags([]);
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+    
+//     if (!user || !user._id) {
+//       toast.error("Please login to upload projects");
+//       navigate("/login");
+//       return;
+//     }
+    
+//     if (!data.title || !data.description || !data.category || !data.subcategory || !data.thumbnail) {
+//       toast.error("Please fill all required fields and select a thumbnail");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       const form = new FormData();
+//       form.append("title", data.title);
+//       form.append("description", data.description);
+//       form.append("category", `${data.category} - ${data.subcategory}`);
+//       form.append("userId", user._id.toString());
+//       form.append("thumbnail", data.thumbnail);
+      
+//       if (tags.length > 0) {
+//         form.append("tags", JSON.stringify(tags));
+//       }
+      
+//       data.files.forEach((file) => {
+//         form.append("files", file);
+//       });
+
+//       console.log("📤 Uploading project:", {
+//         title: data.title,
+//         category: `${data.category} - ${data.subcategory}`,
+//         userId: user._id,
+//         thumbnail: data.thumbnail?.name,
+//         additionalFiles: data.files.length,
+//         tags: tags
+//       });
+
+//       const token = localStorage.getItem("token");
+      
+//       if (!token) {
+//         toast.error("Session expired. Please login again.");
+//         navigate("/login");
+//         return;
+//       }
+
+//       const response = await API.post("/projects/upload", form, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//           Authorization: `Bearer ${token}`,
+//         }
+//       });
+
+//       console.log("✅ Upload success:", response.data);
+
+//       toast.success("Project uploaded successfully! 🎉");
+
+//       resetForm();
+      
+//       setTimeout(() => {
+//         navigate("/profile");
+//       }, 1000);
+      
+//     } catch (err) {
+//       console.error("❌ Upload error:", err);
+//       console.error("Error response:", err.response?.data);
+      
+//       if (err.response?.status === 401) {
+//         toast.error("Session expired. Please login again.");
+//         localStorage.removeItem("token");
+//         localStorage.removeItem("user");
+//         navigate("/login");
+//       } else {
+//         toast.error(
+//           err.response?.data?.message || "Upload failed. Please try again."
+//         );
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen p-3 md:p-6 flex items-center justify-center">
+//       <div className="w-full max-w-3xl">
+//         <form onSubmit={handleSubmit} className="bg-stone-900 p-4 md:p-6 lg:p-8 rounded-sm shadow-lg">
+//           <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white text-center">
+//             Upload New Project
+//           </h2>
+
+//           {/* Thumbnail Upload */}
+//           {thumbnailPreview ? (
+//             <div className="mb-4 md:mb-6">
+//               <label className="block text-xs md:text-sm font-medium text-white mb-2">
+//                 Thumbnail Image <span className="text-red-500">*</span>
+//               </label>
+//               <div className="relative">
+//                 <img 
+//                   src={thumbnailPreview} 
+//                   alt="Thumbnail" 
+//                   className="w-full h-48 md:h-64 object-cover rounded-sm"
+//                 />
+//                 <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 md:px-3 py-1 rounded-sm">
+//                   Thumbnail
+//                 </span>
+//                 <button
+//                   type="button"
+//                   onClick={removeThumbnail}
+//                   className="absolute top-2 right-2 bg-red-600 text-white px-2 md:px-3 py-1 rounded-sm hover:bg-red-700 transition-colors text-sm md:text-base"
+//                   disabled={loading}
+//                 >
+//                   ✕
+//                 </button>
+//               </div>
+//             </div>
+//           ) : (
+//             <div className="mb-4 md:mb-6">
+//               <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+//                 Thumbnail Image <span className="text-red-500">*</span>
+//               </label>
+//               <input
+//                 type="file"
+//                 accept="image/*"
+//                 className="hidden"
+//                 id="thumbnail-upload"
+//                 onChange={handleThumbnailChange}
+//                 disabled={loading}
+//               />
+//               <label
+//                 htmlFor="thumbnail-upload"
+//                 className="flex items-center justify-center w-full h-40 md:h-48 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
+//               >
+//                 <div className="text-center">
+//                   <p className="text-3xl md:text-4xl mb-2">🖼️</p>
+//                   <p className="text-xs md:text-sm text-stone-400 font-medium">
+//                     Click to upload thumbnail
+//                   </p>
+//                   <p className="text-xs text-stone-500 mt-1">
+//                     PNG, JPG, GIF up to 5MB
+//                   </p>
+//                 </div>
+//               </label>
+//             </div>
+//           )}
+
+//           {/* Additional Images */}
+//           {previews.length > 0 && (
+//             <div className="mb-4 md:mb-6">
+//               <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+//                 Additional Images ({previews.length}/4)
+//               </label>
+//               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+//                 {previews.map((preview, index) => (
+//                   <div key={index} className="relative group">
+//                     <img
+//                       src={preview}
+//                       alt={`Preview ${index + 1}`}
+//                       className="w-full h-24 md:h-32 object-cover rounded-lg"
+//                     />
+//                     <button
+//                       type="button"
+//                       onClick={() => removeImage(index)}
+//                       className="absolute top-1 right-1 bg-red-600 text-white px-1.5 md:px-2 py-0.5 rounded-sm hover:bg-red-700 transition-colors text-xs md:text-sm"
+//                       disabled={loading}
+//                     >
+//                       ✕
+//                     </button>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Add More Images Button */}
+//           {data.files.length < 4 && (
+//             <div className="mb-4 md:mb-6">
+//               <label className="block text-xs md:text-sm font-medium text-stone-200 mb-2">
+//                 Add More Images (Optional, max 4 total)
+//               </label>
+//               <input
+//                 type="file"
+//                 accept="image/*"
+//                 multiple
+//                 className="hidden"
+//                 id="files-upload"
+//                 onChange={handleFileChange}
+//                 disabled={loading}
+//               />
+//               <label
+//                 htmlFor="files-upload"
+//                 className="flex items-center justify-center w-full p-3 md:p-4 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
+//               >
+//                 <div className="text-center">
+//                   <p className="text-xl md:text-2xl mb-1">📁</p>
+//                   <p className="text-xs md:text-sm text-stone-500">
+//                     Click to add more images ({4 - data.files.length} remaining)
+//                   </p>
+//                 </div>
+//               </label>
+//             </div>
+//           )}
+
+//           {/* Title */}
+//           <div className="mb-3 md:mb-4">
+//             <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+//               Project Title <span className="text-red-500">*</span>
+//             </label>
+//             <input
+//               type="text"
+//               value={data.title}
+//               onChange={(e) => setData({ ...data, title: e.target.value })}
+//               className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-auto dark:hover:border-blue-400 transition-all bg-stone-800 text-white"
+//               placeholder="Enter project title"
+//               disabled={loading}
+//               required
+//             />
+//           </div>
+
+//           {/* Description */}
+//           <div className="mb-3 md:mb-4">
+//             <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+//               Description <span className="text-red-500">*</span>
+//             </label>
+//             <textarea
+//               value={data.description}
+//               rows="4"
+//               onChange={(e) => setData({ ...data, description: e.target.value })}
+//               className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-auto hover:border-blue-400 transition-all bg-stone-800 resize-none text-white"
+//               placeholder="Describe your project..."
+//               disabled={loading}
+//               required
+//             />
+//           </div>
+
+//           {/* Category */}
+//           <div className="mb-3 md:mb-4">
+//             <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+//               Category <span className="text-red-500">*</span>
+//             </label>
+//             <select
+//               value={data.category}
+//               onChange={handleCategoryChange}
+//               className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white font-medium"
+//               disabled={loading}
+//               required
+//             >
+//               <option value="">Select a category</option>
+//               {Object.keys(categories).map((cat) => (
+//                 <option key={cat} value={cat}>{cat}</option>
+//               ))}
+//             </select>
+//           </div>
+
+//           {/* Subcategory */}
+//           {data.category && (
+//             <div className="mb-4 md:mb-6">
+//               <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
+//                 Subcategory <span className="text-red-500">*</span>
+//               </label>
+//               <select
+//                 value={data.subcategory}
+//                 onChange={(e) => setData({ ...data, subcategory: e.target.value })}
+//                 className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white"
+//                 disabled={loading}
+//                 required
+//               >
+//                 <option value="">Select a subcategory</option>
+//                 {categories[data.category].map((subcat) => (
+//                   <option key={subcat} value={subcat}>{subcat}</option>
+//                 ))}
+//               </select>
+//             </div>
+//           )}
+
+//           {/* Tags Input Component */}
+//           <div className="mb-4 md:mb-6">
+//             <TagsInput tags={tags} setTags={setTags} />
+//           </div>
+
+//           {/* Submit Button */}
+//           <button
+//             type="submit"
+//             disabled={loading || !data.thumbnail}
+//             className="w-full bg-blue-600 hover:bg-stone-800 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-sm transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
+//           >
+//             {loading ? "Uploading..." : !data.thumbnail ? "Select Thumbnail to Upload" : "Upload Project"}
+//           </button>
+
+//           {!data.thumbnail && (
+//             <p className="mt-2 text-xs md:text-sm text-center text-red-500">
+//               * Thumbnail is required
+//             </p>
+//           )}
+//         </form>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { useState } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -174,15 +643,6 @@ export default function Upload() {
         form.append("files", file);
       });
 
-      console.log("📤 Uploading project:", {
-        title: data.title,
-        category: `${data.category} - ${data.subcategory}`,
-        userId: user._id,
-        thumbnail: data.thumbnail?.name,
-        additionalFiles: data.files.length,
-        tags: tags
-      });
-
       const token = localStorage.getItem("token");
       
       if (!token) {
@@ -198,8 +658,6 @@ export default function Upload() {
         }
       });
 
-      console.log("✅ Upload success:", response.data);
-
       toast.success("Project uploaded successfully! 🎉");
 
       resetForm();
@@ -210,7 +668,6 @@ export default function Upload() {
       
     } catch (err) {
       console.error("❌ Upload error:", err);
-      console.error("Error response:", err.response?.data);
       
       if (err.response?.status === 401) {
         toast.error("Session expired. Please login again.");
@@ -228,89 +685,120 @@ export default function Upload() {
   };
 
   return (
-    <div className="min-h-screen p-3 md:p-6 flex items-center justify-center">
-      <div className="w-full max-w-3xl">
-        <form onSubmit={handleSubmit} className="bg-stone-900 p-4 md:p-6 lg:p-8 rounded-sm shadow-lg">
-          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white text-center">
-            Upload New Project
-          </h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-6 mb-30">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 mb-4">
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <span className="text-sm font-semibold text-gray-700">Upload Project</span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-3">
+            Share Your Work
+          </h1>
+          <p className="text-lg text-gray-600">
+            Showcase your creativity with the MCT community
+          </p>
+        </div>
 
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-2xl border border-gray-200 p-8">
+          
           {/* Thumbnail Upload */}
-          {thumbnailPreview ? (
-            <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-white mb-2">
-                Thumbnail Image <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
+          <div className="mb-8">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Thumbnail Image
+              <span className="text-red-500">*</span>
+            </label>
+
+            {thumbnailPreview ? (
+              <div className="relative group">
                 <img 
                   src={thumbnailPreview} 
                   alt="Thumbnail" 
-                  className="w-full h-48 md:h-64 object-cover rounded-sm"
+                  className="w-full h-80 object-cover rounded-2xl border-2 border-gray-200"
                 />
-                <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 md:px-3 py-1 rounded-sm">
+                <div className="absolute top-3 left-3 px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-bold">
                   Thumbnail
-                </span>
+                </div>
                 <button
                   type="button"
                   onClick={removeThumbnail}
-                  className="absolute top-2 right-2 bg-red-600 text-white px-2 md:px-3 py-1 rounded-sm hover:bg-red-700 transition-colors text-sm md:text-base"
+                  className="absolute top-3 right-3 p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all shadow-lg hover:scale-110"
                   disabled={loading}
                 >
-                  ✕
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-            </div>
-          ) : (
-            <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Thumbnail Image <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                id="thumbnail-upload"
-                onChange={handleThumbnailChange}
-                disabled={loading}
-              />
-              <label
-                htmlFor="thumbnail-upload"
-                className="flex items-center justify-center w-full h-40 md:h-48 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
-              >
-                <div className="text-center">
-                  <p className="text-3xl md:text-4xl mb-2">🖼️</p>
-                  <p className="text-xs md:text-sm text-stone-400 font-medium">
-                    Click to upload thumbnail
-                  </p>
-                  <p className="text-xs text-stone-500 mt-1">
-                    PNG, JPG, GIF up to 5MB
-                  </p>
-                </div>
-              </label>
-            </div>
-          )}
+            ) : (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="thumbnail-upload"
+                  onChange={handleThumbnailChange}
+                  disabled={loading}
+                />
+                <label
+                  htmlFor="thumbnail-upload"
+                  className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                >
+                  <div className="text-center">
+                    <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-lg font-semibold text-gray-700 mb-2">
+                      Click to upload thumbnail
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      PNG, JPG, GIF up to 5MB
+                    </p>
+                  </div>
+                </label>
+              </>
+            )}
+          </div>
 
           {/* Additional Images */}
           {previews.length > 0 && (
-            <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
-                Additional Images ({previews.length}/4)
+            <div className="mb-8">
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Additional Images
+                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">
+                  {previews.length}/4
+                </span>
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {previews.map((preview, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={preview}
                       alt={`Preview ${index + 1}`}
-                      className="w-full h-24 md:h-32 object-cover rounded-lg"
+                      className="w-full h-40 object-cover rounded-xl border-2 border-gray-200"
                     />
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute top-1 right-1 bg-red-600 text-white px-1.5 md:px-2 py-0.5 rounded-sm hover:bg-red-700 transition-colors text-xs md:text-sm"
+                      className="absolute top-2 right-2 p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all shadow-lg opacity-0 group-hover:opacity-100"
                       disabled={loading}
                     >
-                      ✕
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
                     </button>
                   </div>
                 ))}
@@ -320,9 +808,12 @@ export default function Upload() {
 
           {/* Add More Images Button */}
           {data.files.length < 4 && (
-            <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-stone-200 mb-2">
-                Add More Images (Optional, max 4 total)
+            <div className="mb-8">
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Add More Images (Optional)
               </label>
               <input
                 type="file"
@@ -335,12 +826,16 @@ export default function Upload() {
               />
               <label
                 htmlFor="files-upload"
-                className="flex items-center justify-center w-full p-3 md:p-4 border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800"
+                className="flex items-center justify-center w-full p-6 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group"
               >
                 <div className="text-center">
-                  <p className="text-xl md:text-2xl mb-1">📁</p>
-                  <p className="text-xs md:text-sm text-stone-500">
-                    Click to add more images ({4 - data.files.length} remaining)
+                  <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-700">
+                    Add more images ({4 - data.files.length} remaining)
                   </p>
                 </div>
               </label>
@@ -348,79 +843,96 @@ export default function Upload() {
           )}
 
           {/* Title */}
-          <div className="mb-3 md:mb-4">
-            <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
-              Project Title <span className="text-red-500">*</span>
+          <div className="mb-6">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-2">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+              Project Title
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={data.title}
               onChange={(e) => setData({ ...data, title: e.target.value })}
-              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-auto dark:hover:border-blue-400 transition-all bg-stone-800 text-white"
-              placeholder="Enter project title"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900 placeholder-gray-400"
+              placeholder="Enter your project title..."
               disabled={loading}
               required
             />
           </div>
 
           {/* Description */}
-          <div className="mb-3 md:mb-4">
-            <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
-              Description <span className="text-red-500">*</span>
+          <div className="mb-6">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-2">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+              Description
+              <span className="text-red-500">*</span>
             </label>
             <textarea
               value={data.description}
-              rows="4"
+              rows="5"
               onChange={(e) => setData({ ...data, description: e.target.value })}
-              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-auto hover:border-blue-400 transition-all bg-stone-800 resize-none text-white"
-              placeholder="Describe your project..."
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900 placeholder-gray-400 resize-none"
+              placeholder="Describe your project in detail..."
               disabled={loading}
               required
             />
           </div>
 
-          {/* Category */}
-          <div className="mb-3 md:mb-4">
-            <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
-              Category <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={data.category}
-              onChange={handleCategoryChange}
-              className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white font-medium"
-              disabled={loading}
-              required
-            >
-              <option value="">Select a category</option>
-              {Object.keys(categories).map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
+          {/* Category & Subcategory Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Category */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-2">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Category
+                <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={data.category}
+                onChange={handleCategoryChange}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900 font-medium"
+                disabled={loading}
+                required
+              >
+                <option value="">Select category</option>
+                {Object.keys(categories).map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
 
-          {/* Subcategory */}
-          {data.category && (
-            <div className="mb-4 md:mb-6">
-              <label className="block text-xs md:text-sm font-medium text-stone-300 mb-2">
-                Subcategory <span className="text-red-500">*</span>
+            {/* Subcategory */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-2">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Subcategory
+                <span className="text-red-500">*</span>
               </label>
               <select
                 value={data.subcategory}
                 onChange={(e) => setData({ ...data, subcategory: e.target.value })}
-                className="w-full p-2 md:p-3 text-sm md:text-base border-2 border-dashed border-stone-600 rounded-sm cursor-pointer hover:border-blue-400 transition-all bg-stone-800 text-white"
-                disabled={loading}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                disabled={loading || !data.category}
                 required
               >
-                <option value="">Select a subcategory</option>
-                {categories[data.category].map((subcat) => (
+                <option value="">Select subcategory</option>
+                {data.category && categories[data.category].map((subcat) => (
                   <option key={subcat} value={subcat}>{subcat}</option>
                 ))}
               </select>
             </div>
-          )}
+          </div>
 
-          {/* Tags Input Component */}
-          <div className="mb-4 md:mb-6">
+          {/* Tags Input */}
+          <div className="mb-8">
             <TagsInput tags={tags} setTags={setTags} />
           </div>
 
@@ -428,16 +940,42 @@ export default function Upload() {
           <button
             type="submit"
             disabled={loading || !data.thumbnail}
-            className="w-full bg-blue-600 hover:bg-stone-800 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-sm transition-all duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-6 py-4 rounded-xl transition-all shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
-            {loading ? "Uploading..." : !data.thumbnail ? "Select Thumbnail to Upload" : "Upload Project"}
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                <span>Uploading...</span>
+              </>
+            ) : !data.thumbnail ? (
+              <>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>Select Thumbnail to Upload</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <span>Upload Project</span>
+              </>
+            )}
           </button>
 
-          {!data.thumbnail && (
-            <p className="mt-2 text-xs md:text-sm text-center text-red-500">
-              * Thumbnail is required
-            </p>
-          )}
+          {/* Required Fields Note */}
+          <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div className="text-sm text-gray-700">
+                <p className="font-semibold mb-1">Required fields:</p>
+                <p>Thumbnail image, title, description, category, and subcategory are mandatory to upload your project.</p>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
     </div>

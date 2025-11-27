@@ -185,7 +185,7 @@ export default function Home() {
   const remainingCount = filteredProjects.length - visibleCount;
 
   return (
-    <div>
+    <div className="mb-20">
       {/* Header Section */}
       <div className="relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
         {/* Decorative Background Elements */}
