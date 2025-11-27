@@ -10,6 +10,8 @@ import projectRoutes from "./routes/projectRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js"; // 🔥 NEW
 import teacherRoutes from "./routes/teacherRoutes.js";
+import forumRoutes from "./routes/forumRoutes.js";
+
 
 dotenv.config();
 
@@ -43,6 +45,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/contact", contactRoutes); // 🔥 NEW: Contact routes
 // Add this line with other routes
 app.use("/api/teacher", teacherRoutes);
+// Add this route
+app.use("/api/forum", forumRoutes);
 
 
 

@@ -60,12 +60,34 @@ export default function Navbar() {
                 Profiles
               </Link>
 
-              {user && (<Link
-                to="/teacherAnnouncements"
-                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+              <Link
+                to="/forum"
+                className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-xl font-semibold transition-all"
               >
-                Announcements
-              </Link>)}
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+                💬 Forum
+              </Link>
+
+              {user && (
+                <Link
+                  to="/teacherAnnouncements"
+                  className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                >
+                  Announcements
+                </Link>
+              )}
 
               <Link
                 to="/imageConverter"
@@ -73,7 +95,6 @@ export default function Navbar() {
               >
                 Tools
               </Link>
-              
             </div>
           </div>
 

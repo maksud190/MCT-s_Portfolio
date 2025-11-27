@@ -154,6 +154,12 @@ import Messages from "./pages/Messages"; // 🔥 NEW
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from 'sonner';
 import TeacherAnnouncements from "./pages/TeacherAnnouncements";
+import Forum from "./pages/Forum";
+import AskQuestion from "./pages/AskQuestion";
+import QuestionDetail from "./pages/QuestionDetail";
+import MyQuestions from "./pages/MyQuestions";
+
+
 
 // ✅ Admin imports
 import { AdminProvider } from './context/AdminContext';
@@ -189,6 +195,12 @@ function App() {
                 <Route path="/project/:projectId" element={<ProjectDetails />} />
                 <Route path="/imageConverter" element={<ImageConverter />} />
                 <Route path="/teacherAnnouncements" element={<TeacherAnnouncements />} />
+                <Route path="/forum" element={<Forum />} />
+                <Route path="/forum/ask" element={<AskQuestion />} />
+                <Route path="/forum/questions/:questionId" element={<QuestionDetail />} />
+                <Route path="/forum/my-questions" element={<MyQuestions />} />
+
+
 
 
                 <Route
