@@ -59,12 +59,21 @@ export default function Navbar() {
               >
                 Profiles
               </Link>
+
+              {user && (<Link
+                to="/teacherAnnouncements"
+                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+              >
+                Announcements
+              </Link>)}
+
               <Link
                 to="/imageConverter"
                 className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Tools
               </Link>
+              
             </div>
           </div>
 
