@@ -8,9 +8,10 @@ import { fileURLToPath } from "url";
 import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
-import contactRoutes from "./routes/contactRoutes.js"; // 🔥 NEW
+import contactRoutes from "./routes/contactRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import forumRoutes from "./routes/forumRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 
 dotenv.config();
@@ -47,6 +48,7 @@ app.use("/api/contact", contactRoutes); // 🔥 NEW: Contact routes
 app.use("/api/teacher", teacherRoutes);
 // Add this route
 app.use("/api/forum", forumRoutes);
+app.use("/api/categories", categoryRoutes);
 
 
 
