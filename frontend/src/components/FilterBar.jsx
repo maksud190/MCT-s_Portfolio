@@ -1,54 +1,54 @@
-import { useState, useEffect } from "react";
-import { API } from "../api/api";
-
-
 export default function FilterBar({
+  categories = [],
   selectedCategory,
   setSelectedCategory,
   sortBy,
   setSortBy,
   dateRange,
   setDateRange,
-  filteredProjects,
+  projects = [],
+  filteredProjects = [],
 }) {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      setLoading(true);
-      const res = await API.get("/categories");
-      setCategories(res.data);
-    } catch (err) {
-      console.error("Error fetching categories:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
   return (
-    <div className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 md:px-8 py-4 mb-6 md:mb-8 shadow-sm">
+    <div className="mb-6 bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
       {/* Compact Filters Content */}
       <div className="p-5">
         <div className="flex flex-col gap-4">
           {/* Mobile Category Dropdown */}
-          <div className="md:hidden">
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-        >
-          <option value="All">📁 All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat._id} value={cat.name}>
-              {cat.icon} {cat.name}
-            </option>
-          ))}
-        </select>
-      </div>
+          <div className="w-full lg:hidden">
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                />
+              </svg>
+              Category
+            </label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl bg-white text-gray-900 hover:border-blue-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all cursor-pointer font-medium"
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat} (
+                  {cat === "All"
+                    ? projects.length
+                    : projects.filter((p) => p.category?.startsWith(cat))
+                        .length}
+                  )
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Compact Filters Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
