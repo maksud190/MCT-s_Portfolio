@@ -489,7 +489,7 @@ export default function QuestionDetail() {
             <div className="flex-shrink-0 text-center space-y-3">
               <button
                 onClick={() => handleVoteQuestion("upvote")}
-                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                className={`w-12 h-12 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
                   userVote === "upvote"
                     ? "bg-green-600 text-white shadow-lg"
                     : "bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600"
@@ -500,19 +500,19 @@ export default function QuestionDetail() {
                 </svg>
               </button>
               
-              <div className={`text-2xl font-black ${
+              <div className={`text-xl font-black ${
                 questionVoteScore > 0 
                   ? "text-green-600" 
                   : questionVoteScore < 0 
                   ? "text-red-600"
                   : "text-gray-900"
               }`}>
-                {questionVoteScore > 0 ? "+" : ""}{questionVoteScore}
+                {questionVoteScore > 0 ? "+" : ""}{questionVoteScore} Vote
               </div>
               
               <button
                 onClick={() => handleVoteQuestion("downvote")}
-                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                className={`w-12 h-12 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
                   userVote === "downvote"
                     ? "bg-red-600 text-white shadow-lg"
                     : "bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600"
@@ -556,7 +556,7 @@ export default function QuestionDetail() {
                       key={idx}
                       src={image.url}
                       alt={`Question image ${idx + 1}`}
-                      className="w-full h-48 object-cover rounded-xl border-2 border-gray-200 cursor-pointer hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover rounded-xl border-2 border-gray-200 cursor-pointer hover:scale-105 transition-transform"
                       onClick={() => window.open(image.url, "_blank")}
                     />
                   ))}

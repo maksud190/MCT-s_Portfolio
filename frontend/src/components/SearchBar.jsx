@@ -325,8 +325,8 @@ export default function SearchBar() {
 
       {/* Search Results Dropdown - Modern Card Design */}
       {showResults && searchResults.length > 0 && (
-        <div className="absolute z-50 w-full mt-3">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-gray-100 max-h-[70vh] overflow-hidden">
+        <div className="absolute z-50 w-sm mt-3">
+          <div className="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-gray-100 max-h-[50vh] overflow-hidden">
             <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50">
               <p className="text-xs font-medium text-gray-600">
                 Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}

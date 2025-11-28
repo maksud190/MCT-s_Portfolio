@@ -30,11 +30,11 @@ export default function Forum() {
   ];
 
   const filters = [
-    { value: "recent", label: "📅 Most Recent", icon: "🆕" },
-    { value: "popular", label: "🔥 Popular", icon: "🔥" },
-    { value: "most_answered", label: "💬 Most Answered", icon: "💬" },
-    { value: "unsolved", label: "❓ Unsolved", icon: "❓" },
-    { value: "solved", label: "✅ Solved", icon: "✅" }
+    { value: "recent", label: "📅 Most Recent"},
+    { value: "popular", label: "🔥 Popular"},
+    { value: "most_answered", label: "💬 Most Answered"},
+    { value: "unsolved", label: "❓ Unsolved"},
+    { value: "solved", label: "✅ Solved"}
   ];
 
   useEffect(() => {
@@ -74,19 +74,33 @@ export default function Forum() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 mb-20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 mb-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 mb-4">
-            <span className="text-2xl">💬</span>
+          <div className="inline-flex items-center gap-1 px-4 py-2 text-blue-600 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 mb-4">
+            {/* <span className="text-2xl">💬</span> */}
+            <svg
+            
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
             <span className="text-sm font-semibold text-gray-700">Community Forum</span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-3">
+          <h1 className="!text-3xl md:text-xl font-black text-gray-900">
             Ask. Answer. Learn.
           </h1>
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-sm text-gray-600 mb-6">
             Get help from the community and share your knowledge
           </p>
 
@@ -94,7 +108,7 @@ export default function Forum() {
           <div className="flex flex-wrap gap-3 justify-center">
             <Link
               to="/forum/ask"
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-stone-100 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-1"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -103,7 +117,7 @@ export default function Forum() {
             </Link>
             <Link
               to="/forum/my-questions"
-              className="px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-semibold transition-all shadow-lg border-2 border-gray-200 flex items-center gap-2"
+              className="px-4 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-semibold transition-all shadow-lg border-2 border-gray-200 flex items-center gap-1"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -128,7 +142,12 @@ export default function Forum() {
                 type="submit"
                 className="absolute right-2 top-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all"
               >
-                🔍 Search
+                <div className="flex items-center gap-1">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                <span>Search</span>
+                </div>
               </button>
             </div>
           </form>
@@ -144,7 +163,7 @@ export default function Forum() {
                   setCategory(cat);
                   setPage(1);
                 }}
-                className={`px-4 py-2 rounded-xl font-semibold text-sm whitespace-nowrap transition-all ${
+                className={`!px-3 !py-1 rounded-xl font-semibold text-sm whitespace-nowrap transition-all ${
                   category === cat
                     ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
                     : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"
@@ -165,7 +184,7 @@ export default function Forum() {
                 setFilter(f.value);
                 setPage(1);
               }}
-              className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 ${
+              className={`!px-3 !py-2 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 ${
                 filter === f.value
                   ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
                   : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"
@@ -210,7 +229,7 @@ export default function Forum() {
               </p>
               <Link
                 to="/forum/ask"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold transition-all shadow-xl hover:shadow-2xl"
+                className="inline-flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-stone-100 rounded-xl font-bold transition-all shadow-xl hover:shadow-2xl"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -228,10 +247,10 @@ export default function Forum() {
                   to={`/forum/questions/${question._id}`}
                   className="block bg-white rounded-3xl shadow-xl border-2 border-gray-200 p-6 transition-all hover:shadow-2xl hover:border-blue-300"
                 >
-                  <div className="flex gap-4">
+                  <div className="flex gap-6">
                     {/* Vote Score & Stats */}
                     <div className="flex-shrink-0 text-center space-y-2">
-                      <div className={`px-3 py-2 rounded-xl font-bold ${
+                      <div className={`px-2 py-1 rounded-xl font-bold ${
                         voteScore > 0 
                           ? "bg-green-100 text-green-700" 
                           : voteScore < 0 
@@ -242,7 +261,7 @@ export default function Forum() {
                       </div>
                       <div className="text-xs text-gray-500 font-semibold">votes</div>
                       
-                      <div className={`px-3 py-2 rounded-xl font-bold ${
+                      <div className={`px-2 py-1 rounded-xl font-bold ${
                         question.answersCount > 0
                           ? question.isSolved
                             ? "bg-green-100 text-green-700"
@@ -256,8 +275,8 @@ export default function Forum() {
 
                     {/* Question Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-xl font-black text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                      <div className="flex items-start justify-between mb-0">
+                        <h3 className="!text-lg font-black text-gray-900 mb-0 hover:text-blue-600 transition-colors">
                           {question.title}
                         </h3>
                         {question.isSolved && (
@@ -272,7 +291,7 @@ export default function Forum() {
                         )}
                       </div>
 
-                      <p className="text-gray-700 mb-3 line-clamp-2">
+                      <p className="text-gray-700 font-semibold text-sm mb-3 line-clamp-2">
                         {question.content}
                       </p>
 
