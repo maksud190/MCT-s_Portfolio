@@ -349,11 +349,16 @@ export const deleteComment = async (req, res) => {
     const { commentId } = req.params;
 
     // Find the project containing this comment
-    const project = await Project.findOne({ "comments._id": commentId });
+    const project = await Project.findOne({ "comments._id": commentId })
+      .populate("userId", "username email");
 
     if (!project) {
       return res.status(404).json({ message: "Comment not found" });
     }
+
+    // Get comment before deleting (for notification)
+    const comment = project.comments.id(commentId);
+    const commentUserId = comment.user;
 
     // Remove the comment
     project.comments = project.comments.filter(
@@ -361,6 +366,18 @@ export const deleteComment = async (req, res) => {
     );
 
     await project.save();
+
+    // 🔥 Send notification to comment author
+    if (commentUserId) {
+      await Notification.create({
+        recipient: commentUserId,
+        sender: req.userId, // Admin ID
+        type: "comment_deleted",
+        message: `Your comment on "${project.title}" has been removed by moderators for violating community guidelines.`,
+        link: `/project/${project._id}`,
+        project: project._id
+      });
+    }
 
     console.log("✅ Comment deleted by admin:", commentId);
     res.json({ message: "Comment deleted successfully" });
@@ -377,7 +394,8 @@ export const flagComment = async (req, res) => {
     const { isFlagged, flagReason } = req.body;
 
     // Find the project containing this comment
-    const project = await Project.findOne({ "comments._id": commentId });
+    const project = await Project.findOne({ "comments._id": commentId })
+      .populate("userId", "username email");
 
     if (!project) {
       return res.status(404).json({ message: "Comment not found" });
@@ -393,6 +411,18 @@ export const flagComment = async (req, res) => {
     comment.flagReason = flagReason || "";
 
     await project.save();
+
+    // 🔥 Send notification to comment author when flagged
+    if (isFlagged && comment.user) {
+      await Notification.create({
+        recipient: comment.user,
+        sender: req.userId, // Admin ID
+        type: "comment_flagged",
+        message: `Your comment on "${project.title}" has been flagged by moderators. ${flagReason ? `Reason: ${flagReason}` : ''}`,
+        link: `/project/${project._id}`,
+        project: project._id
+      });
+    }
 
     console.log("✅ Comment flag status updated:", commentId);
     res.json({ message: "Comment updated successfully", comment });

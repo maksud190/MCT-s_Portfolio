@@ -62,7 +62,7 @@ export default function Navbar() {
 
               <Link
                 to="/forum"
-                className="flex items-center gap-0 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-xl font-semibold transition-all"
+                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 {/* <svg
                   className="w-5 h-5"

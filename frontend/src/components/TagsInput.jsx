@@ -47,14 +47,14 @@ export default function TagsInput({ tags, setTags }) {
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-lg text-sm font-semibold group"
+            className="inline-flex items-center gap-1 px-3  bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-lg text-sm font-semibold group"
           >
-            <span className="text-blue-500">#</span>
+            <span className="text-blue-700">#</span>
             {tag}
             <button
               type="button"
               onClick={() => removeTag(index)}
-              className="p-0.5 hover:bg-red-100 rounded-md transition-colors group"
+              className="!p-0 hover:bg-red-100 rounded-md transition-colors group"
             >
               <svg
                 className="w-4 h-4 text-blue-600 group-hover:text-red-600 transition-colors"

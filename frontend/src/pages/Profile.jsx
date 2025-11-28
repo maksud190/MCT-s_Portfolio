@@ -567,11 +567,11 @@ export default function Profile() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 mb-30">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Modern Profile Card */}
-        <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden mb-8">
+        <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden pt-24 mb-8">
           {/* Cover Background */}
-          <div className="h-25 bg-gradient-to-r relative">
+          {/* <div className="h-25 bg-gradient-to-r relative">
             <div className="absolute inset-0"></div>
-          </div>
+          </div> */}
 
           {/* Profile Content */}
           <div className="px-6 pb-6">

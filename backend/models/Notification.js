@@ -20,7 +20,14 @@ const notificationSchema = new mongoose.Schema(
         "answer_marked_best",
         "question_upvoted",
         "answer_replied",
-        "mention"
+        "mention",
+        
+
+        "comment_flagged",
+        "comment_deleted",
+        "project_liked",
+        "project_commented",
+        "reply_received"
       ],
       required: true
     },
@@ -36,13 +43,20 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    link: {
+      type: String
+    },
+
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project"
+    },
+
+
     isRead: {
       type: Boolean,
       default: false
     },
-    link: {
-      type: String
-    }
   },
   { timestamps: true }
 );
