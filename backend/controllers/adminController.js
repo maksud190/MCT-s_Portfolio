@@ -283,60 +283,121 @@ export const deleteProjectAdmin = async (req, res) => {
 // 💬 COMMENT MODERATION
 // ========================================
 
+// Get all comments from all projects
 export const getAllComments = async (req, res) => {
   try {
-    const { page = 1, limit = 20, isFlagged = "" } = req.query;
+    const { page = 1, limit = 20, isFlagged } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const query = {};
-    if (isFlagged !== "") {
-      query.isFlagged = isFlagged === "true";
-    }
+    // Get all projects with comments
+    const projects = await Project.find({ "comments.0": { $exists: true } })
+      .populate("comments.user", "username avatar email")
+      .populate("userId", "username")
+      .select("title comments")
+      .sort({ "comments.createdAt": -1 });
 
-    const comments = await Comment.find(query)
-      .populate("user", "username avatar")
-      .populate("project", "title")
-      .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
+    // Flatten all comments with project info
+    let allComments = [];
+    projects.forEach(project => {
+      project.comments.forEach(comment => {
+        // Apply flag filter if specified
+        if (isFlagged !== undefined && isFlagged !== '') {
+          const shouldInclude = isFlagged === 'true' ? comment.isFlagged : !comment.isFlagged;
+          if (!shouldInclude) return;
+        }
 
-    const count = await Comment.countDocuments(query);
+        allComments.push({
+          _id: comment._id,
+          text: comment.text,
+          user: comment.user,
+          createdAt: comment.createdAt,
+          isFlagged: comment.isFlagged || false,
+          flagReason: comment.flagReason || "",
+          replies: comment.replies,
+          project: {
+            _id: project._id,
+            title: project.title
+          }
+        });
+      });
+    });
 
-    res.json({
-      comments,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
-      total: count
+    // Sort by creation date (newest first)
+    allComments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // Paginate
+    const total = allComments.length;
+    const paginatedComments = allComments.slice(skip, skip + parseInt(limit));
+    const totalPages = Math.ceil(total / parseInt(limit));
+
+    console.log("✅ Fetched comments for admin:", paginatedComments.length);
+    res.json({ 
+      comments: paginatedComments, 
+      totalPages, 
+      currentPage: parseInt(page), 
+      total 
     });
   } catch (err) {
+    console.error("❌ Get admin comments error:", err);
     res.status(500).json({ message: err.message });
   }
 };
 
+// Delete comment
 export const deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;
 
-    await Comment.findByIdAndDelete(commentId);
+    // Find the project containing this comment
+    const project = await Project.findOne({ "comments._id": commentId });
 
-    res.json({ message: "Comment deleted" });
+    if (!project) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Remove the comment
+    project.comments = project.comments.filter(
+      comment => comment._id.toString() !== commentId
+    );
+
+    await project.save();
+
+    console.log("✅ Comment deleted by admin:", commentId);
+    res.json({ message: "Comment deleted successfully" });
   } catch (err) {
+    console.error("❌ Delete comment error:", err);
     res.status(500).json({ message: err.message });
   }
 };
 
+// Flag/Unflag comment
 export const flagComment = async (req, res) => {
   try {
     const { commentId } = req.params;
     const { isFlagged, flagReason } = req.body;
 
-    const comment = await Comment.findByIdAndUpdate(
-      commentId,
-      { isFlagged, flagReason },
-      { new: true }
-    );
+    // Find the project containing this comment
+    const project = await Project.findOne({ "comments._id": commentId });
 
-    res.json({ message: "Comment updated", comment });
+    if (!project) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Find and update the comment
+    const comment = project.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    comment.isFlagged = isFlagged;
+    comment.flagReason = flagReason || "";
+
+    await project.save();
+
+    console.log("✅ Comment flag status updated:", commentId);
+    res.json({ message: "Comment updated successfully", comment });
   } catch (err) {
+    console.error("❌ Flag comment error:", err);
     res.status(500).json({ message: err.message });
   }
 };
