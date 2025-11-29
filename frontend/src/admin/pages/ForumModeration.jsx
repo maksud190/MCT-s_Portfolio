@@ -1,4 +1,3 @@
-// pages/admin/ForumModeration.jsx
 import { useState, useEffect } from "react";
 import { API } from "../../api/api";
 import { toast } from "sonner";

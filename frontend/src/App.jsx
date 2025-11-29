@@ -174,7 +174,7 @@ import Categories from './admin/pages/Categories';
 import Announcements from './admin/pages/Announcements';
 import Analytics from './admin/pages/Analytics';
 import SiteSettings from './admin/pages/SiteSettings';
-import ForumManagement from "./admin/pages/ForumModeration";
+import ForumModeration from "./admin/pages/ForumModeration";
 
 
 function App() {
