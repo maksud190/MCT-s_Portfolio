@@ -8,7 +8,7 @@ export default function QuestionDetail() {
   const { questionId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ export default function QuestionDetail() {
 
         // Check user's votes on answers
         const votes = {};
-        res.data.answers.forEach(answer => {
+        res.data.answers.forEach((answer) => {
           if (answer.upvotes?.includes(user._id)) {
             votes[answer._id] = "upvote";
           } else if (answer.downvotes?.includes(user._id)) {
@@ -57,7 +57,7 @@ export default function QuestionDetail() {
         // Check if user already voted in poll
         if (res.data.question.isPoll) {
           res.data.question.pollOptions?.forEach((option, idx) => {
-            if (option.votes?.some(vote => vote.user === user._id)) {
+            if (option.votes?.some((vote) => vote.user === user._id)) {
               setSelectedPollOption(idx);
             }
           });
@@ -88,7 +88,7 @@ export default function QuestionDetail() {
       setQuestion({
         ...question,
         upvotes: res.data.upvotes,
-        downvotes: res.data.downvotes
+        downvotes: res.data.downvotes,
       });
 
       if (userVote === voteType) {
@@ -118,11 +118,17 @@ export default function QuestionDetail() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setAnswers(answers.map(answer => 
-        answer._id === answerId
-          ? { ...answer, upvotes: res.data.upvotes, downvotes: res.data.downvotes }
-          : answer
-      ));
+      setAnswers(
+        answers.map((answer) =>
+          answer._id === answerId
+            ? {
+                ...answer,
+                upvotes: res.data.upvotes,
+                downvotes: res.data.downvotes,
+              }
+            : answer
+        )
+      );
 
       if (userAnswerVotes[answerId] === voteType) {
         setUserAnswerVotes({ ...userAnswerVotes, [answerId]: null });
@@ -158,7 +164,7 @@ export default function QuestionDetail() {
 
       setQuestion({
         ...question,
-        pollOptions: res.data.pollOptions
+        pollOptions: res.data.pollOptions,
       });
       setSelectedPollOption(optionIndex);
       toast.success("Vote recorded!");
@@ -170,8 +176,8 @@ export default function QuestionDetail() {
 
   const handleAnswerImageSelect = (e) => {
     const files = Array.from(e.target.files);
-    
-    const validFiles = files.filter(file => {
+
+    const validFiles = files.filter((file) => {
       if (file.size > 5 * 1024 * 1024) {
         toast.error(`${file.name} is too large. Max size is 5MB.`);
         return false;
@@ -186,10 +192,10 @@ export default function QuestionDetail() {
 
     setAnswerImages([...answerImages, ...validFiles]);
 
-    validFiles.forEach(file => {
+    validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAnswerImagePreviews(prev => [...prev, reader.result]);
+        setAnswerImagePreviews((prev) => [...prev, reader.result]);
       };
       reader.readAsDataURL(file);
     });
@@ -214,8 +220,8 @@ export default function QuestionDetail() {
 
       const formData = new FormData();
       formData.append("content", answerContent.trim());
-      
-      answerImages.forEach(image => {
+
+      answerImages.forEach((image) => {
         formData.append("images", image);
       });
 
@@ -225,8 +231,8 @@ export default function QuestionDetail() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
@@ -245,8 +251,8 @@ export default function QuestionDetail() {
 
   const handleReplyImageSelect = (answerId, e) => {
     const files = Array.from(e.target.files);
-    
-    const validFiles = files.filter(file => {
+
+    const validFiles = files.filter((file) => {
       if (file.size > 5 * 1024 * 1024) {
         toast.error(`${file.name} is too large. Max size is 5MB.`);
         return false;
@@ -262,15 +268,15 @@ export default function QuestionDetail() {
 
     setReplyImages({
       ...replyImages,
-      [answerId]: [...currentImages, ...validFiles]
+      [answerId]: [...currentImages, ...validFiles],
     });
 
-    validFiles.forEach(file => {
+    validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setReplyImagePreviews({
           ...replyImagePreviews,
-          [answerId]: [...(replyImagePreviews[answerId] || []), reader.result]
+          [answerId]: [...(replyImagePreviews[answerId] || []), reader.result],
         });
       };
       reader.readAsDataURL(file);
@@ -280,17 +286,19 @@ export default function QuestionDetail() {
   const removeReplyImage = (answerId, index) => {
     setReplyImages({
       ...replyImages,
-      [answerId]: (replyImages[answerId] || []).filter((_, i) => i !== index)
+      [answerId]: (replyImages[answerId] || []).filter((_, i) => i !== index),
     });
     setReplyImagePreviews({
       ...replyImagePreviews,
-      [answerId]: (replyImagePreviews[answerId] || []).filter((_, i) => i !== index)
+      [answerId]: (replyImagePreviews[answerId] || []).filter(
+        (_, i) => i !== index
+      ),
     });
   };
 
   const handleSubmitReply = async (answerId) => {
     const content = replyContent[answerId];
-    
+
     if (!content?.trim()) {
       toast.error("Reply content is required");
       return;
@@ -300,9 +308,9 @@ export default function QuestionDetail() {
       const token = localStorage.getItem("token");
       const formData = new FormData();
       formData.append("content", content.trim());
-      
+
       const images = replyImages[answerId] || [];
-      images.forEach(image => {
+      images.forEach((image) => {
         formData.append("images", image);
       });
 
@@ -312,16 +320,18 @@ export default function QuestionDetail() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
-      setAnswers(answers.map(answer =>
-        answer._id === answerId
-          ? { ...answer, replies: [...answer.replies, res.data.reply] }
-          : answer
-      ));
+      setAnswers(
+        answers.map((answer) =>
+          answer._id === answerId
+            ? { ...answer, replies: [...answer.replies, res.data.reply] }
+            : answer
+        )
+      );
 
       setReplyContent({ ...replyContent, [answerId]: "" });
       setReplyImages({ ...replyImages, [answerId]: [] });
@@ -342,10 +352,12 @@ export default function QuestionDetail() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setAnswers(answers.map(answer => ({
-        ...answer,
-        isBestAnswer: answer._id === answerId
-      })));
+      setAnswers(
+        answers.map((answer) => ({
+          ...answer,
+          isBestAnswer: answer._id === answerId,
+        }))
+      );
 
       setQuestion({ ...question, isSolved: true });
       toast.success("Answer marked as best! ⭐");
@@ -356,15 +368,18 @@ export default function QuestionDetail() {
   };
 
   const handleDeleteAnswer = async (answerId) => {
-    if (!window.confirm("⚠️ Delete this answer?\n\nThis action cannot be undone.")) return;
+    if (
+      !window.confirm("⚠️ Delete this answer?\n\nThis action cannot be undone.")
+    )
+      return;
 
     try {
       const token = localStorage.getItem("token");
       await API.delete(`/forum/answers/${answerId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      setAnswers(answers.filter(a => a._id !== answerId));
+      setAnswers(answers.filter((a) => a._id !== answerId));
       toast.success("Answer deleted!");
     } catch (err) {
       console.error("Error deleting answer:", err);
@@ -378,14 +393,19 @@ export default function QuestionDetail() {
     try {
       const token = localStorage.getItem("token");
       await API.delete(`/forum/answers/${answerId}/replies/${replyId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      setAnswers(answers.map(answer =>
-        answer._id === answerId
-          ? { ...answer, replies: answer.replies.filter(r => r._id !== replyId) }
-          : answer
-      ));
+      setAnswers(
+        answers.map((answer) =>
+          answer._id === answerId
+            ? {
+                ...answer,
+                replies: answer.replies.filter((r) => r._id !== replyId),
+              }
+            : answer
+        )
+      );
 
       toast.success("Reply deleted!");
     } catch (err) {
@@ -408,19 +428,21 @@ export default function QuestionDetail() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setAnswers(answers.map(answer => {
-        if (answer._id === answerId) {
-          return {
-            ...answer,
-            replies: answer.replies.map(reply =>
-              reply._id === replyId
-                ? { ...reply, upvotes: res.data.upvotes }
-                : reply
-            )
-          };
-        }
-        return answer;
-      }));
+      setAnswers(
+        answers.map((answer) => {
+          if (answer._id === answerId) {
+            return {
+              ...answer,
+              replies: answer.replies.map((reply) =>
+                reply._id === replyId
+                  ? { ...reply, upvotes: res.data.upvotes }
+                  : reply
+              ),
+            };
+          }
+          return answer;
+        })
+      );
 
       toast.success("Vote recorded!");
     } catch (err) {
@@ -435,7 +457,10 @@ export default function QuestionDetail() {
 
   const getTotalPollVotes = () => {
     if (!question?.pollOptions) return 0;
-    return question.pollOptions.reduce((sum, opt) => sum + (opt.votes?.length || 0), 0);
+    return question.pollOptions.reduce(
+      (sum, opt) => sum + (opt.votes?.length || 0),
+      0
+    );
   };
 
   if (loading) {
@@ -456,8 +481,13 @@ export default function QuestionDetail() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Question not found</h2>
-          <Link to="/forum" className="text-blue-600 hover:text-blue-700 font-semibold">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Question not found
+          </h2>
+          <Link
+            to="/forum"
+            className="text-blue-600 hover:text-blue-700 font-semibold"
+          >
             ← Back to Forum
           </Link>
         </div>
@@ -475,8 +505,18 @@ export default function QuestionDetail() {
           to="/forum"
           className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-semibold transition-all shadow-lg border-2 border-gray-200 mb-6"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
           </svg>
           Back to Forum
         </Link>
@@ -494,21 +534,34 @@ export default function QuestionDetail() {
                     : "bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600"
                 }`}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 15l7-7 7 7"
+                  />
                 </svg>
               </button>
-              
-              <div className={`text-xl font-black ${
-                questionVoteScore > 0 
-                  ? "text-green-600" 
-                  : questionVoteScore < 0 
-                  ? "text-red-600"
-                  : "text-gray-900"
-              }`}>
-                {questionVoteScore > 0 ? "+" : ""}{questionVoteScore} Vote
+
+              <div
+                className={`text-xl font-black ${
+                  questionVoteScore > 0
+                    ? "text-green-600"
+                    : questionVoteScore < 0
+                    ? "text-red-600"
+                    : "text-gray-900"
+                }`}
+              >
+                {questionVoteScore > 0 ? "+" : ""}
+                {questionVoteScore} Vote
               </div>
-              
+
               <button
                 onClick={() => handleVoteQuestion("downvote")}
                 className={`w-12 h-12 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
@@ -517,8 +570,18 @@ export default function QuestionDetail() {
                     : "bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600"
                 }`}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
             </div>
@@ -540,8 +603,47 @@ export default function QuestionDetail() {
                       📊 Poll
                     </span>
                   )}
+
+                  {question.isFlagged && (
+                    <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold border border-red-200">
+                      🚩 Flagged
+                    </span>
+                  )}
                 </div>
               </div>
+
+              {question.isFlagged && question.flagReason && (
+                <div className="mb-4 p-4 bg-red-50 border-2 border-red-300 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                        <svg
+                          className="w-6 h-6 text-red-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-sm font-bold text-red-900 mb-1">
+                        ⚠️ This question has been flagged by moderators
+                      </h3>
+                      <p className="text-sm text-red-700">
+                        <span className="font-semibold">Reason:</span>{" "}
+                        {question.flagReason}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <p className="text-gray-700 text-lg leading-relaxed mb-4 whitespace-pre-wrap">
                 {question.content}
@@ -572,9 +674,13 @@ export default function QuestionDetail() {
                   <div className="space-y-3">
                     {question.pollOptions?.map((option, idx) => {
                       const totalVotes = getTotalPollVotes();
-                      const percentage = totalVotes > 0 
-                        ? ((option.votes?.length || 0) / totalVotes * 100).toFixed(1)
-                        : 0;
+                      const percentage =
+                        totalVotes > 0
+                          ? (
+                              ((option.votes?.length || 0) / totalVotes) *
+                              100
+                            ).toFixed(1)
+                          : 0;
                       const isSelected = selectedPollOption === idx;
 
                       return (
@@ -591,13 +697,17 @@ export default function QuestionDetail() {
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="font-semibold">{option.option}</span>
+                            <span className="font-semibold">
+                              {option.option}
+                            </span>
                             <span className="font-bold">{percentage}%</span>
                           </div>
                           {selectedPollOption !== null && (
                             <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                               <div
-                                className={`h-full ${isSelected ? "bg-white" : "bg-purple-600"} transition-all`}
+                                className={`h-full ${
+                                  isSelected ? "bg-white" : "bg-purple-600"
+                                } transition-all`}
                                 style={{ width: `${percentage}%` }}
                               />
                             </div>
@@ -648,7 +758,7 @@ export default function QuestionDetail() {
                       {question.author?.username}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {question.author?.designation || question.author?.role} • 
+                      {question.author?.designation || question.author?.role} •
                       Reputation: {question.author?.reputation || 0}
                     </p>
                   </div>
@@ -656,15 +766,28 @@ export default function QuestionDetail() {
 
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
                     </svg>
                     {question.views} views
                   </span>
-                  <span>
-                    {new Date(question.createdAt).toLocaleString()}
-                  </span>
+                  <span>{new Date(question.createdAt).toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -674,15 +797,28 @@ export default function QuestionDetail() {
         {/* Answers Section */}
         <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 p-8">
           <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            <svg
+              className="w-6 h-6 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
             </svg>
             {answers.length} {answers.length === 1 ? "Answer" : "Answers"}
           </h2>
 
           {/* Answer Form */}
           {user && (
-            <form onSubmit={handleSubmitAnswer} className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200">
+            <form
+              onSubmit={handleSubmitAnswer}
+              className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200"
+            >
               <label className="text-sm font-bold text-gray-900 mb-2 block">
                 Your Answer
               </label>
@@ -709,8 +845,18 @@ export default function QuestionDetail() {
                   htmlFor="answer-image-upload"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-semibold transition-all border-2 border-gray-200 cursor-pointer"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   Add Images (Max 5)
                 </label>
@@ -763,8 +909,14 @@ export default function QuestionDetail() {
               </div>
             ) : (
               answers.map((answer) => {
-                const answerVoteScore = getVoteScore(answer.upvotes, answer.downvotes);
-                const canMarkBest = user && (user._id === question.author?._id || user.role === "teacher");
+                const answerVoteScore = getVoteScore(
+                  answer.upvotes,
+                  answer.downvotes
+                );
+                const canMarkBest =
+                  user &&
+                  (user._id === question.author?._id ||
+                    user.role === "teacher");
                 const canDelete = user && user._id === answer.author?._id;
 
                 return (
@@ -787,31 +939,56 @@ export default function QuestionDetail() {
                               : "bg-white text-gray-600 hover:bg-green-100 hover:text-green-600 border border-gray-200"
                           }`}
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 15l7-7 7 7"
+                            />
                           </svg>
                         </button>
-                        
-                        <div className={`text-xl font-black ${
-                          answerVoteScore > 0 
-                            ? "text-green-600" 
-                            : answerVoteScore < 0 
-                            ? "text-red-600"
-                            : "text-gray-900"
-                        }`}>
-                          {answerVoteScore > 0 ? "+" : ""}{answerVoteScore}
+
+                        <div
+                          className={`text-xl font-black ${
+                            answerVoteScore > 0
+                              ? "text-green-600"
+                              : answerVoteScore < 0
+                              ? "text-red-600"
+                              : "text-gray-900"
+                          }`}
+                        >
+                          {answerVoteScore > 0 ? "+" : ""}
+                          {answerVoteScore}
                         </div>
-                        
+
                         <button
-                          onClick={() => handleVoteAnswer(answer._id, "downvote")}
+                          onClick={() =>
+                            handleVoteAnswer(answer._id, "downvote")
+                          }
                           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                             userAnswerVotes[answer._id] === "downvote"
                               ? "bg-red-600 text-white shadow-lg"
                               : "bg-white text-gray-600 hover:bg-red-100 hover:text-red-600 border border-gray-200"
                           }`}
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </button>
 
@@ -864,13 +1041,16 @@ export default function QuestionDetail() {
                             </button>
                           )}
                           <button
-                            onClick={() => setShowReplies({
-                              ...showReplies,
-                              [answer._id]: !showReplies[answer._id]
-                            })}
+                            onClick={() =>
+                              setShowReplies({
+                                ...showReplies,
+                                [answer._id]: !showReplies[answer._id],
+                              })
+                            }
                             className="px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg text-sm font-semibold transition-all"
                           >
-                            💬 {showReplies[answer._id] ? "Hide" : "Show"} Replies ({answer.replies?.length || 0})
+                            💬 {showReplies[answer._id] ? "Hide" : "Show"}{" "}
+                            Replies ({answer.replies?.length || 0})
                           </button>
                         </div>
 
@@ -885,7 +1065,9 @@ export default function QuestionDetail() {
                               />
                             ) : (
                               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold">
-                                {answer.author?.username?.charAt(0).toUpperCase()}
+                                {answer.author?.username
+                                  ?.charAt(0)
+                                  .toUpperCase()}
                               </div>
                             )}
                             <div>
@@ -893,8 +1075,9 @@ export default function QuestionDetail() {
                                 {answer.author?.username}
                               </p>
                               <p className="text-xs text-gray-500">
-                                {answer.author?.designation || answer.author?.role} • 
-                                Reputation: {answer.author?.reputation || 0}
+                                {answer.author?.designation ||
+                                  answer.author?.role}{" "}
+                                • Reputation: {answer.author?.reputation || 0}
                               </p>
                             </div>
                           </div>
@@ -911,22 +1094,26 @@ export default function QuestionDetail() {
                               <div className="p-3 bg-white rounded-xl border border-gray-200">
                                 <textarea
                                   value={replyContent[answer._id] || ""}
-                                  onChange={(e) => setReplyContent({
-                                    ...replyContent,
-                                    [answer._id]: e.target.value
-                                  })}
+                                  onChange={(e) =>
+                                    setReplyContent({
+                                      ...replyContent,
+                                      [answer._id]: e.target.value,
+                                    })
+                                  }
                                   placeholder="Write a reply..."
                                   className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all resize-none text-sm"
                                   rows="3"
                                 />
-                                
+
                                 {/* Reply Images */}
                                 <div className="mt-2">
                                   <input
                                     type="file"
                                     multiple
                                     accept="image/*"
-                                    onChange={(e) => handleReplyImageSelect(answer._id, e)}
+                                    onChange={(e) =>
+                                      handleReplyImageSelect(answer._id, e)
+                                    }
                                     className="hidden"
                                     id={`reply-image-${answer._id}`}
                                   />
@@ -934,8 +1121,18 @@ export default function QuestionDetail() {
                                     htmlFor={`reply-image-${answer._id}`}
                                     className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold text-xs transition-all cursor-pointer"
                                   >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                      />
                                     </svg>
                                     Add Images
                                   </label>
@@ -943,22 +1140,29 @@ export default function QuestionDetail() {
 
                                 {replyImagePreviews[answer._id]?.length > 0 && (
                                   <div className="grid grid-cols-3 gap-2 mt-2">
-                                    {replyImagePreviews[answer._id].map((preview, idx) => (
-                                      <div key={idx} className="relative group">
-                                        <img
-                                          src={preview}
-                                          alt={`Reply preview ${idx + 1}`}
-                                          className="w-full h-16 object-cover rounded-lg border border-gray-200"
-                                        />
-                                        <button
-                                          type="button"
-                                          onClick={() => removeReplyImage(answer._id, idx)}
-                                          className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center text-xs"
+                                    {replyImagePreviews[answer._id].map(
+                                      (preview, idx) => (
+                                        <div
+                                          key={idx}
+                                          className="relative group"
                                         >
-                                          ×
-                                        </button>
-                                      </div>
-                                    ))}
+                                          <img
+                                            src={preview}
+                                            alt={`Reply preview ${idx + 1}`}
+                                            className="w-full h-16 object-cover rounded-lg border border-gray-200"
+                                          />
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              removeReplyImage(answer._id, idx)
+                                            }
+                                            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center text-xs"
+                                          >
+                                            ×
+                                          </button>
+                                        </div>
+                                      )
+                                    )}
                                   </div>
                                 )}
 
@@ -973,7 +1177,10 @@ export default function QuestionDetail() {
 
                             {/* Replies List */}
                             {answer.replies?.map((reply) => (
-                              <div key={reply._id} className="p-3 bg-white rounded-xl border border-gray-200">
+                              <div
+                                key={reply._id}
+                                className="p-3 bg-white rounded-xl border border-gray-200"
+                              >
                                 <div className="flex items-start justify-between mb-2">
                                   <div className="flex items-center gap-2">
                                     {reply.author?.avatar ? (
@@ -984,7 +1191,9 @@ export default function QuestionDetail() {
                                       />
                                     ) : (
                                       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white font-bold text-xs">
-                                        {reply.author?.username?.charAt(0).toUpperCase()}
+                                        {reply.author?.username
+                                          ?.charAt(0)
+                                          .toUpperCase()}
                                       </div>
                                     )}
                                     <div>
@@ -996,10 +1205,12 @@ export default function QuestionDetail() {
                                       </p>
                                     </div>
                                   </div>
-                                  
+
                                   <div className="flex items-center gap-2">
                                     <button
-                                      onClick={() => handleUpvoteReply(answer._id, reply._id)}
+                                      onClick={() =>
+                                        handleUpvoteReply(answer._id, reply._id)
+                                      }
                                       className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                                         reply.upvotes?.includes(user?._id)
                                           ? "bg-green-600 text-white"
@@ -1010,18 +1221,35 @@ export default function QuestionDetail() {
                                     </button>
                                     {user && user._id === reply.author?._id && (
                                       <button
-                                        onClick={() => handleDeleteReply(answer._id, reply._id)}
+                                        onClick={() =>
+                                          handleDeleteReply(
+                                            answer._id,
+                                            reply._id
+                                          )
+                                        }
                                         className="text-red-600 hover:text-red-700 p-1"
                                       >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        <svg
+                                          className="w-4 h-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                          />
                                         </svg>
                                       </button>
                                     )}
                                   </div>
                                 </div>
 
-                                <p className="text-sm text-gray-700 mb-2">{reply.content}</p>
+                                <p className="text-sm text-gray-700 mb-2">
+                                  {reply.content}
+                                </p>
 
                                 {/* Reply Images */}
                                 {reply.images?.length > 0 && (
@@ -1032,7 +1260,9 @@ export default function QuestionDetail() {
                                         src={image.url}
                                         alt={`Reply image ${idx + 1}`}
                                         className="w-full h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:scale-105 transition-transform"
-                                        onClick={() => window.open(image.url, "_blank")}
+                                        onClick={() =>
+                                          window.open(image.url, "_blank")
+                                        }
                                       />
                                     ))}
                                   </div>

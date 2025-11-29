@@ -384,7 +384,7 @@ export default function ForumModeration() {
                           <Link
                             to={`/forum/questions/${question._id}`}
                             target="_blank"
-                            className="text-base font-semibold text-stone-800 dark:text-stone-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            className="text-base font-semibold text-stone-800 dark:!text-stone-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                           >
                             {question.title}
                           </Link>
@@ -404,7 +404,7 @@ export default function ForumModeration() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-stone-600 dark:text-stone-400 mb-3 line-clamp-2">{question.content}</p>
+                        <p className="text-sm text-stone-600 dark:text-stone-400 font-medium mb-3 line-clamp-2">{question.content}</p>
                         
                         {/* Categories & Tags */}
                         <div className="flex flex-wrap gap-2 mb-3">
@@ -447,7 +447,7 @@ export default function ForumModeration() {
                       <Link
                         to={`/forum/questions/${question._id}`}
                         target="_blank"
-                        className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                        className="!px-3 !py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:!text-stone-100 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -459,7 +459,7 @@ export default function ForumModeration() {
                       {question.isFlagged ? (
                         <button
                           onClick={() => handleUnflagQuestion(question._id)}
-                          className="px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                          className="!px-3 !py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -469,7 +469,7 @@ export default function ForumModeration() {
                       ) : (
                         <button
                           onClick={() => handleFlagQuestion(question._id)}
-                          className="px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                          className="!px-3 !py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:!text-stone-100 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 !rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
@@ -480,7 +480,7 @@ export default function ForumModeration() {
 
                       <button
                         onClick={() => handleDeleteQuestion(question._id, question.title)}
-                        className="px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                        className="!px-3 !py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:!text-stone-100 hover:bg-red-200 dark:hover:bg-red-900/50 !rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -563,7 +563,7 @@ export default function ForumModeration() {
                     className={`rounded-sm p-4 border transition-colors ${
                       answer.isFlagged
                         ? "bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700"
-                        : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-750"
+                        : "bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800/30"
                     }`}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -580,14 +580,14 @@ export default function ForumModeration() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-stone-600 dark:text-stone-400 mb-3 line-clamp-3">{answer.content}</p>
+                        <p className="text-sm text-stone-800 dark:text-stone-100 mb-3 line-clamp-3">{answer.content}</p>
                         
                         {/* Question Link */}
                         {answer.question && (
                           <Link
                             to={`/forum/questions/${answer.question._id}`}
                             target="_blank"
-                            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-2 inline-block"
+                            className="text-sm font-medium text-blue-600 dark:!text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-2 inline-block"
                           >
                             Question: {answer.question.title}
                           </Link>
@@ -619,7 +619,7 @@ export default function ForumModeration() {
                       <Link
                         to={`/forum/questions/${answer.question?._id}`}
                         target="_blank"
-                        className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                        className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:!text-stone-100 hover:bg-purple-200 dark:hover:bg-blue-900/50 rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -631,7 +631,7 @@ export default function ForumModeration() {
                       {answer.isFlagged ? (
                         <button
                           onClick={() => handleUnflagAnswer(answer._id)}
-                          className="px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                          className="!px-3 !py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-stone-100 hover:bg-green-200 dark:hover:bg-green-900/50 !rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -641,7 +641,7 @@ export default function ForumModeration() {
                       ) : (
                         <button
                           onClick={() => handleFlagAnswer(answer._id)}
-                          className="px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                          className="!px-3 !py-1.5 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-stone-100 hover:bg-yellow-200 dark:hover:bg-yellow-800/50 !rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
@@ -652,7 +652,7 @@ export default function ForumModeration() {
 
                       <button
                         onClick={() => handleDeleteAnswer(answer._id)}
-                        className="px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-sm text-xs font-medium transition-colors flex items-center gap-1"
+                        className="!px-3 !py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-stone-100 hover:bg-red-200 dark:hover:bg-red-900/50 !rounded-sm !text-sm font-medium transition-colors flex items-center gap-1"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
