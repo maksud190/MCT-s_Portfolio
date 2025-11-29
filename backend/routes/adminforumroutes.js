@@ -307,8 +307,6 @@
 
 
 
-// routes/adminRoutes.js - ADD THESE ROUTES
-
 import express from "express";
 import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js";
 import ForumQuestion from "../models/ForumQuestion.js";

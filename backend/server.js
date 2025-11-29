@@ -101,7 +101,7 @@ import contactRoutes from "./routes/contactRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import forumRoutes from "./routes/forumRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
-import adminForumRoutes from "./routes/adminForumRoutes.js";  // 🔥 NEW: Admin Forum Routes
+import adminforumroutes from "./routes/adminforumfoutes.js";  // 🔥 NEW: Admin Forum Routes
 
 dotenv.config();
 
@@ -132,7 +132,7 @@ app.use((req, res, next) => {
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/admin", adminForumRoutes);  // 🔥 NEW: Admin Forum Routes
+app.use("/api/admin", adminforumroutes);  // 🔥 NEW: Admin Forum Routes
 app.use("/api/contact", contactRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/forum", forumRoutes);
