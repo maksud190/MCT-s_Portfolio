@@ -1,4 +1,5 @@
-// models/ForumQuestion.js
+// models/ForumQuestion.js - ADD THESE FIELDS
+
 import mongoose from "mongoose";
 
 const forumQuestionSchema = new mongoose.Schema(
@@ -68,6 +69,15 @@ const forumQuestionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "ForumAnswer"
     },
+    // 🔥 MODERATION FIELDS - ADD THESE
+    isFlagged: {
+      type: Boolean,
+      default: false
+    },
+    flagReason: {
+      type: String,
+      default: ""
+    },
     // Stats
     views: {
       type: Number,
@@ -94,6 +104,7 @@ const forumQuestionSchema = new mongoose.Schema(
 forumQuestionSchema.index({ author: 1, createdAt: -1 });
 forumQuestionSchema.index({ categories: 1 });
 forumQuestionSchema.index({ isSolved: 1 });
+forumQuestionSchema.index({ isFlagged: 1 }); // 🔥 ADD THIS INDEX
 forumQuestionSchema.index({ createdAt: -1 });
 
 export default mongoose.model("ForumQuestion", forumQuestionSchema);

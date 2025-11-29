@@ -174,6 +174,7 @@ import Categories from './admin/pages/Categories';
 import Announcements from './admin/pages/Announcements';
 import Analytics from './admin/pages/Analytics';
 import SiteSettings from './admin/pages/SiteSettings';
+import ForumManagement from "./admin/pages/ForumManagement"; // 🔥 NEW
 
 
 function App() {
@@ -271,6 +272,7 @@ function App() {
             <Route path="announcements" element={<Announcements />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<SiteSettings />} />
+            <Route path="forum" element={<ForumManagement />} /> {/* 🔥 NEW */}
           </Route>
         </Routes>
         
