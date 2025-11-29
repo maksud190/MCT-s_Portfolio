@@ -101,7 +101,7 @@ import contactRoutes from "./routes/contactRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import forumRoutes from "./routes/forumRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
-import adminforumroutes from "./routes/adminforumfoutes.js";  // 🔥 NEW: Admin Forum Routes
+import adminforumroutes from "./routes/adminforumroutes.js";  // 🔥 NEW: Admin Forum Routes
 
 dotenv.config();
 
