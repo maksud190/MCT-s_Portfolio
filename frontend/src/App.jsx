@@ -176,6 +176,7 @@ import Announcements from './admin/pages/Announcements';
 import Analytics from './admin/pages/Analytics';
 import SiteSettings from './admin/pages/SiteSettings';
 import ForumModeration from "./admin/pages/ForumModeration";
+import TestimonialManagement from "./admin/pages/TestimonialManagement";
 
 
 function App() {
@@ -275,6 +276,7 @@ function App() {
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<SiteSettings />} />
             <Route path="forum" element={<ForumModeration />} /> {/* 🔥 NEW */}
+            <Route path="testimonials" element={<TestimonialManagement />} />
           </Route>
         </Routes>
         
