@@ -6,6 +6,7 @@ import ProjectCard from "../components/ProjectCard";
 import CategorySidebar from "../components/CategorySidebar";
 import FilterBar from "../components/FilterBar";
 import ToolsShowcase from "../components/ToolsShowcase";
+import TestimonialSection from "../components/TestimonialSection";
 
 export default function Home() {
   const { user } = useAuth(); // 🔥 Get user from AuthContext

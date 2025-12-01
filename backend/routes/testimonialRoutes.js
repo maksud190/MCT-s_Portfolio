@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import Testimonial from "../models/Testimonial.js";
+import { verifyToken, isAdmin } from "../middleware/auth.js";
+
 const router = express.Router();
-const Testimonial = require("../models/Testimonial");
-const { verifyToken, isAdmin } = require("../middleware/auth");
 
 // Get all active testimonials (Public)
 router.get("/", async (req, res) => {
@@ -197,4 +198,4 @@ router.delete("/:id", verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

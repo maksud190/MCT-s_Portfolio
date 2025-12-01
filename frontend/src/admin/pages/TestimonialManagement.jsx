@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { API } from "../api/api";
+import { API } from "../../api/api"; // ✅ CORRECT PATH for admin/pages folder
 import { toast } from "sonner";
 
 export default function TestimonialManagement() {

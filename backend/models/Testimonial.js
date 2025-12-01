@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const testimonialSchema = new mongoose.Schema(
   {
@@ -57,4 +57,6 @@ const testimonialSchema = new mongoose.Schema(
 testimonialSchema.index({ order: 1, createdAt: -1 });
 testimonialSchema.index({ isActive: 1 });
 
-module.exports = mongoose.model("Testimonial", testimonialSchema);
+const Testimonial = mongoose.model("Testimonial", testimonialSchema);
+
+export default Testimonial;

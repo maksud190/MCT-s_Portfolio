@@ -13,6 +13,8 @@ import teacherRoutes from "./routes/teacherRoutes.js";
 import forumRoutes from "./routes/forumRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import adminforumroutes from "./routes/adminforumroutes.js";  // 🔥 NEW: Admin Forum Routes
+import testimonialRoutes from "./routes/testimonialRoutes.js";
+
 
 dotenv.config();
 
@@ -43,12 +45,14 @@ app.use((req, res, next) => {
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/admin", adminforumroutes);  // 🔥 NEW: Admin Forum Routes
+app.use("/api/admin", adminforumroutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/forum", forumRoutes);
 app.use("/api/categories", categoryRoutes);
-app.use("/api/testimonials", require("./routes/testimonialRoutes.js"));
+
+app.use("/api/testimonials", testimonialRoutes);
+
 
 // Database connection
 mongoose
