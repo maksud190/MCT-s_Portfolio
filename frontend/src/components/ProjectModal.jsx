@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -16,6 +16,9 @@ export default function ProjectModal() {
   const [likes, setLikes] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // 🔥 Store scroll position
+  const scrollPositionRef = useRef(0);
 
   // Listen for hash changes
   useEffect(() => {
@@ -23,6 +26,10 @@ export default function ProjectModal() {
       const hash = window.location.hash;
       if (hash.startsWith('#project-')) {
         const id = hash.replace('#project-', '');
+        
+        // 🔥 Save current scroll position BEFORE opening modal
+        scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
+        
         setProjectId(id);
         setLoading(true);
       } else {
@@ -46,15 +53,29 @@ export default function ProjectModal() {
       incrementView();
       checkLikeStatus();
       
-      // Lock body scroll
+      // 🔥 Lock body scroll and save position
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollPositionRef.current}px`;
+      document.body.style.width = '100%';
     } else {
-      // Unlock body scroll
-      document.body.style.overflow = 'unset';
+      // 🔥 Unlock body scroll and restore position
+      const scrollY = scrollPositionRef.current;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      
+      // 🔥 Restore scroll position
+      window.scrollTo(0, scrollY);
     }
     
     return () => {
-      document.body.style.overflow = 'unset';
+      // Cleanup
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
     };
   }, [projectId]);
 
