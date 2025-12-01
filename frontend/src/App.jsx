@@ -158,6 +158,7 @@ import Forum from "./pages/Forum";
 import AskQuestion from "./pages/AskQuestion";
 import QuestionDetail from "./pages/QuestionDetail";
 import MyQuestions from "./pages/MyQuestions";
+import ProjectModal from "./components/ProjectModal";
 
 
 
@@ -247,6 +248,7 @@ function App() {
                   }
                 />
               </Routes>
+              <ProjectModal />
               <Footer />
             </>
           } />
