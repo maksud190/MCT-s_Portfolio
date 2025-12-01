@@ -1,6 +1,6 @@
 import express from "express";
 import Testimonial from "../models/Testimonial.js";
-import { verifyToken, isAdmin } from "../middleware/auth.js";
+import { authMiddleware as verifyToken, adminMiddleware as isAdmin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
