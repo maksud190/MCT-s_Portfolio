@@ -792,7 +792,7 @@ export default function ProjectDetails() {
                       </svg>
                       Description
                     </h3>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap  text-sm">
                       {project.description}
                     </p>
                   </div>

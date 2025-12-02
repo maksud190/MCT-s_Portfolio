@@ -159,10 +159,10 @@ export default function Home() {
   };
 
   const currentYear = new Date().getFullYear();
-  
+
   const [stats, setStats] = useState({
     projects: 0,
-    users: 0
+    users: 0,
   });
 
   useEffect(() => {
@@ -173,12 +173,12 @@ export default function Home() {
     try {
       const [projectsRes, usersRes] = await Promise.all([
         API.get("/projects"),
-        API.get("/users/all")
+        API.get("/users/all"),
       ]);
 
       setStats({
         projects: projectsRes.data.length || 0,
-        users: usersRes.data.length || 0
+        users: usersRes.data.length || 0,
       });
     } catch (err) {
       console.error("Error fetching stats:", err);
@@ -414,13 +414,27 @@ export default function Home() {
                 <div className="w-20 h-20 md:w-24 md:h-24 border-4 border-stone-200 rounded-full"></div>
                 <div className="absolute top-0 left-0 w-20 h-20 md:w-24 md:h-24 border-4 border-t-blue-600 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <svg className="w-8 h-8 md:w-10 md:h-10 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  <svg
+                    className="w-8 h-8 md:w-10 md:h-10 text-stone-700"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
                   </svg>
                 </div>
               </div>
-              <p className="mt-6 text-stone-600 font-medium text-base md:text-lg">Loading Projects...</p>
-              <p className="mt-2 text-stone-500 text-sm md:text-base">Please wait a moment</p>
+              <p className="mt-6 text-stone-600 font-medium text-base md:text-lg">
+                Loading Projects...
+              </p>
+              <p className="mt-2 text-stone-500 text-sm md:text-base">
+                Please wait a moment
+              </p>
             </div>
           ) : filteredProjects.length > 0 ? (
             <>
@@ -433,18 +447,35 @@ export default function Home() {
               {hasMoreProjects && (
                 <div className="flex flex-col items-center mt-8 md:mt-12">
                   <p className="text-xs md:text-sm text-stone-500 mb-3">
-                    Showing {visibleProjects.length} of {filteredProjects.length} projects
+                    Showing {visibleProjects.length} of{" "}
+                    {filteredProjects.length} projects
                   </p>
                   <button
                     onClick={handleSeeMore}
                     disabled={loading}
-                    className="group flex items-center gap-2 bg-stone-800 hover:bg-stone-900 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="group flex items-center gap-2 bg-stone-800 hover:bg-stone-900 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-1 animate-fadeInUp"
                   >
                     {loading ? (
                       <>
-                        <svg className="animate-spin h-4 w-4 md:h-5 md:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          className="animate-spin h-4 w-4 md:h-5 md:w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         <span>Loading...</span>
                       </>
@@ -454,8 +485,18 @@ export default function Home() {
                         <span className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white px-2 py-0.5 rounded-sm text-xs font-bold">
                           {remainingCount > 12 ? "12+" : remainingCount}
                         </span>
-                        <svg className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        <svg
+                          className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                          />
                         </svg>
                       </>
                     )}
@@ -466,8 +507,21 @@ export default function Home() {
               {/* All Projects Loaded Message */}
               {!hasMoreProjects && filteredProjects.length > 12 && (
                 <div className="flex flex-col items-center mt-8 md:mt-12">
-                  <div className="flex items-center gap-2 text-stone-500 text-sm md:text-base">
-                    <span>✅</span>
+                  <div className="flex items-center gap-1 text-stone-500 text-sm md:text-base">
+                    <svg
+                      className="w-7 h-7 text-green-600 mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        fill="#000000"
+                        d="M18.9 8.1L9 18l-4.95-4.95l.71-.71L9 16.59l9.19-9.2l.71.71Z"
+                      />
+                    </svg>
                     <span>All {filteredProjects.length} projects loaded</span>
                   </div>
                 </div>
@@ -487,6 +541,13 @@ export default function Home() {
         </div>
       </div>
       <TestimonialSection />
+
+      {/* Animation Styles */}
+      <style>{`        
+        .animate-fadeInUp {
+          animation: fadeInUp 0.6s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
