@@ -484,12 +484,12 @@ export default function QuestionDetail() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Question not found
           </h2>
-          <Link
-            to="/forum"
+          <a
+            href="/forum"
             className="text-blue-600 hover:text-blue-700 font-semibold"
           >
             ← Back to Forum
-          </Link>
+          </a>
         </div>
       </div>
     );
@@ -501,8 +501,8 @@ export default function QuestionDetail() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 mb-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
-        <Link
-          to="/forum"
+        <a
+          href="/forum"
           className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-semibold transition-all shadow-lg border-2 border-gray-200 mb-6"
         >
           <svg
@@ -519,7 +519,7 @@ export default function QuestionDetail() {
             />
           </svg>
           Back to Forum
-        </Link>
+        </a>
 
         {/* Question Card */}
         <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 p-8 mb-6">

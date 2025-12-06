@@ -17,7 +17,21 @@ export default function Navbar() {
     }
   }, [user?.avatar]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -27,13 +41,17 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+    <nav
+      className={`sticky top-0 z-50 bg-white backdrop-blur-lg border-b border-gray-200 shadow-sm transition-all duration-300 ${
+        isScrolled ? "lg:mx-70 lg:mt-4 lg:top-3 lg:rounded-full lg:shadow-xl lg:!bg-white/70 !bg-white" : ""
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center h-16">
           {/* Left Section */}
           <div className="flex items-center gap-3">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
+            <a href="/" className="flex items-center gap-2 group">
               <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <span className="text-white font-black text-lg">M</span>
               </div>
@@ -43,45 +61,45 @@ export default function Navbar() {
                 </span>
                 <span className="text-gray-900"> Portfolio</span>
               </span>
-            </Link>
+            </a>
 
             {/* Desktop Nav Links */}
             <div className="hidden lg:flex items-center gap-1">
-              <Link
-                to="/"
+              <a
+                href="/"
                 className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Explore
-              </Link>
-              <Link
-                to="/profiles"
+              </a>
+              <a href="/profiles"
+                
                 className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Profiles
-              </Link>
+              </a>
 
-              <Link
-                to="/forum"
+              <a
+                href="/forum"
                 className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Forum
-              </Link>
+              </a>
 
               {user && (
-                <Link
-                  to="/teacherAnnouncements"
+                <a
+                  href="/teacherAnnouncements"
                   className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                 >
                   Notices
-                </Link>
+                </a>
               )}
 
-              <Link
-                to="/imageConverter"
+              <a
+                href="/imageConverter"
                 className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Tools
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -96,12 +114,12 @@ export default function Navbar() {
               <>
                 <NotificationBell />
 
-                <Link
-                  to="/upload"
+                <a
+                  href="/upload"
                   className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-stone-100 font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl text-sm"
                 >
                   Upload
-                </Link>
+                </a>
 
                 <div className="relative group">
                   <button className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-xl transition-all">
@@ -140,8 +158,8 @@ export default function Navbar() {
                     </div>
 
                     <div className="py-2">
-                      <Link
-                        to="/profile"
+                      <a
+                        href="/profile"
                         className="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 transition-colors"
                       >
                         <svg
@@ -160,10 +178,10 @@ export default function Navbar() {
                         <span className="text-sm font-semibold text-gray-700">
                           My Profile
                         </span>
-                      </Link>
+                      </a>
 
-                      <Link
-                        to="/settings"
+                      <a
+                        href="/settings"
                         className="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 transition-colors"
                       >
                         <svg
@@ -188,11 +206,11 @@ export default function Navbar() {
                         <span className="text-sm font-semibold text-gray-700">
                           Settings
                         </span>
-                      </Link>
+                      </a>
 
                       {user.role === "admin" && (
-                        <Link
-                          to="/admin"
+                        <a
+                          href="/admin"
                           className="flex items-center gap-3 px-4 py-2 hover:bg-amber-50 transition-colors"
                         >
                           <svg
@@ -211,7 +229,7 @@ export default function Navbar() {
                           <span className="text-sm font-bold text-amber-600">
                             Admin Panel
                           </span>
-                        </Link>
+                        </a>
                       )}
                     </div>
 
@@ -241,18 +259,18 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
+                <a
+                  href="/login"
                   className="px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                 >
                   Login
-                </Link>
-                <Link
-                  to="/register"
+                </a>
+                <a
+                  href="/register"
                   className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl text-sm"
                 >
                   Register
-                </Link>
+                </a>
               </>
             )}
           </div>
@@ -318,8 +336,8 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                <Link
-                  to="/"
+                <a
+                  href="/"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -337,10 +355,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Explore
-                </Link>
+                </a>
 
-                <Link
-                  to="/profiles"
+                <a
+                  href="/profiles"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -358,10 +376,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Profiles
-                </Link>
+                </a>
 
-                <Link
-                  to="/forum"
+                <a
+                  href="/forum"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -380,11 +398,11 @@ export default function Navbar() {
                     />
                   </svg>
                   Forum
-                </Link>
+                </a>
 
                 {user && (
-                  <Link
-                    to="/teacherAnnouncements"
+                  <a
+                    href="/teacherAnnouncements"
                     onClick={() => setShowMobileMenu(false)}
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                   >
@@ -403,11 +421,11 @@ export default function Navbar() {
                       />
                     </svg>
                     Notices
-                  </Link>
+                  </a>
                 )}
 
-                <Link
-                  to="/profile"
+                <a
+                  href="/profile"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -425,10 +443,10 @@ export default function Navbar() {
                     />
                   </svg>
                   My Profile
-                </Link>
+                </a>
 
-                <Link
-                  to="/imageConverter"
+                <a
+                  href="/imageConverter"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -446,10 +464,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Image Converter
-                </Link>
+                </a>
 
-                <Link
-                  to="/upload"
+                <a
+                  href="/upload"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
                 >
@@ -467,10 +485,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Upload Project
-                </Link>
+                </a>
 
-                <Link
-                  to="/settings"
+                <a
+                  href="/settings"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -494,11 +512,11 @@ export default function Navbar() {
                     />
                   </svg>
                   Settings
-                </Link>
+                </a>
 
                 {user.role === "admin" && (
-                  <Link
-                    to="/admin"
+                  <a
+                    href="/admin"
                     onClick={() => setShowMobileMenu(false)}
                     className="flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 text-white hover:bg-amber-600 rounded-xl font-bold transition-colors"
                   >
@@ -516,7 +534,7 @@ export default function Navbar() {
                       />
                     </svg>
                     Admin Panel
-                  </Link>
+                  </a>
                 )}
 
                 <button
@@ -541,8 +559,8 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  to="/"
+                <a
+                  href="/"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -560,10 +578,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Explore
-                </Link>
+                </a>
 
-                <Link
-                  to="/profiles"
+                <a
+                  href="/profiles"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -581,10 +599,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Profiles
-                </Link>
+                </a>
 
-                <Link
-                  to="/imageConverter"
+                <a
+                  href="/imageConverter"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -602,23 +620,23 @@ export default function Navbar() {
                     />
                   </svg>
                   Image Converter
-                </Link>
+                </a>
 
-                <Link
-                  to="/login"
+                <a
+                  href="/login"
                   onClick={() => setShowMobileMenu(false)}
                   className="block px-4 py-3 text-blue-600 text-center rounded-xl font-bold hover:bg-blue-50 transition-colors"
                 >
                   Login
-                </Link>
+                </a>
 
-                <Link
-                  to="/register"
+                <a
+                  href="/register"
                   onClick={() => setShowMobileMenu(false)}
                   className="block px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600  text-center rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 !text-white transition-all shadow-lg"
                 >
                   Register
-                </Link>
+                </a>
               </>
             )}
           </div>

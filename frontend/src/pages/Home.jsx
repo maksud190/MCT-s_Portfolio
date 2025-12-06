@@ -257,8 +257,8 @@ export default function Home() {
               {/* 🔥 Conditional Button - Show different button based on login status */}
               {user ? (
                 // ✅ If user is logged in - Show "Visit Your Profile"
-                <Link
-                  to="/profile"
+                <a
+                  href="/profile"
                   className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 !text-white rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
                 >
                   <svg
@@ -288,11 +288,11 @@ export default function Home() {
                       d="M13 7l5 5m0 0l-5 5m5-5H6"
                     />
                   </svg>
-                </Link>
+                </a>
               ) : (
                 // ❌ If user is NOT logged in - Show "Create New Profile"
-                <Link
-                  to="/register"
+                <a
+                  href="/register"
                   className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 !text-white rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
                 >
                   <svg
@@ -322,15 +322,15 @@ export default function Home() {
                       d="M13 7l5 5m0 0l-5 5m5-5H6"
                     />
                   </svg>
-                </Link>
+                </a>
               )}
 
-              <Link
-                to="/upload"
+              <a
+                href="/upload"
                 className="px-8 py-4 bg-white text-gray-900 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-gray-200 hover:border-blue-300"
               >
                 Upload Your Project
-              </Link>
+              </a>
             </div>
 
             {/* Stats */}

@@ -4,10 +4,10 @@ import { API } from "../api/api";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  
+
   const [stats, setStats] = useState({
     projects: 0,
-    users: 0
+    users: 0,
   });
 
   useEffect(() => {
@@ -18,12 +18,12 @@ export default function Footer() {
     try {
       const [projectsRes, usersRes] = await Promise.all([
         API.get("/projects"),
-        API.get("/users/all")
+        API.get("/users/all"),
       ]);
 
       setStats({
         projects: projectsRes.data.length || 0,
-        users: usersRes.data.length || 0
+        users: usersRes.data.length || 0,
       });
     } catch (err) {
       console.error("Error fetching stats:", err);
@@ -31,7 +31,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-stone-900 border-t border-gray-200 ">
+    <footer className="relative bg-neutral-900 border-t border-gray-200 ">
       {/* Top Stats Banner */}
       <div className="relative -mt-16 mb-12">
         <div className="max-w-6xl mx-auto px-6">
@@ -69,26 +69,31 @@ export default function Footer() {
       {/* Main Footer Content */}
       <div className="max-w-6xl mx-auto px-6 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-          
           {/* Brand Column - Larger */}
           <div className="lg:col-span-2">
-            <Link to="/" className="inline-flex items-center gap-3 mb-4 group">
+            <a href="/" className="inline-flex items-center gap-3 mb-4 group">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center transform group-hover:rotate-6 transition-transform">
                 <span className="text-2xl font-black text-white">M</span>
               </div>
               <div>
-                <div className="text-xl font-black text-white">MCT Portfolio</div>
-                <div className="text-xs text-stone-400">Showcase Your Creativity</div>
+                <div className="text-xl font-black text-white">
+                  MCT Portfolio
+                </div>
+                <div className="text-xs text-stone-400">
+                  Showcase Your Creativity
+                </div>
               </div>
-            </Link>
-            
+            </a>
+
             <p className="text-sm text-stone-300 mb-6 leading-relaxed max-w-sm">
-              The ultimate platform for Multimedia & Creative Technology students to showcase their work and connect with the creative community.
+              The ultimate platform for Multimedia & Creative Technology
+              students to showcase their work and connect with the creative
+              community.
             </p>
 
             {/* Social Media - Modern Pills */}
             <div className="flex flex-wrap gap-2">
-              <a 
+              <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -96,7 +101,7 @@ export default function Footer() {
               >
                 Facebook
               </a>
-              <a 
+              <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -104,7 +109,7 @@ export default function Footer() {
               >
                 Twitter
               </a>
-              <a 
+              <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -112,7 +117,7 @@ export default function Footer() {
               >
                 Instagram
               </a>
-              <a 
+              <a
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -128,21 +133,21 @@ export default function Footer() {
             <h4 className="text-sm font-bold text-stone-100 mb-4 uppercase tracking-wider">
               Explore
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-3 list-none">
               {[
                 { to: "/", label: "Home" },
                 { to: "/profiles", label: "Browse Creators" },
                 { to: "/upload", label: "Upload Project" },
-                { to: "/profile", label: "My Profile" }
+                { to: "/profile", label: "My Profile" },
               ].map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm !text-blue-400 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                  <a
+                    href={link.to}
+                    className="text-sm font-medium !text-stone-100 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
                   >
-                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
+                    <span className="w-1.5 h-1.5  rounded-full group-hover:bg-blue-600 transition-colors"></span>
                     {link.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -153,20 +158,20 @@ export default function Footer() {
             <h4 className="text-sm font-bold text-stone-100 mb-4 uppercase tracking-wider">
               Categories
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-3 list-none">
               {[
                 "3D Modeling",
                 "Graphics Design",
                 "Web Development",
                 "Photography",
-                "Video Production"
+                "Video Production",
               ].map((cat) => (
                 <li key={cat}>
-                  
-                   <a href={`/?category=${cat}`}
-                    className="text-sm !text-blue-400 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                  <a
+                    href={`/?category=${cat}`}
+                    className="text-sm font-medium !text-stone-100 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
                   >
-                    <span className="w-1.5 h-1.5 bg-blue-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
+                    <span className="w-1.5 h-1.5  rounded-full group-hover:bg-blue-600 transition-colors"></span>
                     {cat}
                   </a>
                 </li>
@@ -179,19 +184,19 @@ export default function Footer() {
             <h4 className="text-sm font-bold text-stone-100 mb-4 uppercase tracking-wider">
               Support
             </h4>
-            <ul className="space-y-3 mb-6">
+            <ul className="space-y-3 mb-6 !list-none">
               {[
                 "Help Center",
                 "Guidelines",
                 "Privacy Policy",
-                "Terms of Use"
+                "Terms of Use",
               ].map((item) => (
                 <li key={item}>
-                  
-                   <a href="#"
-                    className="text-sm !text-blue-400 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
+                  <a
+                    href="#"
+                    className="text-sm font-medium !text-stone-100 hover:text-blue-600 transition-colors inline-flex items-center gap-2 group"
                   >
-                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-600 transition-colors"></span>
+                    <span className="w-1.5 h-1.5  rounded-full group-hover:bg-blue-600 transition-colors"></span>
                     {item}
                   </a>
                 </li>
@@ -203,7 +208,7 @@ export default function Footer() {
               <div className="text-xs font-semibold text-stone-100 mb-2">
                 Get in Touch
               </div>
-              <a 
+              <a
                 href="mailto:support@mctportfolio.com"
                 className="text-sm !text-stone-300 hover:!text-stone-800 font-medium break-all"
               >
@@ -214,16 +219,22 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="pt-8 border-t border-gray-200">
+        <div className="pt-8 border-t border-stone-500">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-stone-300">
-              © {currentYear} MCT Portfolio. All rights reserved.
+              © {currentYear} MCT's Portfolio. All rights reserved.
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-stone-400">Made with</span>
-              <span className="text-red-500 text-lg animate-pulse">♥</span>
-              <span className="text-xs text-stone-400">by MCT Students</span>
+                <span className="text-xs text-stone-400">Made by</span>
+              <a href="https://www.facebook.com/maksud190" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1">
+                <span className="text-amber-300 text-md animate-pulse">
+                  
+                  Maksudur Rahaman
+                </span>
+              </a>
+              {/* <span className="text-red-500 text-lg animate-pulse">♥</span>
+              <span className="text-xs text-stone-400">by MCT Students</span> */}
             </div>
 
             <div className="flex gap-2">
@@ -240,12 +251,22 @@ export default function Footer() {
 
       {/* Floating Back to Top */}
       <button
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl shadow-xl flex items-center justify-center transition-all hover:scale-110 z-50 group"
         aria-label="Back to top"
       >
-        <svg className="w-6 h-6 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        <svg
+          className="w-6 h-6 group-hover:-translate-y-1 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2.5}
+            d="M5 10l7-7m0 0l7 7m-7-7v18"
+          />
         </svg>
       </button>
     </footer>
