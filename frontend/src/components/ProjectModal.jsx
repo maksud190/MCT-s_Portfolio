@@ -227,7 +227,7 @@ export default function ProjectModal() {
       {/* Modal Container */}
       <div className="mt-20 fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div
-          className="w-dvw max-w-7xl max-h-[90vh] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden pointer-events-auto animate-slideUp"
+          className="w-fit max-w-7xl max-h-[90vh] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden pointer-events-auto animate-slideUp"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header with Close Button */}
@@ -410,8 +410,13 @@ export default function ProjectModal() {
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 ">
                     {/* Pofile */}
 
-                    <div className="lg:flex items-center lg:justify-between mb-7">
-                      <div className="flex items-center gap-3">
+                    <div
+                      
+                      className="lg:flex items-center lg:justify-between mb-7"
+                    >
+                      <a 
+                      href={`/user/${project.userId._id}`}
+                      className="flex items-center gap-3">
                         {project.userId.avatar ? (
                           <img
                             src={project.userId.avatar}
@@ -433,7 +438,7 @@ export default function ProjectModal() {
                             </p>
                           )}
                         </div>
-                      </div>
+                      </a>
 
                       <div className="grid grid-cols-2 gap-2">
                         <button
@@ -600,9 +605,6 @@ export default function ProjectModal() {
                   {/* Comments Section */}
                   <Comments projectId={projectId} />
                 </div>
-
-               
-                
               </div>
             </div>
           </div>

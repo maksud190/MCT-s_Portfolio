@@ -56,7 +56,10 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/profiles" element={<Profiles />} />
-                <Route path="/user/:userId" element={<Profile />} />
+
+                
+                <Route path="/profile/:username" element={<Profile />} />
+
                 <Route path="/project/:projectId" element={<ProjectDetails />} />
                 <Route path="/imageConverter" element={<ImageConverter />} />
                 <Route path="/teacherAnnouncements" element={<TeacherAnnouncements />} />

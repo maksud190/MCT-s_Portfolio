@@ -106,24 +106,24 @@ export default function Forum() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link
-              to="/forum/ask"
+            <a
+              href="/forum/ask"
               className="px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-stone-100 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-1"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               Ask Question
-            </Link>
-            <Link
-              to="/forum/my-questions"
+            </a>
+            <a
+              href="/forum/my-questions"
               className="px-4 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-semibold transition-all shadow-lg border-2 border-gray-200 flex items-center gap-1"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               My Questions
-            </Link>
+            </a>
           </div>
         </div>
 
@@ -227,24 +227,24 @@ export default function Forum() {
                   ? "No questions match your search. Try different keywords."
                   : "Be the first to ask a question!"}
               </p>
-              <Link
-                to="/forum/ask"
+              <a
+                href="/forum/ask"
                 className="inline-flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-stone-100 rounded-xl font-bold transition-all shadow-xl hover:shadow-2xl"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
                 Ask Question
-              </Link>
+              </a>
             </div>
           ) : (
             questions.map((question) => {
               const voteScore = getVoteScore(question);
               
               return (
-                <Link
+                <a
                   key={question._id}
-                  to={`/forum/questions/${question._id}`}
+                  href={`/forum/questions/${question._id}`}
                   className="block bg-white rounded-3xl shadow-xl border-2 border-gray-200 p-6 transition-all hover:shadow-2xl hover:border-blue-300"
                 >
                   <div className="flex gap-6">
@@ -317,7 +317,8 @@ export default function Forum() {
 
                       {/* Author & Meta */}
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                        <div
+                        className="flex items-center gap-2">
                           {question.author?.avatar ? (
                             <img
                               src={question.author.avatar}
@@ -354,7 +355,7 @@ export default function Forum() {
                       </div>
                     </div>
                   </div>
-                </Link>
+                </a>
               );
             })
           )}

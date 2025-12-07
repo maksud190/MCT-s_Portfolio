@@ -741,7 +741,9 @@ export default function QuestionDetail() {
 
               {/* Author & Meta */}
               <div className="flex items-center justify-between pt-4 border-t-2 border-gray-100">
-                <div className="flex items-center gap-3">
+                <a
+                href={`/user/${question.author?._id}`}
+                className="flex items-center gap-3">
                   {question.author?.avatar ? (
                     <img
                       src={question.author.avatar}
@@ -762,7 +764,7 @@ export default function QuestionDetail() {
                       Reputation: {question.author?.reputation || 0}
                     </p>
                   </div>
-                </div>
+                </a>
 
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span className="flex items-center gap-1">
@@ -933,7 +935,7 @@ export default function QuestionDetail() {
                       <div className="flex-shrink-0 text-center space-y-2">
                         <button
                           onClick={() => handleVoteAnswer(answer._id, "upvote")}
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                          className={`w-10 h-10 !border-1 !border-gray-300 rounded-xl flex items-center justify-center transition-all ${
                             userAnswerVotes[answer._id] === "upvote"
                               ? "bg-green-600 text-white shadow-lg"
                               : "bg-white text-gray-600 hover:bg-green-100 hover:text-green-600 border border-gray-200"
@@ -971,14 +973,14 @@ export default function QuestionDetail() {
                           onClick={() =>
                             handleVoteAnswer(answer._id, "downvote")
                           }
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                          className={`w-10 h-10 !border-1 !border-gray-300 rounded-xl flex items-center justify-center transition-all ${
                             userAnswerVotes[answer._id] === "downvote"
                               ? "bg-red-600 text-white shadow-lg"
                               : "bg-white text-gray-600 hover:bg-red-100 hover:text-red-600 border border-gray-200"
                           }`}
                         >
                           <svg
-                            className="w-5 h-5"
+                            className="w-6 h-6"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -987,7 +989,7 @@ export default function QuestionDetail() {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M19 9l-7 7-7-7"
+                              d="M5 15l7-7 7 7"
                             />
                           </svg>
                         </button>
@@ -1056,7 +1058,9 @@ export default function QuestionDetail() {
 
                         {/* Author */}
                         <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                          <div className="flex items-center gap-2">
+                          <a 
+                          href={`/user/${answer.author?._id}`}
+                          className="flex items-center gap-2">
                             {answer.author?.avatar ? (
                               <img
                                 src={answer.author.avatar}
@@ -1080,7 +1084,7 @@ export default function QuestionDetail() {
                                 • Reputation: {answer.author?.reputation || 0}
                               </p>
                             </div>
-                          </div>
+                          </a>
                           <span className="text-xs text-gray-500">
                             {new Date(answer.createdAt).toLocaleString()}
                           </span>
