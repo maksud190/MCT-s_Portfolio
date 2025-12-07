@@ -415,7 +415,7 @@ export default function ProjectModal() {
                       className="lg:flex items-center lg:justify-between mb-7"
                     >
                       <a 
-                      href={`/user/${project.userId._id}`}
+                      href={`/profile/${project.userId.username}`}
                       className="flex items-center gap-3">
                         {project.userId.avatar ? (
                           <img
