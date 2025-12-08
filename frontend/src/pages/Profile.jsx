@@ -446,46 +446,29 @@
 
 
 
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { API } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import ProjectCard from "../components/ProjectCard";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Profile() {
   const { user: currentUser } = useAuth();
-  const { username } = useParams(); // ⬅️ URL theke username ashbe (/profile/:username)
+  const { username } = useParams(); // /profile/:username
   const [profileUser, setProfileUser] = useState(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // own profile: URL-e username nai, ba URL-er username == currentUser.username
+  // 🔑 last loaded user key (username or userId) – double fetch prevent
+  const lastFetchKeyRef = useRef(null);
+
   const isOwnProfile =
     !username || (currentUser && username === currentUser.username);
 
   const displayUser = isOwnProfile ? currentUser : profileUser;
-
-  useEffect(() => {
-    // jokhon auth load hoy nai, tokhon wait korbo
-    if (!currentUser && !username) {
-      return;
-    }
-
-    if (isOwnProfile && currentUser) {
-      // nijer profile
-      setProfileUser(currentUser);
-      fetchProjects(currentUser._id);
-      setLoading(false);
-    } else if (username) {
-      // onno user er profile – username diye hit korbo
-      fetchUserProfileByUsername(username);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username, currentUser, isOwnProfile]);
 
   // ✅ username diye user fetch
   const fetchUserProfileByUsername = async (uname) => {
@@ -494,13 +477,10 @@ export default function Profile() {
       const response = await API.get(`/users/username/${uname}`);
       const user = response.data;
       setProfileUser(user);
-      // ekhon user._id diye tar project niye ashbo
-      fetchProjects(user._id);
+      await fetchProjects(user._id);
     } catch (error) {
       console.error("Error fetching user profile:", error);
       toast.error("Failed to load user profile");
-      // jodi user na paoa jay, chaile 404 page e nite paro
-      // navigate("/404");
     } finally {
       setLoading(false);
     }
@@ -517,6 +497,32 @@ export default function Profile() {
       setProjectsLoading(false);
     }
   };
+
+  // 🔥 Main effect – ekbar e fetch korbo (StrictMode e double run handle)
+  useEffect(() => {
+    // kon user ke load korte hobe tar ekta unique key
+    const key = username || currentUser?._id;
+
+    // ekhono kono user info nai
+    if (!key) return;
+
+    // jodi ei key er jonno agei fetch kore thaki, abar korbo na
+    if (lastFetchKeyRef.current === key) {
+      return;
+    }
+    // ebar theke ei key ke loaded dhore nichi
+    lastFetchKeyRef.current = key;
+
+    if (!username && currentUser) {
+      // own profile
+      setProfileUser(currentUser);
+      fetchProjects(currentUser._id);
+      setLoading(false);
+    } else if (username) {
+      // onno user-er profile
+      fetchUserProfileByUsername(username);
+    }
+  }, [username, currentUser]); // isOwnProfile ke dependency theke ber kore dilam
 
   const handleDelete = async (projectId, projectTitle) => {
     if (!isOwnProfile) return;
@@ -681,8 +687,11 @@ export default function Profile() {
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
                   <div>
                     <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
-                      {displayUser?.username}
+                      {displayUser?.fullName}
                     </h1>
+                    <h6 className="!text-2xl md:text-4xl font-black text-gray-800 mb-2">
+                      {displayUser?.username}
+                    </h6>
                     <p className="text-gray-600 mb-2 flex items-center gap-2">
                       <svg
                         className="w-4 h-4"
@@ -739,10 +748,12 @@ export default function Profile() {
                     )}
                   </div>
 
-                  {isOwnProfile && (
-                    <button
-                      onClick={() => navigate("/settings")}
-                      className="mt-4 md:mt-0 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+                  {isOwnProfile && displayUser?.username && (
+                    <Link
+                      to={`/profile/${encodeURIComponent(
+                        displayUser.username
+                      )}/settings`}
+                      className="mt-4 md:mt-0 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
                     >
                       <svg
                         className="w-5 h-5"
@@ -764,7 +775,7 @@ export default function Profile() {
                         />
                       </svg>
                       Edit Profile
-                    </button>
+                    </Link>
                   )}
                 </div>
 
@@ -802,7 +813,7 @@ export default function Profile() {
                   </div>
                 )}
 
-                {!hasSocialLinks && isOwnProfile && (
+                {!hasSocialLinks && isOwnProfile && displayUser?.username && (
                   <div className="mb-4 p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl">
                     <p className="text-sm text-gray-700 flex items-center gap-2">
                       <svg
@@ -819,12 +830,14 @@ export default function Profile() {
                         />
                       </svg>
                       <span>No social links added yet.</span>
-                      <button
-                        onClick={() => navigate("/settings")}
+                      <Link
+                        to={`/profile/${encodeURIComponent(
+                          displayUser.username
+                        )}/settings`}
                         className="text-blue-600 hover:text-blue-700 underline font-semibold"
                       >
                         Add links
-                      </button>
+                      </Link>
                     </p>
                   </div>
                 )}

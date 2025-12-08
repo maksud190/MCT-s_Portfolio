@@ -370,12 +370,14 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 
 export default function Login() {
-  const [form, setForm] = useState({ identifier: "", password: "" }); // email or username
+  // identifier = email or username
+  const [form, setForm] = useState({ identifier: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login, user } = useAuth();
   const navigate = useNavigate();
 
+  // already logged in hole direct profile e pathiye dao
   useEffect(() => {
     if (user?.username) {
       navigate(`/profile/${encodeURIComponent(user.username)}`);
@@ -384,13 +386,22 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.identifier.trim() || !form.password) {
+      toast.error("Please enter your email/username and password");
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // 🔥 Backend login controller expect: { email, password }
+      // but email field e amra identifier pathachhi (email or username duita hote pare)
       const res = await API.post("/users/login", {
-        identifier: form.identifier.trim(),
+        email: form.identifier.trim(),
         password: form.password,
       });
+
       console.log("✅ Login response:", res.data);
       login(res.data);
 

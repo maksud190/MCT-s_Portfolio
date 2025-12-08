@@ -867,8 +867,8 @@ export default function Navbar() {
                         </span>
                       </a>
 
-                      <a
-                        href="/settings"
+                      <Link
+                        to={`/profile/${encodeURIComponent(user.username)}/settings`}
                         className="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 transition-colors"
                       >
                         <svg
@@ -893,7 +893,7 @@ export default function Navbar() {
                         <span className="text-sm font-semibold text-gray-700">
                           Settings
                         </span>
-                      </a>
+                      </Link>
 
                       {user.role === "admin" && (
                         <a
@@ -952,12 +952,12 @@ export default function Navbar() {
                 >
                   Login
                 </a>
-                <Link
-                  to="/register"
+                <a
+                  href="/register"
                   className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl text-sm"
                 >
                   Register
-                </Link>
+                </a>
               </>
             )}
           </div>

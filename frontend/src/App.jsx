@@ -96,7 +96,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="/settings"
+                  path="/profile/:username/settings"
                   element={
                     <ProtectedRoute>
                       <Settings />
