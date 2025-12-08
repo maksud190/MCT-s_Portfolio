@@ -376,7 +376,7 @@
 
 
 
-
+// routes/userRoutes.js
 import express from "express";
 import multer from "multer";
 import {
@@ -397,7 +397,7 @@ import {
   deleteAccount,
   getAllUsers,
   getUserByUsername,
-  checkUsername, // ⬅️ NEW
+  checkUsername, // ✅ username availability controller
 } from "../controllers/userController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 

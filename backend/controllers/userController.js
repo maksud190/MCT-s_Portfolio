@@ -767,6 +767,7 @@
 
 
 
+// controllers/userController.js
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -775,87 +776,78 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import Project from "../models/projectModel.js";
 
+// ✅ Allowed email domains (ichchha moto change korte paro)
+const ALLOWED_EMAIL_DOMAINS = [
+  "daffodilvarsity.edu.bd",
+  "diu.edu.bd",
+  "gmail.com",
+];
 
-
-
-
-
-
-// ✅ Allowed email domains for registration
-const ALLOWED_EMAIL_DOMAINS = process.env.ALLOWED_EMAIL_DOMAINS
-  ? process.env.ALLOWED_EMAIL_DOMAINS.split(",").map((d) => d.trim().toLowerCase())
-  : [
-      "diu.edu.bd",
-      "daffodilvarsity.edu.bd",
-      "gmail.com",
-      "email.com",
-      // চাইলে এখানে আরও domain add করতে পারো
-    ];
-
-
-
-
-
-
-
-
-
-// ✅ helper: username validation (frontend-er sathe match)
-const validateUsername = (username) => {
-  return /^[a-zA-Z0-9_.]{3,20}$/.test(username);
+// ✅ basic email format check
+const isValidEmailFormat = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-
-
-
-// ✅ Register (with domain restriction)
+/* =========================================================
+   REGISTER
+========================================================= */
 export const register = async (req, res) => {
   try {
-    const { username, email, password, role, designation, department } = req.body;
+    const {
+      fullName,
+      username,
+      email,
+      password,
+      role,
+      designation,
+      department,
+    } = req.body;
 
-    // 1️⃣ Basic validation
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: "Username, email and password are required" });
-    }
-
-    // 2️⃣ Email format check
-    const trimmedEmail = email.trim().toLowerCase();
-    if (!trimmedEmail.includes("@")) {
-      return res.status(400).json({ message: "Please enter a valid email address" });
-    }
-
-    const emailDomain = trimmedEmail.split("@")[1];
-    if (!emailDomain) {
-      return res.status(400).json({ message: "Invalid email format" });
-    }
-
-    // 3️⃣ Domain restriction check
-    if (!ALLOWED_EMAIL_DOMAINS.includes(emailDomain)) {
+    // basic validation
+    if (!fullName || !username || !email || !password) {
       return res.status(400).json({
-        message:
-          "Registration is only allowed with these email domains: " +
-          ALLOWED_EMAIL_DOMAINS.join(", "),
+        message: "Full name, username, email and password are required",
       });
     }
 
-    // 4️⃣ Check duplicate username
-    const existingUsername = await User.findOne({ username });
+    const trimmedEmail = email.trim().toLowerCase();
+
+    // ✅ email format
+    if (!isValidEmailFormat(trimmedEmail)) {
+      return res
+        .status(400)
+        .json({ message: "Please provide a valid email address" });
+    }
+
+    // ✅ domain restriction
+    const emailDomain = trimmedEmail.split("@")[1];
+    if (!ALLOWED_EMAIL_DOMAINS.includes(emailDomain)) {
+      return res.status(400).json({
+        message: `Only ${ALLOWED_EMAIL_DOMAINS.join(
+          ", "
+        )} emails are allowed for registration`,
+      });
+    }
+
+    // ✅ email already exists?
+    const existingEmail = await User.findOne({ email: trimmedEmail });
+    if (existingEmail) {
+      return res.status(400).json({ message: "Email is already registered" });
+    }
+
+    // ✅ username already exists?
+    const existingUsername = await User.findOne({ username: username.trim() });
     if (existingUsername) {
-      return res.status(400).json({ message: "Username is already taken" });
+      return res
+        .status(400)
+        .json({ message: "Username is already taken. Please choose another." });
     }
 
-    // 5️⃣ Check duplicate email
-    const existingUser = await User.findOne({ email: trimmedEmail });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists with this email" });
-    }
-
-    // 6️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 7️⃣ Create user
     const user = await User.create({
-      username,
+      fullName: fullName.trim(),
+      username: username.trim(),
       email: trimmedEmail,
       password: hashedPassword,
       role: role || "student",
@@ -863,44 +855,45 @@ export const register = async (req, res) => {
       department: department || "Multimedia and Creative Technology",
     });
 
-    // 8️⃣ (Optional) এখানে চাইলে সাথে সাথে email verification token generate করে send করতে পারো
-    // এখন তুমি ইতিমধ্যে আলাদা sendVerificationEmail route রেখেছো, তাই চাইলে সেটাই use করবে।
-    // এখানে শুধু simple success response রাখলাম:
-
     res.status(201).json({
-      message: "User registered successfully. Please verify your email if required.",
+      message: "User registered successfully",
       user: {
         _id: user._id,
+        fullName: user.fullName,
         username: user.username,
         email: user.email,
         role: user.role,
         designation: user.designation,
         department: user.department,
+        isEmailVerified: user.isEmailVerified,
       },
     });
   } catch (err) {
-    console.error("❌ Register error:", err.message);
+    console.error("❌ Register error:", err);
     res.status(500).json({ message: err.message });
   }
 };
 
-// ✅ Login - now supports email OR username
+/* =========================================================
+   LOGIN  (email OR username)
+========================================================= */
 export const login = async (req, res) => {
   try {
-    const { identifier, password } = req.body; // frontend theke asbe
+    const { email, password } = req.body;
 
+    // frontend theke field er naam still "email",
+    // but value ta email or username duita thekei ashte pare
+    const identifier = email?.trim();
     if (!identifier || !password) {
       return res
         .status(400)
-        .json({ message: "Identifier and password are required" });
+        .json({ message: "Email/Username and password are required" });
     }
-
-    const trimmed = identifier.trim();
 
     const user = await User.findOne({
       $or: [
-        { email: trimmed.toLowerCase() },
-        { username: trimmed },
+        { email: identifier.toLowerCase() },
+        { username: identifier },
       ],
     });
 
@@ -908,15 +901,15 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
     if (user.isBlocked) {
       return res
         .status(403)
         .json({ message: "Your account has been blocked. Contact admin." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -945,39 +938,13 @@ export const login = async (req, res) => {
     });
   } catch (err) {
     console.error("❌ Login error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: err.message });
   }
 };
 
-// ✅ NEW: username availability check (for real-time check)
-export const checkUsername = async (req, res) => {
-  try {
-    const { username } = req.query;
-
-    if (!username) {
-      return res.status(400).json({ message: "Username is required" });
-    }
-
-    const trimmed = username.trim();
-
-    if (!validateUsername(trimmed)) {
-      return res.status(400).json({
-        available: false,
-        message:
-          "Username must be 3–20 characters and can only contain letters, numbers, dots and underscores.",
-      });
-    }
-
-    const existing = await User.findOne({ username: trimmed });
-
-    res.json({ available: !existing });
-  } catch (err) {
-    console.error("❌ checkUsername error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-// ✅ Get user by ID (for other users' profiles)
+/* =========================================================
+   GET USER BY ID
+========================================================= */
 export const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -995,7 +962,9 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// ✅ Get user by USERNAME (for pretty profile URLs)
+/* =========================================================
+   GET USER BY USERNAME (pretty URL)
+========================================================= */
 export const getUserByUsername = async (req, res) => {
   try {
     const { username } = req.params;
@@ -1013,13 +982,15 @@ export const getUserByUsername = async (req, res) => {
   }
 };
 
-// ✅ Update user profile - add username uniqueness + fullName support
+/* =========================================================
+   UPDATE USER PROFILE
+========================================================= */
 export const updateUserProfile = async (req, res) => {
   try {
     const userId = req.userId;
     const {
-      fullName,
       username,
+      fullName,
       bio,
       studentId,
       batch,
@@ -1033,6 +1004,7 @@ export const updateUserProfile = async (req, res) => {
     console.log("📝 Update profile request:", {
       userId,
       username,
+      fullName,
       role,
       designation,
       department,
@@ -1045,31 +1017,18 @@ export const updateUserProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // full name
-    if (fullName !== undefined) {
-      user.fullName = fullName.trim();
-    }
-
-    // username change (unique + valid)
+    // Username change (optional)
     if (username && username !== user.username) {
-      if (!validateUsername(username.trim())) {
-        return res.status(400).json({
-          message:
-            "Username must be 3–20 characters and can only contain letters, numbers, dots and underscores.",
-        });
+      const exists = await User.findOne({ username });
+      if (exists) {
+        return res
+          .status(400)
+          .json({ message: "Username already taken. Choose another." });
       }
-
-      const existingUsername = await User.findOne({
-        username: username.trim(),
-        _id: { $ne: userId },
-      });
-
-      if (existingUsername) {
-        return res.status(400).json({ message: "Username already taken" });
-      }
-
-      user.username = username.trim();
+      user.username = username;
     }
+
+    if (fullName !== undefined) user.fullName = fullName;
 
     if (bio !== undefined) user.bio = bio;
     if (studentId !== undefined) user.studentId = studentId;
@@ -1077,12 +1036,11 @@ export const updateUserProfile = async (req, res) => {
     if (batchAdvisor !== undefined) user.batchAdvisor = batchAdvisor;
     if (batchMentor !== undefined) user.batchMentor = batchMentor;
 
-    // role, designation, department
     if (role) user.role = role;
     if (designation !== undefined) user.designation = designation;
     if (department) user.department = department;
 
-    // ✅ Handle social links - Parse from JSON string
+    // social links
     if (req.body.socialLinks) {
       try {
         const parsedSocialLinks =
@@ -1106,7 +1064,7 @@ export const updateUserProfile = async (req, res) => {
       }
     }
 
-    // Handle avatar upload
+    // avatar upload
     if (req.file) {
       console.log("📁 File received, uploading to Cloudinary...");
 
@@ -1131,13 +1089,6 @@ export const updateUserProfile = async (req, res) => {
     }
 
     await user.save();
-
-    console.log("✅ User saved:", {
-      role: user.role,
-      designation: user.designation,
-      department: user.department,
-      socialLinks: user.socialLinks,
-    });
 
     const updatedUser = {
       _id: user._id,
@@ -1166,8 +1117,6 @@ export const updateUserProfile = async (req, res) => {
       hourlyRate: user.hourlyRate,
     };
 
-    console.log("✅ Profile updated successfully");
-
     res.json({
       message: "Profile updated successfully",
       user: updatedUser,
@@ -1178,7 +1127,9 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-// 🔥 Feature 18: Email Verification - Send Email
+/* =========================================================
+   EMAIL VERIFICATION (SEND)
+========================================================= */
 export const sendVerificationEmail = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1226,7 +1177,9 @@ export const sendVerificationEmail = async (req, res) => {
   }
 };
 
-// 🔥 Feature 18: Verify Email Token
+/* =========================================================
+   VERIFY EMAIL TOKEN
+========================================================= */
 export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
@@ -1254,7 +1207,9 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-// 🔥 Feature 3: Follow/Unfollow User
+/* =========================================================
+   FOLLOW / UNFOLLOW USER
+========================================================= */
 export const followUser = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1322,7 +1277,9 @@ export const followUser = async (req, res) => {
   }
 };
 
-// 🔥 Feature 3: Check Follow Status
+/* =========================================================
+   CHECK FOLLOW STATUS
+========================================================= */
 export const checkFollowStatus = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1342,7 +1299,9 @@ export const checkFollowStatus = async (req, res) => {
   }
 };
 
-// 🔥 Feature 4: Get Notifications
+/* =========================================================
+   GET NOTIFICATIONS
+========================================================= */
 export const getNotifications = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1371,7 +1330,9 @@ export const getNotifications = async (req, res) => {
   }
 };
 
-// 🔥 Feature 4: Mark Notification as Read
+/* =========================================================
+   MARK NOTIFICATION AS READ
+========================================================= */
 export const markNotificationRead = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1392,7 +1353,9 @@ export const markNotificationRead = async (req, res) => {
   }
 };
 
-// 🔥 Feature 4: Mark All Notifications as Read
+/* =========================================================
+   MARK ALL NOTIFICATIONS READ
+========================================================= */
 export const markAllNotificationsRead = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1409,7 +1372,9 @@ export const markAllNotificationsRead = async (req, res) => {
   }
 };
 
-// 🔥 Feature 30: Send Contact Message (old email-based – currently route e use hocche na)
+/* =========================================================
+   OLD CONTACT EMAIL FUNCTION (unused HTTP route)
+========================================================= */
 export const sendContactMessage = async (req, res) => {
   try {
     const { toUserId, message, projectId } = req.body;
@@ -1454,7 +1419,9 @@ export const sendContactMessage = async (req, res) => {
   }
 };
 
-// 🔥 Feature 5: Update Profile Settings
+/* =========================================================
+   UPDATE SETTINGS (cover, bio, social, skills)
+========================================================= */
 export const updateSettings = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1540,8 +1507,6 @@ export const updateSettings = async (req, res) => {
       batchMentor: user.batchMentor,
     };
 
-    console.log("✅ Settings updated successfully");
-
     res.json({
       message: "Settings updated successfully",
       user: updatedUser,
@@ -1552,7 +1517,9 @@ export const updateSettings = async (req, res) => {
   }
 };
 
-// 🔥 Update Account (Username & Password) – with unique username check
+/* =========================================================
+   UPDATE ACCOUNT (username + password)
+========================================================= */
 export const updateAccount = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1564,23 +1531,13 @@ export const updateAccount = async (req, res) => {
     }
 
     if (username && username !== user.username) {
-      if (!validateUsername(username.trim())) {
-        return res.status(400).json({
-          message:
-            "Username must be 3–20 characters and can only contain letters, numbers, dots and underscores.",
-        });
-      }
-
-      const existingUsername = await User.findOne({
-        username: username.trim(),
-        _id: { $ne: userId },
-      });
-
+      const existingUsername = await User.findOne({ username });
       if (existingUsername) {
-        return res.status(400).json({ message: "Username already taken" });
+        return res
+          .status(400)
+          .json({ message: "Username already taken. Choose another." });
       }
-
-      user.username = username.trim();
+      user.username = username;
     }
 
     if (newPassword) {
@@ -1597,12 +1554,6 @@ export const updateAccount = async (req, res) => {
           .json({ message: "Current password is incorrect" });
       }
 
-      if (newPassword.length < 6) {
-        return res
-          .status(400)
-          .json({ message: "New password must be at least 6 characters" });
-      }
-
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       user.password = hashedPassword;
     }
@@ -1613,7 +1564,6 @@ export const updateAccount = async (req, res) => {
       message: "Account updated successfully",
       user: {
         _id: user._id,
-        fullName: user.fullName,
         username: user.username,
         email: user.email,
       },
@@ -1624,7 +1574,9 @@ export const updateAccount = async (req, res) => {
   }
 };
 
-// 🔥 Update Social Links
+/* =========================================================
+   UPDATE SOCIAL LINKS
+========================================================= */
 export const updateSocialLinks = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1648,7 +1600,9 @@ export const updateSocialLinks = async (req, res) => {
   }
 };
 
-// 🔥 Delete Account
+/* =========================================================
+   DELETE ACCOUNT
+========================================================= */
 export const deleteAccount = async (req, res) => {
   try {
     const userId = req.userId;
@@ -1663,7 +1617,9 @@ export const deleteAccount = async (req, res) => {
   }
 };
 
-// 🔥 Get All Users (for Profiles directory)
+/* =========================================================
+   GET ALL USERS  (Profiles directory)
+========================================================= */
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({ isActive: true })
@@ -1676,5 +1632,34 @@ export const getAllUsers = async (req, res) => {
   } catch (err) {
     console.error("Get all users error:", err);
     res.status(500).json({ message: err.message });
+  }
+};
+
+/* =========================================================
+   USERNAME AVAILABILITY (for Register.jsx)
+========================================================= */
+export const checkUsername = async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username || !username.trim()) {
+      return res
+        .status(400)
+        .json({ available: false, message: "Username is required" });
+    }
+
+    const existing = await User.findOne({ username: username.trim() });
+
+    if (existing) {
+      return res.json({ available: false });
+    }
+
+    return res.json({ available: true });
+  } catch (err) {
+    console.error("❌ Username availability check error:", err);
+    res.status(500).json({
+      available: false,
+      message: "Server error while checking username",
+    });
   }
 };
