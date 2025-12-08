@@ -775,83 +775,112 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import Project from "../models/projectModel.js";
 
+
+
+
+
+
+
+// ✅ Allowed email domains for registration
+const ALLOWED_EMAIL_DOMAINS = process.env.ALLOWED_EMAIL_DOMAINS
+  ? process.env.ALLOWED_EMAIL_DOMAINS.split(",").map((d) => d.trim().toLowerCase())
+  : [
+      "diu.edu.bd",
+      "daffodilvarsity.edu.bd",
+      "gmail.com",
+      "email.com",
+      // চাইলে এখানে আরও domain add করতে পারো
+    ];
+
+
+
+
+
+
+
+
+
 // ✅ helper: username validation (frontend-er sathe match)
 const validateUsername = (username) => {
   return /^[a-zA-Z0-9_.]{3,20}$/.test(username);
 };
 
-// ✅ Register
+
+
+
+// ✅ Register (with domain restriction)
 export const register = async (req, res) => {
   try {
-    const {
-      fullName,
-      username,
-      email,
-      password,
-      role,
-      designation,
-      department,
-    } = req.body;
+    const { username, email, password, role, designation, department } = req.body;
 
-    if (!fullName || !username || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Full name, username, email and password are required" });
+    // 1️⃣ Basic validation
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "Username, email and password are required" });
     }
 
-    if (!validateUsername(username.trim())) {
+    // 2️⃣ Email format check
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail.includes("@")) {
+      return res.status(400).json({ message: "Please enter a valid email address" });
+    }
+
+    const emailDomain = trimmedEmail.split("@")[1];
+    if (!emailDomain) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // 3️⃣ Domain restriction check
+    if (!ALLOWED_EMAIL_DOMAINS.includes(emailDomain)) {
       return res.status(400).json({
         message:
-          "Username must be 3–20 characters and can only contain letters, numbers, dots and underscores.",
+          "Registration is only allowed with these email domains: " +
+          ALLOWED_EMAIL_DOMAINS.join(", "),
       });
     }
 
-    const existingEmail = await User.findOne({ email: email.toLowerCase() });
-    if (existingEmail) {
-      return res.status(400).json({ message: "Email already in use" });
-    }
-
-    const existingUsername = await User.findOne({ username: username.trim() });
+    // 4️⃣ Check duplicate username
+    const existingUsername = await User.findOne({ username });
     if (existingUsername) {
-      return res.status(400).json({ message: "Username already taken" });
+      return res.status(400).json({ message: "Username is already taken" });
     }
 
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters" });
+    // 5️⃣ Check duplicate email
+    const existingUser = await User.findOne({ email: trimmedEmail });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists with this email" });
     }
 
+    // 6️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // 7️⃣ Create user
     const user = await User.create({
-      fullName: fullName.trim(),
-      username: username.trim(),
-      email: email.toLowerCase().trim(),
+      username,
+      email: trimmedEmail,
       password: hashedPassword,
       role: role || "student",
-      designation: designation || "Undergraduate Student",
+      designation: designation || "",
       department: department || "Multimedia and Creative Technology",
     });
 
-    const safeUser = {
-      _id: user._id,
-      fullName: user.fullName,
-      username: user.username,
-      email: user.email,
-      avatar: user.avatar,
-      bio: user.bio,
-      role: user.role,
-      designation: user.designation,
-      department: user.department,
-    };
+    // 8️⃣ (Optional) এখানে চাইলে সাথে সাথে email verification token generate করে send করতে পারো
+    // এখন তুমি ইতিমধ্যে আলাদা sendVerificationEmail route রেখেছো, তাই চাইলে সেটাই use করবে।
+    // এখানে শুধু simple success response রাখলাম:
 
-    res
-      .status(201)
-      .json({ message: "User registered successfully", user: safeUser });
+    res.status(201).json({
+      message: "User registered successfully. Please verify your email if required.",
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        designation: user.designation,
+        department: user.department,
+      },
+    });
   } catch (err) {
-    console.error("❌ Register error:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("❌ Register error:", err.message);
+    res.status(500).json({ message: err.message });
   }
 };
 
