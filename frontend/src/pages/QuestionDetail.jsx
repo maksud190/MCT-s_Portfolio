@@ -742,7 +742,7 @@ export default function QuestionDetail() {
               {/* Author & Meta */}
               <div className="flex items-center justify-between pt-4 border-t-2 border-gray-100">
                 <a
-                href={`/user/${question.author?._id}`}
+                href={`/profile/${question.author?.username}`}
                 className="flex items-center gap-3">
                   {question.author?.avatar ? (
                     <img

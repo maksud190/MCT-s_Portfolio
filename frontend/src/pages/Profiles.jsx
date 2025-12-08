@@ -52,7 +52,7 @@ export default function Profiles() {
 
   const UserCard = ({ user }) => (
     <a
-      href={`/user/${user._id}`}
+      href={`/profile/${user.username}`}
       className="group block bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 hover:-translate-y-1"
     >
       {/* Avatar Section */}
