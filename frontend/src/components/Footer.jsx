@@ -77,7 +77,7 @@ export default function Footer() {
               </div>
               <div>
                 <div className="text-xl font-black text-white">
-                  MCT Portfolio
+                  MCT's Portfolio
                 </div>
                 <div className="text-xs text-stone-400">
                   Showcase Your Creativity

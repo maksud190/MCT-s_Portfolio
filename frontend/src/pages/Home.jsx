@@ -17,7 +17,7 @@ export default function Home() {
   const [dateRange, setDateRange] = useState("all");
 
   // ✅ Pagination state
-  const [visibleCount, setVisibleCount] = useState(12);
+  const [visibleCount, setVisibleCount] = useState(15);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
@@ -147,13 +147,13 @@ export default function Home() {
     }
 
     setFilteredProjects(filtered);
-    setVisibleCount(12);
+    setVisibleCount(15);
   }, [projects, selectedCategory, sortBy, dateRange]);
 
   const handleSeeMore = () => {
     setLoading(true);
     setTimeout(() => {
-      setVisibleCount((prev) => prev + 12);
+      setVisibleCount((prev) => prev + 15);
       setLoading(false);
     }, 500);
   };
@@ -483,7 +483,7 @@ export default function Home() {
                       <>
                         <span>See More</span>
                         <span className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white px-2 py-0.5 rounded-sm text-xs font-bold">
-                          {remainingCount > 12 ? "12+" : remainingCount}
+                          {remainingCount > 15 ? "15+" : remainingCount}
                         </span>
                         <svg
                           className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform"
@@ -505,7 +505,7 @@ export default function Home() {
               )}
 
               {/* All Projects Loaded Message */}
-              {!hasMoreProjects && filteredProjects.length > 12 && (
+              {!hasMoreProjects && filteredProjects.length > 15 && (
                 <div className="flex flex-col items-center mt-8 md:mt-12">
                   <div className="flex items-center gap-1 text-stone-500 text-sm md:text-base">
                     <svg

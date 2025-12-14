@@ -522,10 +522,10 @@ export default function QuestionDetail() {
         </a>
 
         {/* Question Card */}
-        <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 p-8 mb-6">
+        <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 p-6 mb-6">
           <div className="flex gap-6">
             {/* Voting Section */}
-            <div className="flex-shrink-0 text-center space-y-3">
+            {/* <div className="hidden lg:block flex-shrink-0 text-center space-y-3">
               <button
                 onClick={() => handleVoteQuestion("upvote")}
                 className={`w-12 h-12 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
@@ -584,12 +584,12 @@ export default function QuestionDetail() {
                   />
                 </svg>
               </button>
-            </div>
+            </div> */}
 
             {/* Question Content */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-4">
-                <h1 className="text-3xl font-black text-gray-900">
+                <h1 className="!text-2xl font-bold text-gray-900">
                   {question.title}
                 </h1>
                 <div className="flex gap-2 ml-4">
@@ -645,7 +645,7 @@ export default function QuestionDetail() {
                 </div>
               )}
 
-              <p className="text-gray-700 text-lg leading-relaxed mb-4 whitespace-pre-wrap">
+              <p className="text-gray-700 text-sm leading-relaxed mb-4 whitespace-pre-wrap">
                 {question.content}
               </p>
 
@@ -742,8 +742,9 @@ export default function QuestionDetail() {
               {/* Author & Meta */}
               <div className="flex items-center justify-between pt-4 border-t-2 border-gray-100">
                 <a
-                href={`/profile/${question.author?.username}`}
-                className="flex items-center gap-3">
+                  href={`/profile/${question.author?.username}`}
+                  className="flex items-center gap-3"
+                >
                   {question.author?.avatar ? (
                     <img
                       src={question.author.avatar}
@@ -794,10 +795,72 @@ export default function QuestionDetail() {
               </div>
             </div>
           </div>
+
+          {/* Voting Section */}
+          <div className="text-center  flex items-center  gap-6 mt-6">
+            <button
+              onClick={() => handleVoteQuestion("upvote")}
+              className={`w-8 h-8 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
+                userVote === "upvote"
+                  ? "bg-green-600 text-white shadow-lg"
+                  : "bg-gray-100  hover:bg-green-100 hover:text-green-600"
+              }`}
+            >
+              <svg
+                className="!bg-gray-900 w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="m5.84 17.41l5.66-5.66l5.66 5.66l-.71.7l-4.95-4.95l-4.95 4.95l-.71-.7m0-4l5.66-5.66l5.66 5.66l-.71.7l-4.95-4.95l-4.95 4.95l-.71-.7Z"
+                />
+              </svg>
+            </button>
+
+            <div
+              className={`text-xl font-black ${
+                questionVoteScore > 0
+                  ? "text-green-600"
+                  : questionVoteScore < 0
+                  ? "text-red-600"
+                  : "text-gray-900"
+              }`}
+            >
+              {questionVoteScore > 0 ? "+" : ""}
+              {questionVoteScore} Vote
+            </div>
+
+            <button
+              onClick={() => handleVoteQuestion("downvote")}
+              className={`w-8 h-8 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
+                userVote === "downvote"
+                  ? "bg-red-600 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600"
+              }`}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Answers Section */}
-        <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 p-8">
+        <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 p-6">
           <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
             <svg
               className="w-6 h-6 text-blue-600"
@@ -819,7 +882,7 @@ export default function QuestionDetail() {
           {user && (
             <form
               onSubmit={handleSubmitAnswer}
-              className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200"
+              className="mb-8 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200"
             >
               <label className="text-sm font-bold text-gray-900 mb-2 block">
                 Your Answer
@@ -931,78 +994,6 @@ export default function QuestionDetail() {
                     }`}
                   >
                     <div className="flex gap-4">
-                      {/* Vote Section */}
-                      <div className="flex-shrink-0 text-center space-y-2">
-                        <button
-                          onClick={() => handleVoteAnswer(answer._id, "upvote")}
-                          className={`w-10 h-10 !border-1 !border-gray-300 rounded-xl flex items-center justify-center transition-all ${
-                            userAnswerVotes[answer._id] === "upvote"
-                              ? "bg-green-600 text-white shadow-lg"
-                              : "bg-white text-gray-600 hover:bg-green-100 hover:text-green-600 border border-gray-200"
-                          }`}
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 15l7-7 7 7"
-                            />
-                          </svg>
-                        </button>
-
-                        <div
-                          className={`text-xl font-black ${
-                            answerVoteScore > 0
-                              ? "text-green-600"
-                              : answerVoteScore < 0
-                              ? "text-red-600"
-                              : "text-gray-900"
-                          }`}
-                        >
-                          {answerVoteScore > 0 ? "+" : ""}
-                          {answerVoteScore}
-                        </div>
-
-                        <button
-                          onClick={() =>
-                            handleVoteAnswer(answer._id, "downvote")
-                          }
-                          className={`w-10 h-10 !border-1 !border-gray-300 rounded-xl flex items-center justify-center transition-all ${
-                            userAnswerVotes[answer._id] === "downvote"
-                              ? "bg-red-600 text-white shadow-lg"
-                              : "bg-white text-gray-600 hover:bg-red-100 hover:text-red-600 border border-gray-200"
-                          }`}
-                        >
-                          <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 15l7-7 7 7"
-                            />
-                          </svg>
-                        </button>
-
-                        {answer.isBestAnswer && (
-                          <div className="mt-3">
-                            <span className="inline-block px-2 py-1 bg-green-600 text-white rounded-lg text-xs font-bold">
-                              ⭐ Best
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
                       {/* Answer Content */}
                       <div className="flex-1 min-w-0">
                         <p className="text-gray-700 leading-relaxed mb-3 whitespace-pre-wrap">
@@ -1029,7 +1020,7 @@ export default function QuestionDetail() {
                           {canMarkBest && !answer.isBestAnswer && (
                             <button
                               onClick={() => handleMarkBestAnswer(answer._id)}
-                              className="px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg text-sm font-semibold transition-all"
+                              className="!px-3 !py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg sm:!text-xs font-semibold transition-all"
                             >
                               ⭐ Mark as Best
                             </button>
@@ -1037,7 +1028,7 @@ export default function QuestionDetail() {
                           {canDelete && (
                             <button
                               onClick={() => handleDeleteAnswer(answer._id)}
-                              className="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg text-sm font-semibold transition-all"
+                              className="!px-3 !py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg sm:!text-xs font-semibold transition-all"
                             >
                               🗑️ Delete
                             </button>
@@ -1049,7 +1040,7 @@ export default function QuestionDetail() {
                                 [answer._id]: !showReplies[answer._id],
                               })
                             }
-                            className="px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg text-sm font-semibold transition-all"
+                            className="!px-3 !py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg text-sm sm:!text-xs font-semibold transition-all"
                           >
                             💬 {showReplies[answer._id] ? "Hide" : "Show"}{" "}
                             Replies ({answer.replies?.length || 0})
@@ -1058,9 +1049,10 @@ export default function QuestionDetail() {
 
                         {/* Author */}
                         <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                          <a 
-                          href={`/user/${answer.author?._id}`}
-                          className="flex items-center gap-2">
+                          <a
+                            href={`/user/${answer.author?._id}`}
+                            className="flex items-center gap-2"
+                          >
                             {answer.author?.avatar ? (
                               <img
                                 src={answer.author.avatar}
@@ -1088,6 +1080,80 @@ export default function QuestionDetail() {
                           <span className="text-xs text-gray-500">
                             {new Date(answer.createdAt).toLocaleString()}
                           </span>
+                        </div>
+
+                        {/* Vote Section */}
+                        <div className="text-center  flex items-center  gap-6 mt-6">
+                          <button
+                            onClick={() =>
+                              handleVoteAnswer(answer._id, "upvote")
+                            }
+                            className={`w-8 h-8 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
+                              userAnswerVotes[answer._id] === "upvote"
+                                ? "bg-green-600 text-white shadow-lg"
+                                : "bg-white text-gray-600 hover:bg-green-100 hover:text-green-600 border border-gray-200"
+                            }`}
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 15l7-7 7 7"
+                              />
+                            </svg>
+                          </button>
+
+                          <div
+                            className={`text-xl font-black ${
+                              answerVoteScore > 0
+                                ? "text-green-600"
+                                : answerVoteScore < 0
+                                ? "text-red-600"
+                                : "text-gray-900"
+                            }`}
+                          >
+                            {answerVoteScore > 0 ? "+" : ""}
+                            {answerVoteScore}
+                          </div>
+
+                          <button
+                            onClick={() =>
+                              handleVoteAnswer(answer._id, "downvote")
+                            }
+                            className={`w-8 h-8 rounded-xl !border-2 !border-gray-200 flex items-center justify-center transition-all ${
+                              userAnswerVotes[answer._id] === "downvote"
+                                ? "bg-red-600 text-white shadow-lg"
+                                : "bg-white text-gray-600 hover:bg-red-100 hover:text-red-600 border border-gray-200"
+                            }`}
+                          >
+                            <svg
+                              className="w-6 h-6"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 15l7-7 7 7"
+                              />
+                            </svg>
+                          </button>
+
+                          {answer.isBestAnswer && (
+                            <div className="mt-3">
+                              <span className="inline-block px-2 py-1 bg-green-600 text-white rounded-lg text-xs font-bold">
+                                ⭐ Best
+                              </span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Replies Section */}

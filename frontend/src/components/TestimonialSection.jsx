@@ -105,12 +105,12 @@ export default function TestimonialSection() {
   }
 
   return (
-    <div className="py-16 mb-50 md:py-20 bg-gradient-to-b from-gray-100 via-blue-100/20 to-gray-100 relative overflow-hidden">
+    <div className="!py-12 mb-50 md:py-20 bg-gradient-to-b from-gray-100 via-blue-100/20 to-gray-100 relative overflow-hidden">
       
       
       {/* Animated Background Blobs */}
-      <div className="absolute top-20 -left-4 w-45 h-45 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute top-45 right-12 w-60 h-60 bg-blue-200 rounded-full mix-blend-multiply filter blur-2xl opacity-90 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-25 -left-3 w-45 h-45 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+      <div className="absolute top-55 right-18 w-60 h-60 bg-blue-200 rounded-full mix-blend-multiply filter blur-2xl opacity-90 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-10 left-50 w-60 h-60 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-4000"></div>
       
       

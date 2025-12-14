@@ -10,7 +10,7 @@ export default function FilterBar({
   filteredProjects = [],
 }) {
   return (
-    <div className="mb-6 bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+    <div className="mb-15 bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
       {/* Compact Filters Content */}
       <div className="p-5">
         <div className="flex flex-col gap-4">

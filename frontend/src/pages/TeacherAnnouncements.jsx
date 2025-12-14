@@ -217,7 +217,7 @@ export default function TeacherAnnouncements() {
             </span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-3">
+          <h1 className="!text-4xl md:text-5xl font-black text-gray-900 mb-3">
             {isTeacher ? "My Announcements" : "Important Updates"}
           </h1>
           <p className="text-lg text-gray-600">
