@@ -410,13 +410,11 @@ export default function ProjectModal() {
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 ">
                     {/* Pofile */}
 
-                    <div
-                      
-                      className="lg:flex items-center lg:justify-between mb-7"
-                    >
-                      <a 
-                      href={`/profile/${project.userId.username}`}
-                      className="flex items-center gap-3">
+                    <div className="lg:flex items-center lg:justify-between mb-7">
+                      <a
+                        href={`/profile/${project.userId.username}`}
+                        className="flex items-center gap-3"
+                      >
                         {project.userId.avatar ? (
                           <img
                             src={project.userId.avatar}
@@ -621,7 +619,7 @@ export default function ProjectModal() {
       )}
 
       {/* Custom Scrollbar & Animation Styles */}
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
           height: 6px;

@@ -196,7 +196,7 @@ export default function NotificationBell() {
       {/* Bell Icon Button */}
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-all focus:outline-none"
+        className="relative p-2 text-gray-700 shadow-sm  hover:bg-gray-100 rounded-xl transition-all focus:outline-none"
       >
         <svg
           className="w-6 h-6"
@@ -212,7 +212,7 @@ export default function NotificationBell() {
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-600 to-pink-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-pulse">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
