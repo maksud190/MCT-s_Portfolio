@@ -70,42 +70,42 @@ export default function Navbar() {
 
             {/* Desktop Nav Links */}
             <div className="hidden lg:flex items-center gap-1">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Explore
-              </a>
+              </Link>
 
-              <a
-                href="/profiles"
+              <Link
+                to="/profiles"
                 className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Profiles
-              </a>
+              </Link>
 
-              <a
-                href="/forum"
+              <Link
+                to="/forum"
                 className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Forum
-              </a>
+              </Link>
 
               {user && (
-                <a
-                  href="/teacherAnnouncements"
+                <Link
+                  to="/teacherAnnouncements"
                   className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                 >
                   Notices
-                </a>
+                </Link>
               )}
 
-              <a
-                href="/imageConverter"
+              <Link
+                to="/imageConverter"
                 className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
               >
                 Tools
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -166,8 +166,8 @@ export default function Navbar() {
                     </div>
 
                     <div className="py-2">
-                      <a
-                        href={profileUrl}
+                      <Link
+                        to={profileUrl}
                         className="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 transition-colors"
                       >
                         <svg
@@ -186,7 +186,7 @@ export default function Navbar() {
                         <span className="text-sm font-semibold text-gray-700">
                           My Profile
                         </span>
-                      </a>
+                      </Link>
 
                       <Link
                         to={`/profile/${encodeURIComponent(user.username)}/settings`}
@@ -217,8 +217,8 @@ export default function Navbar() {
                       </Link>
 
                       {user.role === "admin" && (
-                        <a
-                          href="/admin"
+                        <Link
+                          to="/admin"
                           className="flex items-center gap-3 px-4 py-2 hover:bg-amber-50 transition-colors"
                         >
                           <svg
@@ -237,7 +237,7 @@ export default function Navbar() {
                           <span className="text-sm font-bold text-amber-600">
                             Admin Panel
                           </span>
-                        </a>
+                        </Link>
                       )}
                     </div>
 
@@ -267,18 +267,18 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                 >
                   Login
-                </a>
-                <a
-                  href="/register"
+                </Link>
+                <Link
+                  to="/register"
                   className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 !text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl text-sm"
                 >
                   Register
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -344,8 +344,8 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -363,10 +363,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Explore
-                </a>
+                </Link>
 
-                <a
-                  href="/profiles"
+                <Link
+                  to="/profiles"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -384,10 +384,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Profiles
-                </a>
+                </Link>
 
-                <a
-                  href="/forum"
+                <Link
+                  to="/forum"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -406,11 +406,11 @@ export default function Navbar() {
                     />
                   </svg>
                   Forum
-                </a>
+                </Link>
 
                 {user && (
-                  <a
-                    href="/teacherAnnouncements"
+                  <Link
+                    to="/teacherAnnouncements"
                     onClick={() => setShowMobileMenu(false)}
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                   >
@@ -429,11 +429,11 @@ export default function Navbar() {
                       />
                     </svg>
                     Notices
-                  </a>
+                  </Link>
                 )}
 
-                <a
-                  href={profileUrl}
+                <Link
+                  to={profileUrl}
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -451,10 +451,10 @@ export default function Navbar() {
                     />
                   </svg>
                   My Profile
-                </a>
+                </Link>
 
-                <a
-                  href="/imageConverter"
+                <Link
+                  to="/imageConverter"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -472,7 +472,7 @@ export default function Navbar() {
                     />
                   </svg>
                   Image Converter
-                </a>
+                </Link>
 
                 <Link
                   to="/upload"
@@ -495,8 +495,8 @@ export default function Navbar() {
                   Upload Project
                 </Link>
 
-                <a
-                  href="/settings"
+                <Link
+                  to="/settings"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -520,11 +520,11 @@ export default function Navbar() {
                     />
                   </svg>
                   Settings
-                </a>
+                </Link>
 
                 {user.role === "admin" && (
-                  <a
-                    href="/admin"
+                  <Link
+                    to="/admin"
                     onClick={() => setShowMobileMenu(false)}
                     className="flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 text-white hover:bg-amber-600 rounded-xl font-bold transition-colors"
                   >
@@ -542,7 +542,7 @@ export default function Navbar() {
                       />
                     </svg>
                     Admin Panel
-                  </a>
+                  </Link>
                 )}
 
                 <button
@@ -567,8 +567,8 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -586,10 +586,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Explore
-                </a>
+                </Link>
 
-                <a
-                  href="/profiles"
+                <Link
+                  to="/profiles"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -607,10 +607,10 @@ export default function Navbar() {
                     />
                   </svg>
                   Profiles
-                </a>
+                </Link>
 
-                <a
-                  href="/imageConverter"
+                <Link
+                  to="/imageConverter"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors font-semibold"
                 >
@@ -628,23 +628,23 @@ export default function Navbar() {
                     />
                   </svg>
                   Image Converter
-                </a>
+                </Link>
 
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   onClick={() => setShowMobileMenu(false)}
                   className="block px-4 py-3 text-blue-600 text-center rounded-xl font-bold hover:bg-blue-50 transition-colors"
                 >
                   Login
-                </a>
+                </Link>
 
-                <a
-                  href="/register"
+                <Link
+                  to="/register"
                   onClick={() => setShowMobileMenu(false)}
                   className="block px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600  text-center rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 !text-white transition-all shadow-lg"
                 >
                   Register
-                </a>
+                </Link>
               </>
             )}
           </div>
