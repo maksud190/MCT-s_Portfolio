@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { API } from "../api/api";
-import { useAuth } from "../context/AuthContext"; // 🔥 Import useAuth
+import { useAuth } from "../context/AuthContext";
 import ProjectCard from "../components/ProjectCard";
 import CategorySidebar from "../components/CategorySidebar";
 import FilterBar from "../components/FilterBar";
@@ -9,14 +9,13 @@ import ToolsShowcase from "../components/ToolsShowcase";
 import TestimonialSection from "../components/TestimonialSection";
 
 export default function Home() {
-  const { user } = useAuth(); // 🔥 Get user from AuthContext
+  const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("random");
   const [dateRange, setDateRange] = useState("all");
 
-  // ✅ Pagination state
   const [visibleCount, setVisibleCount] = useState(15);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -48,10 +47,21 @@ export default function Home() {
     return shuffled;
   };
 
+  // ✅ Helper function to get likes count
+  const getLikesCount = (project) => {
+    if (!project.likes) return 0;
+    // If likes is an array, return its length
+    if (Array.isArray(project.likes)) return project.likes.length;
+    // If likes is a number, return it directly
+    if (typeof project.likes === 'number') return project.likes;
+    return 0;
+  };
+
   useEffect(() => {
     setInitialLoading(true);
     API.get("/projects")
       .then((res) => {
+        console.log("Sample project likes:", res.data[0]?.likes); // ✅ Debug log
         setProjects(res.data);
         setInitialLoading(false);
       })
@@ -75,16 +85,19 @@ export default function Home() {
 
     let filtered = [...projects];
 
+    // Apply random sorting first if selected
     if (sortBy === "random" && shuffledProjectsRef.current) {
       filtered = [...shuffledProjectsRef.current];
     }
 
+    // Apply category filter
     if (selectedCategory !== "All") {
       filtered = filtered.filter((p) =>
         p.category.startsWith(selectedCategory)
       );
     }
 
+    // Apply date range filter
     if (dateRange !== "all") {
       const now = new Date();
       const filterDate = new Date();
@@ -113,6 +126,7 @@ export default function Home() {
       filtered = filtered.filter((p) => new Date(p.createdAt) >= filterDate);
     }
 
+    // ✅ Apply sorting (Updated with better likes handling)
     if (sortBy !== "random") {
       switch (sortBy) {
         case "latest":
@@ -126,14 +140,21 @@ export default function Home() {
           );
           break;
         case "likes-high":
-          filtered.sort(
-            (a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)
-          );
+          // ✅ Fixed: Using helper function for consistent likes counting
+          filtered.sort((a, b) => {
+            const aLikes = getLikesCount(a);
+            const bLikes = getLikesCount(b);
+            console.log(`Comparing: ${a.title} (${aLikes} likes) vs ${b.title} (${bLikes} likes)`); // Debug
+            return bLikes - aLikes; // High to low
+          });
           break;
         case "likes-low":
-          filtered.sort(
-            (a, b) => (a.likes?.length || 0) - (b.likes?.length || 0)
-          );
+          // ✅ Fixed: Using helper function for consistent likes counting
+          filtered.sort((a, b) => {
+            const aLikes = getLikesCount(a);
+            const bLikes = getLikesCount(b);
+            return aLikes - bLikes; // Low to high
+          });
           break;
         case "views-high":
           filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
@@ -145,6 +166,11 @@ export default function Home() {
           break;
       }
     }
+
+    console.log("Filtered projects after sorting:", filtered.slice(0, 3).map(p => ({
+      title: p.title,
+      likes: getLikesCount(p)
+    }))); // ✅ Debug log
 
     setFilteredProjects(filtered);
     setVisibleCount(15);
@@ -254,9 +280,7 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              {/* 🔥 Conditional Button - Show different button based on login status */}
               {user ? (
-                // ✅ If user is logged in - Show "Visit Your Profile"
                 <a
                   href="/profile"
                   className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 !text-white rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
@@ -290,7 +314,6 @@ export default function Home() {
                   </svg>
                 </a>
               ) : (
-                // ❌ If user is NOT logged in - Show "Create New Profile"
                 <a
                   href="/register"
                   className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 !text-white rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
@@ -380,11 +403,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 🔥 Tools Showcase Component - Now Separate! */}
       <ToolsShowcase />
 
       <div className="flex bg-gradient-to-t from-gray-100 to-white">
-        {/* Sidebar - Desktop only */}
         <CategorySidebar
           categories={categories}
           selectedCategory={selectedCategory}
@@ -392,9 +413,7 @@ export default function Home() {
           projects={projects}
         />
 
-        {/* Main Content */}
         <div className="flex-1 px-3 md:px-6 pb-12 md:pb-20">
-          {/* Filter Bar */}
           <FilterBar
             categories={categories}
             selectedCategory={selectedCategory}
@@ -407,7 +426,6 @@ export default function Home() {
             filteredProjects={filteredProjects}
           />
 
-          {/* Loader */}
           {initialLoading ? (
             <div className="flex flex-col items-center justify-center py-20 md:py-32">
               <div className="relative">
@@ -504,7 +522,6 @@ export default function Home() {
                 </div>
               )}
 
-              {/* All Projects Loaded Message */}
               {!hasMoreProjects && filteredProjects.length > 15 && (
                 <div className="flex flex-col items-center mt-8 md:mt-12">
                   <div className="flex items-center gap-1 text-stone-500 text-sm md:text-base">
@@ -542,7 +559,6 @@ export default function Home() {
       </div>
       <TestimonialSection />
 
-      {/* Animation Styles */}
       <style>{`        
         .animate-fadeInUp {
           animation: fadeInUp 0.6s ease-out;
