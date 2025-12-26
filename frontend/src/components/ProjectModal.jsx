@@ -227,7 +227,7 @@ export default function ProjectModal() {
       {/* Modal Container */}
       <div className="mt-20 fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div
-          className="w-fit max-w-7xl max-h-[90vh] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden pointer-events-auto animate-slideUp"
+          className="w-5xl max-w-7xl max-h-[90vh] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden pointer-events-auto animate-slideUp"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header with Close Button */}
@@ -312,7 +312,7 @@ export default function ProjectModal() {
                 {/* Main Content - Left Side */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Image Gallery */}
-                  <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden">
+                  <div className="bg-gradient-to-br from-gray-900/10 to-gray-800/10 rounded-2xl overflow-hidden">
                     <div className="relative p-6">
                       <img
                         src={project.images[currentImageIndex]}
@@ -382,8 +382,8 @@ export default function ProjectModal() {
 
                     {/* Thumbnail Strip */}
                     {project.images.length > 1 && (
-                      <div className="p-4 bg-gradient-to-br from-gray-800 to-gray-700">
-                        <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar justify-center">
+                      <div className="py-1 bg-gradient-to-b from-gray-900/10 to-gray-800/10">
+                        <div className="flex gap-2 overflow-x-auto custom-scrollbar justify-center">
                           {project.images.map((img, idx) => (
                             <button
                               key={idx}
