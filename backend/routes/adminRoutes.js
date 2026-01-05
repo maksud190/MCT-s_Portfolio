@@ -382,6 +382,91 @@ router.delete(
   }
 );
 
+
+
+
+
+
+
+// 🔥 GET - Dashboard Statistics
+router.get("/dashboard/stats", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    // Calculate date for "this week"
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    // Get total counts
+    const totalUsers = await User.countDocuments();
+    const totalProjects = await Project.countDocuments();
+    
+    // Get new users this week
+    const newUsersWeek = await User.countDocuments({
+      createdAt: { $gte: oneWeekAgo }
+    });
+
+    // Get new projects this week
+    const newProjectsWeek = await Project.countDocuments({
+      createdAt: { $gte: oneWeekAgo }
+    });
+
+    // Get total comments (assuming comments are embedded in projects)
+    const commentsResult = await Project.aggregate([
+      { $project: { commentCount: { $size: "$comments" } } },
+      { $group: { _id: null, total: { $sum: "$commentCount" } } }
+    ]);
+    const totalComments = commentsResult[0]?.total || 0;
+
+    // Get pending reports (if you have a Report model)
+    // const pendingReports = await Report.countDocuments({ status: 'pending' });
+    const pendingReports = 0; // Placeholder
+
+    // Get most viewed projects
+    const mostViewedProjects = await Project.find({ isApproved: true })
+      .sort({ views: -1 })
+      .limit(5)
+      .populate("userId", "username avatar")
+      .select("title thumbnail views userId")
+      .lean();
+
+    // Get most liked projects
+    const mostLikedProjects = await Project.find({ isApproved: true })
+      .sort({ likes: -1 })
+      .limit(5)
+      .populate("userId", "username avatar")
+      .select("title thumbnail likes userId")
+      .lean();
+
+    res.json({
+      totalUsers,
+      totalProjects,
+      totalComments,
+      pendingReports,
+      newUsersWeek,
+      newProjectsWeek,
+      mostViewedProjects,
+      mostLikedProjects
+    });
+
+  } catch (err) {
+    console.error("Error fetching dashboard stats:", err);
+    res.status(500).json({ 
+      message: "Server error",
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 // 🔥 GET - Get project statistics (Admin Dashboard)
 router.get("/projects/stats/overview", authMiddleware, adminMiddleware, async (req, res) => {
   try {

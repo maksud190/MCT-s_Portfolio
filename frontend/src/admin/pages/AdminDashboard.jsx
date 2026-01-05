@@ -136,7 +136,7 @@ export default function AdminDashboard() {
                   <div className="flex-shrink-0">
                     <img
                       src={Project.thumbnail}
-                      alt={project.title}
+                      alt={Project.title}
                       className="w-12 h-12 rounded object-cover"
                     />
                   </div>
