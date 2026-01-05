@@ -121,7 +121,7 @@
 
 import express from "express";
 import Project from "../models/projectModel.js";
-import User from "../models/User.js";
+import User from "../models/userModel.js";
 import Notification from "../models/Notification.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
