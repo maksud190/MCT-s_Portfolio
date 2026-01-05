@@ -145,6 +145,93 @@ const adminMiddleware = async (req, res, next) => {
   }
 };
 
+
+
+// 🔥 GET - Dashboard Statistics
+router.get("/dashboard/stats", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    console.log("📊 Dashboard stats route hit!");
+    
+    // Calculate date for "this week"
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    // Get total counts
+    const totalUsers = await User.countDocuments();
+    const totalProjects = await Project.countDocuments();
+    
+    // Get new users this week
+    const newUsersWeek = await User.countDocuments({
+      createdAt: { $gte: oneWeekAgo }
+    });
+
+    // Get new projects this week
+    const newProjectsWeek = await Project.countDocuments({
+      createdAt: { $gte: oneWeekAgo }
+    });
+
+    // Calculate total comments
+    const commentsResult = await Project.aggregate([
+      { 
+        $project: { 
+          commentCount: { 
+            $size: { $ifNull: ["$comments", []] } 
+          } 
+        } 
+      },
+      { 
+        $group: { 
+          _id: null, 
+          total: { $sum: "$commentCount" } 
+        } 
+      }
+    ]);
+    const totalComments = commentsResult[0]?.total || 0;
+
+    const pendingReports = 0; // Placeholder
+
+    // Get most viewed projects
+    const mostViewedProjects = await Project.find({ isApproved: true })
+      .sort({ views: -1 })
+      .limit(5)
+      .populate("userId", "username avatar")
+      .select("title thumbnail views userId")
+      .lean();
+
+    // Get most liked projects
+    const mostLikedProjects = await Project.find({ isApproved: true })
+      .sort({ likes: -1 })
+      .limit(5)
+      .populate("userId", "username avatar")
+      .select("title thumbnail likes userId")
+      .lean();
+
+    console.log("✅ Dashboard data fetched successfully!");
+
+    res.json({
+      totalUsers,
+      totalProjects,
+      totalComments,
+      pendingReports,
+      newUsersWeek,
+      newProjectsWeek,
+      mostViewedProjects,
+      mostLikedProjects
+    });
+
+  } catch (err) {
+    console.error("❌ Dashboard stats error:", err);
+    res.status(500).json({ 
+      message: "Server error",
+      error: err.message
+    });
+  }
+});
+
+
+
+
+
 // 🔥 GET all projects (admin view - includes pending)
 router.get("/projects", authMiddleware, adminMiddleware, async (req, res) => {
   try {

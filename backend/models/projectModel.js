@@ -206,7 +206,7 @@ projectSchema.index({ userId: 1 });
 projectSchema.index({ isApproved: 1, createdAt: -1 });
 projectSchema.index({ approvalStatus: 1 });
 projectSchema.index({ category: 1, isApproved: 1 });
-projectSchema.index({ slug: 1 });
+projectSchema.index({ index: true });
 projectSchema.index({ isFeatured: 1, isApproved: 1 });
 
 // 🔥 NEW: Method to check if user can view project
