@@ -83,6 +83,8 @@
 
 
 // models/Notification.js (Update)
+import mongoose from "mongoose";
+
 const notificationSchema = new mongoose.Schema(
   {
     recipient: {
