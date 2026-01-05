@@ -2,7 +2,8 @@ import Project from "../models/projectModel.js";
 import User from "../models/userModel.js";
 import cloudinary from "../config/cloudinary.js";
 
-// ✅ Upload new project
+
+// ✅ Upload new project - FIXED VERSION
 export const uploadProject = async (req, res) => {
   try {
     const { title, description, category, userId } = req.body;
@@ -36,6 +37,7 @@ export const uploadProject = async (req, res) => {
 
     console.log("✅ Uploaded URLs:", imageUrls.length);
 
+    // 🔥 FIX: Explicitly set approval status to pending
     const project = await Project.create({
       userId: userId.trim(),
       title: title.trim(),
@@ -43,12 +45,19 @@ export const uploadProject = async (req, res) => {
       category: category.trim(),
       thumbnail: imageUrls[0],
       images: imageUrls,
+      // 🔥 IMPORTANT: Set these explicitly
+      isApproved: false,
+      approvalStatus: "pending",
     });
 
     console.log("✅ Project created successfully:", project._id);
+    console.log("📊 Project status:", {
+      isApproved: project.isApproved,
+      approvalStatus: project.approvalStatus
+    });
 
     res.json({ 
-      message: "Project uploaded successfully", 
+      message: "Project uploaded successfully! Waiting for admin approval.", 
       project 
     });
   } catch (err) {
