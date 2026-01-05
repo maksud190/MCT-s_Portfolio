@@ -12,42 +12,20 @@ export default function AdminDashboard() {
     fetchDashboardStats();
   }, []);
 
-  // const fetchDashboardStats = async () => {
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const res = await API.get('/admin/dashboard/stats', {
-  //       headers: { Authorization: `Bearer ${token}` }
-  //     });
-  //     setStats(res.data);
-  //   } catch (err) {
-  //     console.error('Error fetching dashboard stats:', err);
-  //     toast.error('Failed to load dashboard stats');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-
-
-
-
   const fetchDashboardStats = async () => {
-  try {
-    const res = await API.get('/admin/dashboard/stats'); // Removed manual header
-    setStats(res.data);
-  } catch (err) {
-    console.error('Error fetching dashboard stats:', err);
-    console.error('Full error:', err.response); // More debug info
-    toast.error('Failed to load dashboard stats');
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
-
-
+    try {
+      const token = localStorage.getItem('token');
+      const res = await API.get('/admin/dashboard/stats', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStats(res.data);
+    } catch (err) {
+      console.error('Error fetching dashboard stats:', err);
+      toast.error('Failed to load dashboard stats');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
