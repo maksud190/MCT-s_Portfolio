@@ -117,7 +117,7 @@
 
 
 
-// routes/adminRoutes.js - Complete admin routes for project management
+// routes/adminRoutes.js - Complete admin routes with Dashboard Stats
 
 import express from "express";
 import Project from "../models/projectModel.js";
@@ -144,6 +144,80 @@ const adminMiddleware = async (req, res, next) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// 🔥 GET - Dashboard Statistics (MUST BE FIRST!)
+router.get("/dashboard/stats", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    // Get total counts
+    const totalProjects = await Project.countDocuments();
+    const totalUsers = await User.countDocuments();
+    
+    // Get approval statistics
+    const pendingProjects = await Project.countDocuments({ approvalStatus: "pending" });
+    const approvedProjects = await Project.countDocuments({ approvalStatus: "approved" });
+    const rejectedProjects = await Project.countDocuments({ approvalStatus: "rejected" });
+    const featuredProjects = await Project.countDocuments({ isFeatured: true });
+    
+    // Get recent projects (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentProjects = await Project.countDocuments({
+      createdAt: { $gte: sevenDaysAgo }
+    });
+    
+    // Get total engagement
+    const engagementStats = await Project.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalViews: { $sum: "$views" },
+          totalLikes: { $sum: "$likes" },
+          totalComments: { $sum: { $size: { $ifNull: ["$comments", []] } } }
+        }
+      }
+    ]);
+    
+    const engagement = engagementStats[0] || {
+      totalViews: 0,
+      totalLikes: 0,
+      totalComments: 0
+    };
+    
+    // Get top projects
+    const topProjects = await Project.find()
+      .sort({ likes: -1 })
+      .limit(5)
+      .populate("userId", "username avatar")
+      .select("title thumbnail likes views category createdAt");
+    
+    // Get recent pending projects
+    const recentPending = await Project.find({ approvalStatus: "pending" })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("userId", "username avatar")
+      .select("title thumbnail category createdAt");
+    
+    // Response
+    res.json({
+      totalProjects,
+      totalUsers,
+      pendingProjects,
+      approvedProjects,
+      rejectedProjects,
+      featuredProjects,
+      recentProjects,
+      totalViews: engagement.totalViews,
+      totalLikes: engagement.totalLikes,
+      totalComments: engagement.totalComments,
+      topProjects,
+      recentPending
+    });
+    
+  } catch (err) {
+    console.error("Error fetching dashboard stats:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
 
 // 🔥 GET all projects (admin view - includes pending)
 router.get("/projects", authMiddleware, adminMiddleware, async (req, res) => {
@@ -239,7 +313,7 @@ router.put(
       if (!isApproved && rejectionReason) {
         project.rejectionReason = rejectionReason;
       } else if (isApproved) {
-        project.rejectionReason = ""; // Clear any previous rejection reason
+        project.rejectionReason = "";
       }
 
       await project.save();
@@ -271,15 +345,6 @@ router.put(
         link: notificationLink,
       });
 
-      // 🔥 Optional: Send email notification
-      // if (project.userId.email) {
-      //   await sendEmailNotification({
-      //     to: project.userId.email,
-      //     subject: isApproved ? "Project Approved!" : "Project Not Approved",
-      //     message: notificationMessage,
-      //   });
-      // }
-
       res.json({
         message: `Project ${isApproved ? "approved" : "rejected"} successfully`,
         project: {
@@ -310,7 +375,6 @@ router.put(
         return res.status(404).json({ message: "Project not found" });
       }
 
-      // 🔥 Only approved projects can be featured
       if (!project.isApproved && !project.isFeatured) {
         return res.status(400).json({
           message: "Only approved projects can be featured",
@@ -320,7 +384,6 @@ router.put(
       project.isFeatured = !project.isFeatured;
       await project.save();
 
-      // Notify project owner if featured
       if (project.isFeatured) {
         await Notification.create({
           recipient: project.userId,
@@ -359,13 +422,9 @@ router.delete(
         return res.status(404).json({ message: "Project not found" });
       }
 
-      // Delete project
       await Project.findByIdAndDelete(req.params.id);
-
-      // Delete associated notifications
       await Notification.deleteMany({ project: req.params.id });
 
-      // Notify project owner
       await Notification.create({
         recipient: project.userId,
         sender: req.user.id,
@@ -381,70 +440,6 @@ router.delete(
     }
   }
 );
-
-// 🔥 GET - Get project statistics (Admin Dashboard)
-router.get("/projects/stats/overview", authMiddleware, adminMiddleware, async (req, res) => {
-  try {
-    const stats = await Project.aggregate([
-      {
-        $facet: {
-          totalProjects: [{ $count: "count" }],
-          approvalStatus: [
-            {
-              $group: {
-                _id: "$approvalStatus",
-                count: { $sum: 1 },
-              },
-            },
-          ],
-          featuredProjects: [
-            {
-              $match: { isFeatured: true },
-            },
-            { $count: "count" },
-          ],
-          recentProjects: [
-            {
-              $match: {
-                createdAt: {
-                  $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-                },
-              },
-            },
-            { $count: "count" },
-          ],
-          topProjects: [
-            { $sort: { likes: -1 } },
-            { $limit: 5 },
-            {
-              $project: {
-                title: 1,
-                likes: 1,
-                views: 1,
-                thumbnail: 1,
-              },
-            },
-          ],
-        },
-      },
-    ]);
-
-    const result = stats[0];
-    
-    res.json({
-      totalProjects: result.totalProjects[0]?.count || 0,
-      pending: result.approvalStatus.find((s) => s._id === "pending")?.count || 0,
-      approved: result.approvalStatus.find((s) => s._id === "approved")?.count || 0,
-      rejected: result.approvalStatus.find((s) => s._id === "rejected")?.count || 0,
-      featured: result.featuredProjects[0]?.count || 0,
-      recentWeek: result.recentProjects[0]?.count || 0,
-      topProjects: result.topProjects,
-    });
-  } catch (err) {
-    console.error("Error fetching admin stats:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 // 🔥 PUT - Bulk approve projects
 router.put(
@@ -472,7 +467,6 @@ router.put(
         }
       );
 
-      // Create notifications for all approved projects
       const projects = await Project.find({ _id: { $in: projectIds } });
       
       for (const project of projects) {
